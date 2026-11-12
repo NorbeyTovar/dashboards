@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RUES · Registro Único Empresarial y Social de Colombia — CADIT 2.0</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <link rel="stylesheet" href="estilo-cadit.css">
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/echarts.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --marino: #283044;
+      --amarillo: #FFCC00;
+      --azul: #004E98;
+      --niebla: #F4F5F7;
+      --texto: #374151;
+      --azul-claro: #2A70B8;
+      --azul-sombra: #1B3556;
+      --ocre: #E6B800;
+      --suave: #6B7280;
+      --borde: #E5E7EB;
+      --blanco: #FFFFFF;
+    }
+
+    .lateral {
+      background: radial-gradient(ellipse at top, #35405c, #283044 70%) !important;
+    }
+
+    .lateral .marca {
+      border-bottom: 4px solid #FFCC00 !important;
+    }
+
+    .lateral .contexto {
+      color: #FFCC00 !important;
+    }
+
+    .lateral button.activa {
+      border-left-color: #FFCC00 !important;
+    }
+
+    .acciones button {
+      background: #FFCC00 !important;
+      color: #283044 !important;
+    }
+
+    .acciones button:hover {
+      background: #E6B800 !important;
+    }
+
+    /* ─── Contenedor de KPIs Ejecutivos (3x2 Desktop sin truncamiento) ─── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    .kpi-card {
+      min-width: 0;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 142px;
+      box-sizing: border-box;
+      position: relative;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 3px 8px rgba(15, 23, 42, 0.02);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card:hover {
+      border-color: #004E98;
+      box-shadow: 0 6px 20px rgba(0, 78, 152, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .kpi-card.kpi-hero {
+      border-top: 3.5px solid #FFCC00;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+    }
+
+    .kpi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .kpi-card-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #64748B;
+    }
+
+    .kpi-card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1E293B;
+      white-space: normal;
+      word-break: normal;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .kpi-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    .badge-primary {
+      background: rgba(0, 78, 152, 0.08);
+      color: #004E98;
+    }
+
+    .badge-success {
+      background: rgba(22, 163, 74, 0.1);
+      color: #15803D;
+    }
+
+    .badge-gold {
+      background: rgba(230, 184, 0, 0.18);
+      color: #8A6D00;
+    }
+
+    .badge-neutral {
+      background: #F1F5F9;
+      color: #475569;
+    }
+
+    .kpi-info-btn {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      border: 1px solid #CBD5E1;
+      background: #FFFFFF;
+      color: #64748B;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: all .15s ease;
+      line-height: 1;
+    }
+
+    .kpi-info-btn:hover {
+      background: #004E98;
+      color: #FFFFFF;
+      border-color: #004E98;
+    }
+
+    .popup-info-kpi {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 290px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #334155;
+      z-index: 100;
+      display: none;
+      border-top: 3px solid #004E98;
+      pointer-events: none;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi,
+    .kpi-info-btn:focus+.popup-info-kpi {
+      display: block;
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .popup-info-meta {
+      font-size: 10.5px;
+      color: #64748B;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed #E2E8F0;
+    }
+
+    .kpi-card-val {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0F172A;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin: 4px 0 8px 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-card-val.val-hero {
+      color: #004E98;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .kpi-card-track {
+      height: 4px;
+      background: #F1F5F9;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .kpi-card-track-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width .8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #64748B;
+      border-top: 1px solid #F1F5F9;
+      padding-top: 6px;
+      margin-top: auto;
+    }
+
+    .kpi-card-sub {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .kpi-delta {
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10.5px;
+    }
+
+    .delta-up {
+      color: #16A34A;
+    }
+
+    .delta-down {
+      color: #DC2626;
+    }
+
+    .delta-neutral {
+      color: #64748B;
+    }
+
+    /* ─── Selector y Filtros ─── */
+    .area-filtros {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .filtros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) auto;
+      gap: 14px;
+      align-items: flex-end;
+    }
+
+    .filtro-campo {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .filtro-campo label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #475569;
+    }
+
+    .filtro-campo select {
+      height: 38px;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 0 10px;
+      font-size: 13px;
+      color: #1E293B;
+      background: #FFFFFF;
+      outline: none;
+      transition: border-color .15s ease;
+    }
+
+    .filtro-campo select:focus {
+      border-color: #004E98;
+      box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.12);
+    }
+
+    .btn-limpiar {
+      height: 38px;
+      padding: 0 14px;
+      border: 1px solid #CBD5E1;
+      background: #F8FAFC;
+      color: #475569;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-limpiar:hover {
+      background: #F1F5F9;
+      color: #0F172A;
+      border-color: #94A3B8;
+    }
+
+    .chips-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #E5E7EB;
+    }
+
+    .chips-barra:empty {
+      display: none;
+    }
+
+    .chip-filtro {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .chip-filtro button {
+      background: none;
+      border: none;
+      color: #1E40AF;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── Controles Flotantes de Zoom para el Mapa ─── */
+    .mapa-zoom-controles {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 4px;
+      box-shadow: 0 4px 12px rgba(40, 48, 68, 0.08);
+      z-index: 10;
+    }
+
+    .mapa-zoom-controles button {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FFFFFF;
+      border: 1px solid var(--borde);
+      border-radius: 5px;
+      color: var(--marino);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s ease;
+      padding: 0;
+    }
+
+    .mapa-zoom-controles button:hover {
+      background: #F4F5F7;
+      border-color: var(--azul);
+      color: var(--azul);
+      transform: scale(1.05);
+    }
+
+    .mapa-zoom-controles button:active {
+      background: var(--amarillo);
+      color: var(--marino);
+      transform: scale(0.95);
+    }
+
+    /* ─── Cuadrículas y Gráficos CADIT ─── */
+    .cuadricula-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 1080px) {
+      .cuadricula-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cuadricula-territorial {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 1080px) {
+      .cuadricula-territorial {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ─── Ficha de Síntesis Territorial (Fondo Blanco + Popup Ejecutivo CADIT) ─── */
+    .ficha-territorial-activa {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-top: 3.5px solid #004E98;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 16px 36px -4px rgba(0, 78, 152, 0.12), 0 0 0 1px rgba(0, 78, 152, 0.06);
+      color: #0F172A;
+      position: relative;
+      scroll-margin-top: 80px;
+    }
+
+    .ficha-territorial-activa.popup-activa {
+      animation: popupFichaTerritorial 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+    }
+
+    @keyframes popupFichaTerritorial {
+      0% {
+        opacity: 0;
+        transform: translateY(-24px) scale(0.965);
+        filter: blur(5px);
+      }
+
+      65% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.003);
+        filter: blur(0);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Entrada escalonada de las 6 sub-tarjetas */
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(1) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(2) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(3) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both;
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(4) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.26s both;
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(5) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(6) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.38s both;
+    }
+
+    @keyframes fichaCardIn {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ficha-territorial-cab {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .ficha-territorial-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ficha-tag {
+      background: rgba(0, 78, 152, 0.08);
+      color: #004E98;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 78, 152, 0.2);
+    }
+
+    .ficha-nombre {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0;
+      color: #0F172A;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+    }
+
+    .ficha-ranking-badge {
+      background: #004E98;
+      color: #FFFFFF;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 4px;
+      letter-spacing: .02em;
+    }
+
+    .btn-quitar-ficha {
+      background: #F8FAFC;
+      color: #475569;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .18s ease;
+    }
+
+    .btn-quitar-ficha:hover {
+      background: #004E98;
+      color: #FFFFFF;
+      border-color: #004E98;
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.18);
+    }
+
+    .ficha-metricas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .ficha-metricas-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .ficha-metricas-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ficha-territorial-cab {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
+
+    .ficha-metrica-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      transition: all .2s ease;
+    }
+
+    .ficha-metrica-card:hover {
+      border-color: #004E98;
+      background: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .ficha-metrica-card.ficha-destacada {
+      background: rgba(0, 78, 152, 0.04);
+      border-color: rgba(0, 78, 152, 0.25);
+    }
+
+    .ficha-metrica-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #64748B;
+      margin-bottom: 4px;
+    }
+
+    .ficha-metrica-num-fila {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .ficha-metrica-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0F172A;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'tnum';
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .ficha-metrica-val.acento {
+      color: #004E98;
+    }
+
+    .ficha-metrica-unit {
+      font-size: 11px;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    .ficha-metrica-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .ficha-metrica-sub {
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+
+    .panel {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      min-width: 0;
+    }
+
+    .panel-cab {
+      margin-bottom: 14px;
+    }
+
+    .panel-cab h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0 0 4px 0;
+      line-height: 1.3;
+    }
+
+    .panel-cab p.sub {
+      font-size: 12px;
+      color: #64748B;
+      margin: 0;
+    }
+
+    .grafico-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    /* ─── Tabla Departamental Oficial ─── */
+    .tabla-container {
+      overflow-x: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+    }
+
+    .tabla-cadit {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .tabla-cadit th {
+      background: #F8FAFC;
+      color: #475569;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding: 10px 12px;
+      border-bottom: 2px solid #E2E8F0;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .tabla-cadit td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #F1F5F9;
+      color: #1E293B;
+      white-space: nowrap;
+    }
+
+    .tabla-cadit tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .tabla-paginacion {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #E2E8F0;
+      font-size: 12px;
+      color: #64748B;
+    }
+
+    .tabla-paginacion-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tabla-paginacion-btns button {
+      padding: 4px 10px;
+      border: 1px solid #CBD5E1;
+      background: #FFFFFF;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tabla-paginacion-btns button:hover:not(:disabled) {
+      background: #004E98;
+      color: #FFFFFF;
+      border-color: #004E98;
+    }
+
+    .tabla-paginacion-btns button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navegación lateral institucional -->
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>RUES Empresarial</h3>
+      <button class="activa" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Tablero General</button>
+      <h3>CIENCIA, TECNOLOGÍA E INNOVACIÓN</h3>
+      <button data-href="minciencias.html">MinCiencias · Grupos</button>
+      <button data-href="idic.html">IDIC · Innovación</button>
+      <h3>EDUCACIÓN SUPERIOR</h3>
+      <button data-href="index.html">SNIES · Base Externa</button>
+      <button data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-href="sena.html">SENA · Formación</button>
+      <button data-href="latam.html">Educación Superior · LATAM</button>
+    </nav>
+  </aside>
+
+  <!-- Contenedor principal -->
+  <div class="contenido">
+    <!-- Barra superior institucional -->
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar departamento, sector económico o tipo de sociedad…"
+          autocomplete="off" aria-label="Buscar filtros">
+        <div id="resultados" hidden></div>
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Corte Oficial RUES 2024 · Confecámaras / 58 Cámaras</span>
+        <div class="acciones">
+          <button id="pdf" type="button" style="display: none;">PDF</button>
+          <button id="xlsx" type="button" style="display: none;">XLSX</button>
+        </div>
+      </div>
+    </div>
+
+    <main class="principal">
+      <header class="encabezado">
+        <h1>Registro Único Empresarial · RUES</h1>
+        <p class="sub">Sistema de Decisión Estratégica · Dinámica de creación, supervivencia societaria y tejido
+          empresarial territorial bajo información de las 58 Cámaras de Comercio de Colombia.</p>
+      </header>
+
+      <!-- Bloque de Filtros -->
+      <section class="area-filtros">
+        <div class="filtros-grid">
+          <div class="filtro-campo">
+            <label for="f-anio">Año de Evaluación / Corte</label>
+            <select id="f-anio">
+              <option value="2025">2025 (Corte Preliminar)</option>
+              <option value="2024" selected>2024 (Corte Oficial Homologado)</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2018">2018</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-departamento">Departamento de Cobertura</label>
+            <select id="f-departamento">
+              <option value="">Todos los Departamentos (Nacional)</option>
+            </select>
+          </div>
+          <div>
+            <button type="button" class="btn-limpiar" id="btn-limpiar">Restablecer Filtros</button>
+          </div>
+        </div>
+        <div class="chips-barra" id="chips-barra"></div>
+      </section>
+
+      <!-- Fila de 6 KPIs Ejecutivos (3x2 Desktop sin truncamiento) -->
+      <section class="kpis" id="kpis"></section>
+
+      <!-- Ficha de Síntesis Territorial cuando se selecciona un departamento (Estándar CADIT) -->
+      <div class="ficha-territorial-activa" id="ficha-territorial-activa" hidden>
+        <div class="ficha-territorial-cab">
+          <div class="ficha-territorial-info">
+            <span class="ficha-tag">Territorio seleccionado</span>
+            <h3 id="ficha-dpto-nombre" class="ficha-nombre">—</h3>
+            <span class="ficha-ranking-badge" id="ficha-dpto-ranking">Puesto #— a nivel nacional</span>
+          </div>
+          <button type="button" id="btn-cerrar-ficha-dpto" class="btn-quitar-ficha"
+            title="Restablecer vista a nivel nacional">
+            Restablecer vista nacional ×
+          </button>
+        </div>
+        <div class="ficha-metricas-grid">
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Empresas con Registro Activo</span>
+            <div class="ficha-metrica-num-fila">
+              <span class="ficha-metrica-val" id="ficha-activas-val">—</span>
+              <span class="ficha-metrica-unit">empresas</span>
+            </div>
+            <small class="ficha-metrica-sub" id="ficha-activas-sub">Stock activo en el departamento</small>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Nuevas Empresas Creadas</span>
+            <div class="ficha-metrica-num-fila">
+              <span class="ficha-metrica-val" id="ficha-nuevas-val">—</span>
+              <span class="ficha-metrica-unit">constituidas</span>
+            </div>
+            <small class="ficha-metrica-sub" id="ficha-nuevas-sub">Dinamismo y apertura empresarial</small>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Tasa de Supervivencia</span>
+            <div class="ficha-metrica-num-fila">
+              <span class="ficha-metrica-val" id="ficha-supervivencia-val">—</span>
+              <span class="ficha-metrica-badge"
+                style="background:#ECFDF5;color:#065F46;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">Oficial</span>
+            </div>
+            <small class="ficha-metrica-sub" id="ficha-supervivencia-sub">Permanencia empresarial a 5 años</small>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Sociedades por Acciones (SAS)</span>
+            <div class="ficha-metrica-num-fila">
+              <span class="ficha-metrica-val acento" id="ficha-sas-val">—</span>
+              <span class="ficha-metrica-unit">SAS activas</span>
+            </div>
+            <small class="ficha-metrica-sub" id="ficha-sas-sub">Adopción del modelo societario</small>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Personas Naturales</span>
+            <div class="ficha-metrica-num-fila">
+              <span class="ficha-metrica-val" id="ficha-pn-val">—</span>
+              <span class="ficha-metrica-unit">comerciantes</span>
+            </div>
+            <small class="ficha-metrica-sub" id="ficha-pn-sub">Base popular y comercial</small>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Establecimientos de Comercio</span>
+            <div class="ficha-metrica-num-fila">
+              <span class="ficha-metrica-val" id="ficha-establ-val">—</span>
+              <span class="ficha-metrica-unit">locales y sedes</span>
+            </div>
+            <small class="ficha-metrica-sub" id="ficha-establ-sub">Infraestructura comercial activa</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Módulo 1: Cartografía Territorial + Composición Societaria -->
+      <div class="cuadricula-territorial">
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Densidad empresarial activa · ¿Dónde se concentra el tejido mercantil?</h2>
+            <p class="sub">Volumen de empresas y personas jurídicas con registro activo por departamento · Clic en un
+              departamento para enfocar el análisis</p>
+          </div>
+          <div class="grafico-wrap" style="min-height: 460px; position: relative;">
+            <div id="g-mapa-colombia" style="width: 100%; height: 460px;"></div>
+            <div class="mapa-zoom-controles">
+              <button type="button" id="btn-zoom-in" title="Acercar mapa">+</button>
+              <button type="button" id="btn-zoom-out" title="Alejar mapa">−</button>
+              <button type="button" id="btn-zoom-reset" title="Restablecer vista centrada">↺</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-cab">
+            <h2 id="titulo-dona">Estructura jurídica · ¿Qué figuras societarias predominan?</h2>
+            <p class="sub" id="sub-dona">Distribución de empresas activas según forma societaria (Personas Naturales vs.
+              SAS vs. Limitadas vs. ESAL)</p>
+          </div>
+          <div class="grafico-wrap" style="min-height: 460px;">
+            <canvas id="g-sociedades" style="width: 100%; height: 460px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Módulo 2: Macro-Sectores Económicos + Dinámica Histórica -->
+      <div class="cuadricula-2">
+        <div class="panel">
+          <div class="panel-cab">
+            <h2 id="titulo-sectores">Vocación productiva · ¿Cuáles son los sectores económicos líderes?</h2>
+            <p class="sub" id="sub-sectores">Top macro-sectores económicos según clasificación CIIU homologada</p>
+          </div>
+          <div class="grafico-wrap" style="min-height: 380px;">
+            <canvas id="g-sectores" style="width: 100%; height: 380px;"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Evolución histórica · ¿Cómo evoluciona la constitución anual de empresas?</h2>
+            <p class="sub">Nuevas empresas matriculadas por año (2018–2025) y desagregación por SAS y Personas Naturales
+            </p>
+          </div>
+          <div class="grafico-wrap" style="min-height: 380px;">
+            <canvas id="g-historico-rues" style="width: 100%; height: 380px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    "use strict";
+
+    const $ = id => document.getElementById(id);
+    const fmt = n => typeof n === "number" ? Math.round(n).toLocaleString("es-CO") : (n || "0");
+    const fmt1 = n => typeof n === "number" ? n.toLocaleString("es-CO", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : (n || "0,0");
+
+    const MAPA_CODIGOS_DEPTO = {
+      "ANTIOQUIA": "CO-ANT", "ATLÁNTICO": "CO-ATL", "BOGOTÁ, D.C.": "CO-DC",
+      "BOLÍVAR": "CO-BOL", "BOYACÁ": "CO-BOY", "CALDAS": "CO-CAL", "CAQUETÁ": "CO-CAQ",
+      "CAUCA": "CO-CAU", "CESAR": "CO-CES", "CÓRDOBA": "CO-COR", "CUNDINAMARCA": "CO-CUN",
+      "CHOCÓ": "CO-CHO", "HUILA": "CO-HUI", "LA GUAJIRA": "CO-LAG", "MAGDALENA": "CO-MAG",
+      "META": "CO-MET", "NARIÑO": "CO-NAR", "NORTE DE SANTANDER": "CO-NSA", "QUINDÍO": "CO-QUI",
+      "RISARALDA": "CO-RIS", "SANTANDER": "CO-SAN", "SUCRE": "CO-SUC", "TOLIMA": "CO-TOL",
+      "VALLE DEL CAUCA": "CO-VAL", "ARAUCA": "CO-ARA", "CASANARE": "CO-CAS", "PUTUMAYO": "CO-PUT",
+      "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA": "CO-SAP",
+      "AMAZONAS": "CO-AMA", "GUAINÍA": "CO-GUA", "GUAVIARE": "CO-GUV", "VAUPÉS": "CO-VAU",
+      "VICHADA": "CO-VID"
+    };
+
+    const MAPA_ID_A_SVG_NAME = {
+      "CO-AMA": "Amazonas", "CO-ANT": "Antioquia", "CO-ARA": "Arauca", "CO-ATL": "Atlántico",
+      "CO-BOL": "Bolívar", "CO-BOY": "Boyacá", "CO-CAL": "Caldas", "CO-CAQ": "Caquetá",
+      "CO-CAS": "Casanare", "CO-CAU": "Cauca", "CO-CES": "Cesar", "CO-CHO": "Chocó",
+      "CO-COR": "Córdoba", "CO-CUN": "Cundinamarca", "CO-GUA": "Guainia", "CO-GUV": "Guaviare",
+      "CO-HUI": "Huila", "CO-MAG": "Magdalena", "CO-MET": "Meta", "CO-NAR": "Nariño",
+      "CO-NSA": "Norde de Santander", "CO-PUT": "Putumayo", "CO-QUI": "Quindio", "CO-RIS": "Risaralda",
+      "CO-SAN": "Santander", "CO-SUC": "Sucre", "CO-TOL": "Tolima", "CO-VAU": "Vaupés",
+      "CO-VID": "Vichada", "CO-DC": "Distrito Capital de Bogotá", "CO-LAG": "La Guajira",
+      "CO-SAP": "San Andrés, Providencia y Santa Catalina"
+    };
+
+    const SVG_NAME_A_DEPTO = {};
+    Object.entries(MAPA_CODIGOS_DEPTO).forEach(([depto, cod]) => {
+      const svgNom = MAPA_ID_A_SVG_NAME[cod];
+      if (svgNom) SVG_NAME_A_DEPTO[svgNom.toLowerCase()] = depto;
+    });
+    SVG_NAME_A_DEPTO["distrito capital de bogotá"] = "BOGOTÁ, D.C.";
+    SVG_NAME_A_DEPTO["distrito capital de bogota"] = "BOGOTÁ, D.C.";
+    SVG_NAME_A_DEPTO["bogotá, d.c."] = "BOGOTÁ, D.C.";
+    SVG_NAME_A_DEPTO["bogota, d.c."] = "BOGOTÁ, D.C.";
+
+    let DATA = null;
+    let graficos = {};
+    let chartMapaEcharts = null;
+    let mapaSvgRegistrado = false;
+
+    const st = {
+      anio: 2024,
+      departamento: "",
+      busqueda: "",
+      pagina: 1,
+      porPagina: 33
+    };
+
+    function destruirGrafico(id) {
+      if (graficos[id]) {
+        graficos[id].destroy();
+        delete graficos[id];
+      }
+    }
+
+    // ─── Plugins Oficiales de Etiquetas CADIT ───
+    const pluginCentroDona = {
+      id: "centroDonaRues",
+      afterDraw(chart) {
+        if (chart.config.type !== "doughnut") return;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const centerY = (chartArea.top + chartArea.bottom) / 2;
+        const dataArr = chart.data.datasets[0].data || [];
+        const total = chart._refTotal || dataArr.reduce((a, b) => a + Number(b || 0), 0);
+        const val0 = Number(dataArr[0] || 0);
+        const pct = total > 0 ? (val0 / total * 100).toFixed(1) + " %" : "—";
+        const label0 = chart.data.labels[0] || "";
+
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = '700 21px "IBM Plex Sans", system-ui, sans-serif';
+        ctx.fillStyle = "#004E98";
+        ctx.fillText(pct, centerX, centerY - 8);
+
+        ctx.font = '600 11px "IBM Plex Sans", system-ui, sans-serif';
+        ctx.fillStyle = "#64748B";
+        const labelText = label0.length > 20 ? label0.slice(0, 18) + "…" : label0;
+        ctx.fillText(labelText, centerX, centerY + 14);
+        ctx.restore();
+      }
+    };
+
+    const pluginEtiquetasBarras = {
+      id: "etiquetasBarrasRues",
+      afterDatasetsDraw(chart) {
+        if (chart.config.type !== "bar") return;
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data.length) return;
+
+        ctx.save();
+        ctx.font = '600 11px "IBM Plex Sans", system-ui, sans-serif';
+        ctx.textBaseline = 'middle';
+        const dataVals = chart.data.datasets[0].data || [];
+        const rightLimit = chart.chartArea.right;
+
+        meta.data.forEach((bar, i) => {
+          const val = Number(dataVals[i]);
+          if (val == null || val === 0 || isNaN(val)) return;
+          const txt = fmt(val);
+          const textWidth = ctx.measureText(txt).width;
+          const barLength = Math.abs(bar.x - bar.base);
+          const cabeAdentro = barLength > (textWidth + 20);
+          const desbordaAfuera = (bar.x + textWidth + 8) > rightLimit;
+
+          if (cabeAdentro && desbordaAfuera) {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.textAlign = "right";
+            ctx.fillText(txt, bar.x - 7, bar.y);
+          } else {
+            ctx.fillStyle = "#374151";
+            ctx.textAlign = "left";
+            const xPos = bar.x + 6;
+            const finalX = Math.min(xPos, rightLimit - textWidth - 2);
+            ctx.fillText(txt, finalX, bar.y);
+          }
+        });
+        ctx.restore();
+      }
+    };
+
+    const pluginEtiquetasLineas = {
+      id: "etiquetasLineasRues",
+      afterDatasetsDraw(chart) {
+        if (chart.config.type !== "line") return;
+        const { ctx } = chart;
+        ctx.save();
+        ctx.font = '600 10.5px "IBM Plex Sans", system-ui, sans-serif';
+        ctx.textAlign = 'center';
+
+        chart.data.datasets.forEach((ds, dsIdx) => {
+          const meta = chart.getDatasetMeta(dsIdx);
+          if (!meta || meta.hidden) return;
+          ctx.fillStyle = ds.borderColor || "#004E98";
+
+          meta.data.forEach((pt, i) => {
+            const val = ds.data[i];
+            if (val == null || val === 0) return;
+            const txt = (val >= 1000) ? (val / 1000).toFixed(0) + "k" : fmt(val);
+
+            if (chart.data.datasets.length > 1 && dsIdx === 1) {
+              ctx.textBaseline = 'top';
+              ctx.fillText(txt, pt.x, pt.y + 6);
+            } else {
+              ctx.textBaseline = 'bottom';
+              ctx.fillText(txt, pt.x, pt.y - 6);
+            }
+          });
+        });
+        ctx.restore();
+      }
+    };
+
+    // ─── Tarjetas KPI Oficiales CADIT (3x2) ───
+    function tarjetaKPI({ kicker, titulo, valRaw, valFormateado, sub, badge, badgeCls = "badge-neutral", delta, deltaCls = "delta-neutral", trackPct = 0, trackColor = "#004E98", esHero = false, id, popupData }) {
+      return `
+      <div class="kpi-card ${esHero ? 'kpi-hero' : ''}">
+        <div class="kpi-card-header">
+          <div class="kpi-card-meta">
+            <span class="kpi-card-kicker">${kicker}</span>
+            <h3 class="kpi-card-title">${titulo}</h3>
+          </div>
+          <div class="kpi-card-aside">
+            <span class="kpi-badge ${badgeCls}">${badge}</span>
+            <button type="button" class="kpi-info-btn" aria-label="Información metodológica" data-id="${id}">ⓘ</button>
+            <div class="popup-info-kpi" id="popup-${id}">
+              <div class="popup-info-header">${popupData.titulo || titulo}</div>
+              <p style="margin:0 0 4px 0;">${popupData.mide || ""}</p>
+              ${popupData.calculo ? `<p style="margin:4px 0 0 0;font-size:10.5px;color:#004E98;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+              <div class="popup-info-meta">Fuente: ${popupData.fuente || "Confecámaras · RUES Oficial"}</div>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card-val ${esHero ? 'val-hero' : ''}" data-val="${valRaw}">${valFormateado}</div>
+        <div class="kpi-card-track"><div class="kpi-card-track-fill" style="width: ${trackPct}%; background: ${trackColor};"></div></div>
+        <div class="kpi-card-footer">
+          <p class="kpi-card-sub">${sub}</p>
+          ${delta ? `<span class="kpi-delta ${deltaCls}">${delta}</span>` : ''}
+        </div>
+      </div>
+    `;
+    }
+
+    // ─── Carga de Datos y Arranque ───
+    async function cargarDatos() {
+      try {
+        const res = await fetch("datos/rues_datos.json");
+        if (!res.ok) throw new Error("No se pudo cargar rues_datos.json");
+        DATA = await res.json();
+
+        poblarSelectDeptos();
+        await inicializarMapaColombiaEcharts();
+        actualizarDashboard();
+      } catch (e) {
+        console.error("Error al inicializar tablero RUES:", e);
+      }
+    }
+
+    function poblarSelectDeptos() {
+      const sel = $("f-departamento");
+      const deptos = DATA.por_anio[DATA.metadata.corte_default] || [];
+      const deptosOrdenados = [...deptos].sort((a, b) => a.departamento.localeCompare(b.departamento));
+
+      sel.innerHTML = `<option value="">Todos los Departamentos (Nacional)</option>` +
+        deptosOrdenados.map(d => `<option value="${d.departamento}">${d.departamento}</option>`).join("");
+    }
+
+    // ─── Actualización Reactiva del Dashboard ───
+    let ultimosValoresKPIs = {};
+
+    function animarNumeroConHistorial(el, key, valorFinal, duracion = 500, formato = fmt) {
+      if (!el) return;
+      if (valorFinal == null || isNaN(valorFinal)) {
+        el.textContent = "—";
+        return;
+      }
+      const valFin = Number(valorFinal);
+      const valIni = (ultimosValoresKPIs[key] !== undefined) ? Number(ultimosValoresKPIs[key]) : 0;
+      ultimosValoresKPIs[key] = valFin;
+
+      if (valIni === valFin && el.textContent) {
+        el.textContent = formato(valFin);
+        return;
+      }
+
+      const inicio = performance.now();
+      function paso(ahora) {
+        const progreso = Math.min((ahora - inicio) / duracion, 1);
+        const factor = 1 - Math.pow(1 - progreso, 3);
+        const valorIntermedio = valIni + (valFin - valIni) * factor;
+        el.textContent = formato(valorIntermedio);
+        if (progreso < 1) {
+          requestAnimationFrame(paso);
+        } else {
+          el.textContent = formato(valFin);
+        }
+      }
+      requestAnimationFrame(paso);
+    }
+
+    function animarNumero(el, valorFinal, duracion = 500, formato = fmt) {
+      if (!el) return;
+      if (valorFinal == null || isNaN(valorFinal)) {
+        el.textContent = "—";
+        return;
+      }
+      const valFin = Number(valorFinal);
+      const valIni = Number(el.dataset.valorActual || 0);
+      el.dataset.valorActual = valFin;
+      if (valIni === valFin) {
+        el.textContent = formato(valFin);
+        return;
+      }
+      const inicio = performance.now();
+      function paso(ahora) {
+        const progreso = Math.min((ahora - inicio) / duracion, 1);
+        const factor = 1 - Math.pow(1 - progreso, 3);
+        const valorIntermedio = valIni + (valFin - valIni) * factor;
+        el.textContent = formato(Math.round(valorIntermedio));
+        if (progreso < 1) {
+          requestAnimationFrame(paso);
+        } else {
+          el.textContent = formato(valFin);
+        }
+      }
+      requestAnimationFrame(paso);
+    }
+
+    function actualizarFichaTerritorial(dptoInfo, listaCompleta, nal) {
+      const ficha = $("ficha-territorial-activa");
+      if (!ficha) return;
+
+      if (st.departamento && dptoInfo) {
+        const totalNac = (nal && nal.stock_activas) ? nal.stock_activas : 1;
+        const sharePct = totalNac > 0 ? ((dptoInfo.stock_activas || 0) / totalNac * 100) : 0;
+        const totalNuevasNac = (nal && nal.nuevas_empresas) ? nal.nuevas_empresas : 1;
+        const shareNuevas = totalNuevasNac > 0 ? ((dptoInfo.nuevas_empresas || 0) / totalNuevasNac * 100) : 0;
+        const totalEstablNac = (nal && nal.establecimientos_activos) ? nal.establecimientos_activos : 1;
+        const shareEstabl = totalEstablNac > 0 ? ((dptoInfo.establecimientos_activos || 0) / totalEstablNac * 100) : 0;
+
+        const pctSasDepto = (dptoInfo.stock_activas || 0) > 0
+          ? ((dptoInfo.activas_sas || 0) * 100.0 / dptoInfo.stock_activas)
+          : 0;
+        const pctPnDepto = (dptoInfo.stock_activas || 0) > 0
+          ? ((dptoInfo.activas_persona_natural || 0) * 100.0 / dptoInfo.stock_activas)
+          : 0;
+
+        const puestoStr = `Puesto #${dptoInfo.ranking || 1} a nivel nacional`;
+
+        $("ficha-dpto-nombre").textContent = dptoInfo.departamento;
+        $("ficha-dpto-ranking").textContent = puestoStr;
+
+        // Card 1: Empresas Activas
+        animarNumero($("ficha-activas-val"), dptoInfo.stock_activas || 0);
+        $("ficha-activas-sub").textContent = `${fmt1(sharePct)} % del país (${fmt(dptoInfo.stock_activas || 0)} de ${fmt(totalNac)})`;
+
+        // Card 2: Nuevas Empresas
+        animarNumero($("ficha-nuevas-val"), dptoInfo.nuevas_empresas || 0);
+        $("ficha-nuevas-sub").textContent = `${fmt1(shareNuevas)} % de creación nal (+${fmt(dptoInfo.nuevas_sas || 0)} SAS)`;
+
+        // Card 3: Tasa de Supervivencia
+        $("ficha-supervivencia-val").textContent = fmt1(dptoInfo.tasa_supervivencia_pct || 0) + " %";
+        $("ficha-supervivencia-sub").textContent = `Permanencia a 5 años vs ${fmt1(nal.tasa_supervivencia_pct || 0)} % país`;
+
+        // Card 4: Sociedades SAS
+        animarNumero($("ficha-sas-val"), dptoInfo.activas_sas || 0);
+        $("ficha-sas-sub").textContent = `${fmt1(pctSasDepto)} % del tejido empresarial activo`;
+
+        // Card 5: Personas Naturales
+        animarNumero($("ficha-pn-val"), dptoInfo.activas_persona_natural || 0);
+        $("ficha-pn-sub").textContent = `${fmt1(pctPnDepto)} % de concentración local`;
+
+        // Card 6: Establecimientos de Comercio
+        animarNumero($("ficha-establ-val"), dptoInfo.establecimientos_activos || 0);
+        $("ficha-establ-sub").textContent = `${fmt1(shareEstabl)} % de la red comercial nacional`;
+
+        $("btn-cerrar-ficha-dpto").onclick = () => {
+          st.departamento = "";
+          $("f-departamento").value = "";
+          actualizarDashboard();
+        };
+
+        ficha.hidden = false;
+        ficha.classList.remove("popup-activa");
+        void ficha.offsetWidth;
+        ficha.classList.add("popup-activa");
+      } else {
+        ficha.hidden = true;
+      }
+    }
+
+    function actualizarDashboard() {
+      if (!DATA) return;
+
+      const anio = String(st.anio);
+      const listaCompleta = DATA.por_anio[anio] || [];
+      const nal = DATA.kpis_nacionales[anio] || {};
+
+      let listaFiltrada = listaCompleta.filter(d => {
+        if (st.departamento && d.departamento.toUpperCase() !== st.departamento.toUpperCase()) return false;
+        return true;
+      });
+
+      if (st.busqueda) {
+        const q = st.busqueda.toLowerCase();
+        listaFiltrada = listaFiltrada.filter(d =>
+          d.departamento.toLowerCase().includes(q) ||
+          d.codigo_dane.includes(q)
+        );
+      }
+
+      const deptoActivoInfo = st.departamento
+        ? listaCompleta.find(d => d.departamento.toUpperCase() === st.departamento.toUpperCase())
+        : null;
+
+      renderizarChipsFiltro();
+      actualizarFichaTerritorial(deptoActivoInfo, listaCompleta, nal);
+      renderizarKPIs();
+      pintarMapaColombia(listaCompleta);
+      pintarDonaSociedades(listaFiltrada);
+      pintarBarrasSectores(st.departamento || "NACIONAL");
+      pintarLineasHistorico();
+    }
+
+    function renderizarChipsFiltro() {
+      const c = $("chips-barra");
+      const chips = [];
+
+      if (st.anio !== 2024) {
+        chips.push(`<span class="chip-filtro">Corte: ${st.anio} <button onclick="quitarFiltro('anio')">×</button></span>`);
+      }
+      if (st.departamento) {
+        chips.push(`<span class="chip-filtro">Depto: ${st.departamento} <button onclick="quitarFiltro('depto')">×</button></span>`);
+      }
+
+      c.innerHTML = chips.join("");
+    }
+
+    window.quitarFiltro = function (tipo) {
+      if (tipo === "anio") { st.anio = 2024; $("f-anio").value = "2024"; $("corte").textContent = "Corte Oficial RUES 2024 · Confecámaras / 58 Cámaras"; }
+      if (tipo === "depto") { st.departamento = ""; $("f-departamento").value = ""; }
+      st.pagina = 1;
+      actualizarDashboard();
+    };
+
+    // ─── 1. KPIs Oficiales CADIT (3x2 Nacionales Fijos) ───
+    function renderizarKPIs() {
+      const kpisEl = $("kpis");
+      const anio = String(st.anio);
+      const nal = DATA.kpis_nacionales[anio] || {};
+
+      const activas = nal.stock_activas || 0;
+      const nuevas = nal.nuevas_empresas || 0;
+      const tasaSup = nal.tasa_supervivencia_pct || 0;
+      const sas = nal.activas_sas || 0;
+      const pn = nal.activas_persona_natural || 0;
+      const establ = nal.establecimientos_activos || 0;
+
+      const pctSas = nal.pct_sas || (activas > 0 ? (sas * 100.0 / activas).toFixed(1) : "0,0");
+      const pctPn = nal.pct_persona_natural || (activas > 0 ? (pn * 100.0 / activas).toFixed(1) : "0,0");
+
+      const tarjetas = [
+        tarjetaKPI({
+          kicker: "TEJIDO EMPRESARIAL ACTIVO",
+          titulo: "Empresas con Registro Activo",
+          valRaw: activas,
+          valFormateado: fmt(activas),
+          sub: "Censo oficial de 58 Cámaras de Comercio",
+          badge: "Nacional",
+          badgeCls: "badge-primary",
+          delta: "Base productiva país",
+          deltaCls: "delta-neutral",
+          trackPct: 100,
+          trackColor: "#004E98",
+          esHero: true,
+          id: "kpi-activas",
+          popupData: {
+            titulo: "Empresas Activas en Registro Mercantil (RUES_EMP_ACT)",
+            mide: "Stock acumulado de personas naturales y jurídicas con matrícula mercantil vigente en cámaras de comercio.",
+            calculo: "COUNT(*) WHERE estado_matricula = 'ACTIVA'",
+            fuente: "Confecámaras · RUES Oficial"
+          }
+        }),
+        tarjetaKPI({
+          kicker: "DINÁMICA DE CREACIÓN ANUAL",
+          titulo: `Nuevas Empresas en ${st.anio}`,
+          valRaw: nuevas,
+          valFormateado: fmt(nuevas),
+          sub: "Matrículas constituidas durante el período",
+          badge: `Año ${st.anio}`,
+          badgeCls: "badge-success",
+          delta: "+ Flujo Anual",
+          deltaCls: "delta-up",
+          trackPct: 100,
+          trackColor: "#10B981",
+          id: "kpi-nuevas",
+          popupData: {
+            titulo: "Nuevas Empresas Constituidas (RUES_NUE_EMP)",
+            mide: "Flujo de nuevas matrículas mercantiles expedidas durante el año calendario evaluado.",
+            calculo: "COUNT(*) WHERE anio_matricula = año_evaluado",
+            fuente: "Confecámaras · Registro Mercantil"
+          }
+        }),
+        tarjetaKPI({
+          kicker: "PERMANENCIA MERCANTIL",
+          titulo: "Tasa de Supervivencia Mercantil",
+          valRaw: tasaSup,
+          valFormateado: `${fmt1(tasaSup)} %`,
+          sub: "Proporción de empresas que permanecen activas",
+          badge: "Supervivencia",
+          badgeCls: tasaSup >= 35 ? "badge-success" : "badge-neutral",
+          delta: "Promedio País",
+          deltaCls: "delta-neutral",
+          trackPct: Math.min(100, Math.round(tasaSup)),
+          trackColor: "#FFCC00",
+          id: "kpi-supervivencia",
+          popupData: {
+            titulo: "Tasa de Supervivencia Empresarial (RUES_TAS_SUP)",
+            mide: "Porcentaje de empresas formalmente activas frente al total histórico de matrículas expedidas y canceladas.",
+            calculo: "(Empresas Activas / (Activas + Canceladas)) × 100",
+            fuente: "Confecámaras · RUES"
+          }
+        }),
+        tarjetaKPI({
+          kicker: "MODELO SOCIETARIO",
+          titulo: "Sociedades por Acciones (SAS)",
+          valRaw: sas,
+          valFormateado: fmt(sas),
+          sub: `${pctSas} % del tejido empresarial activo`,
+          badge: "SAS",
+          badgeCls: "badge-primary",
+          delta: `${pctSas} % adopción`,
+          deltaCls: "delta-up",
+          trackPct: parseFloat(pctSas) || 0,
+          trackColor: "#004E98",
+          id: "kpi-sas",
+          popupData: {
+            titulo: "Sociedades por Acciones Simplificadas (RUES_CON_SAS)",
+            mide: "Volumen y porcentaje de empresas constituidas bajo el esquema SAS (Ley 1258 de 2008).",
+            calculo: "COUNT(*) WHERE tipo_sociedad = 'SAS' AND estado = 'ACTIVA'",
+            fuente: "Confecámaras · RUES"
+          }
+        }),
+        tarjetaKPI({
+          kicker: "BASE POPULAR Y COMERCIAL",
+          titulo: "Personas Naturales Comerciantes",
+          valRaw: pn,
+          valFormateado: fmt(pn),
+          sub: `${pctPn} % de la base empresarial`,
+          badge: "Persona Natural",
+          badgeCls: "badge-gold",
+          delta: `${pctPn} % concentración`,
+          deltaCls: "delta-neutral",
+          trackPct: parseFloat(pctPn) || 0,
+          trackColor: "#E6B800",
+          id: "kpi-pn",
+          popupData: {
+            titulo: "Personas Naturales Comerciantes (RUES_PER_NAT)",
+            mide: "Volumen de comerciantes individuales y microempresarios registrados como personas naturales.",
+            calculo: "COUNT(*) WHERE tipo_sociedad = 'Persona Natural' AND estado = 'ACTIVA'",
+            fuente: "Confecámaras · RUES"
+          }
+        }),
+        tarjetaKPI({
+          kicker: "INFRAESTRUCTURA DE MERCADO",
+          titulo: "Establecimientos de Comercio",
+          valRaw: establ,
+          valFormateado: fmt(establ),
+          sub: "Tiendas, agencias y sucursales comerciales",
+          badge: "Locales y Sedes",
+          badgeCls: "badge-neutral",
+          delta: "Puntos físicos país",
+          deltaCls: "delta-neutral",
+          trackPct: 85,
+          trackColor: "#283044",
+          id: "kpi-establ",
+          popupData: {
+            titulo: "Establecimientos Comerciales Activos (RUES_EST_COM)",
+            mide: "Total de puntos de venta físicos, locales, almacenes, sedes y sucursales registradas.",
+            calculo: "COUNT(*) FROM silver.rues_establecimientos WHERE estado = 'ACTIVA'",
+            fuente: "Confecámaras · Registro de Establecimientos"
+          }
+        })
+      ];
+
+      kpisEl.innerHTML = tarjetas.join("");
+
+      animarNumeroConHistorial($("kpi-activas")?.querySelector(".kpi-card-val"), "activas", activas, 500, fmt);
+      animarNumeroConHistorial($("kpi-nuevas")?.querySelector(".kpi-card-val"), "nuevas", nuevas, 500, fmt);
+      animarNumeroConHistorial($("kpi-supervivencia")?.querySelector(".kpi-card-val"), "supervivencia", tasaSup, 500, v => fmt1(v) + " %");
+      animarNumeroConHistorial($("kpi-sas")?.querySelector(".kpi-card-val"), "sas", sas, 500, fmt);
+      animarNumeroConHistorial($("kpi-pn")?.querySelector(".kpi-card-val"), "pn", pn, 500, fmt);
+      animarNumeroConHistorial($("kpi-establ")?.querySelector(".kpi-card-val"), "establ", establ, 500, fmt);
+    }
+
+    // ─── 2. Mapa Coroplético de Colombia (ECharts Continuo CADIT) ───
+    async function inicializarMapaColombiaEcharts() {
+      if (mapaSvgRegistrado) return;
+      try {
+        const svgRes = await fetch("colombia.svg");
+        if (!svgRes.ok) return;
+        const svgText = await svgRes.text();
+        echarts.registerMap("colombia_svg", { svg: svgText });
+        mapaSvgRegistrado = true;
+
+        const dom = $("g-mapa-colombia");
+        if (!dom) return;
+        chartMapaEcharts = echarts.init(dom);
+
+        chartMapaEcharts.on("click", params => {
+          let dpto = null;
+          if (params.data && params.data.dpto) {
+            dpto = params.data.dpto;
+          } else if (params.name) {
+            dpto = SVG_NAME_A_DEPTO[params.name.toLowerCase()] || params.name;
+          }
+          if (dpto) {
+            fijarFiltroDepartamento(st.departamento.toUpperCase() === dpto.toUpperCase() ? "" : dpto);
+          }
+        });
+
+        // Controles y sincronización de Zoom & Pan
+        let zoomNivel = 1.15;
+        chartMapaEcharts.on("georoam", params => {
+          if (params.zoom != null) {
+            const opt = chartMapaEcharts.getOption();
+            if (opt && opt.series && opt.series[0] && opt.series[0].zoom) {
+              zoomNivel = opt.series[0].zoom;
+            }
+          }
+        });
+        $("btn-zoom-in")?.addEventListener("click", () => {
+          zoomNivel = Math.min(zoomNivel + 0.3, 4.5);
+          chartMapaEcharts?.setOption({ series: [{ zoom: zoomNivel }] });
+        });
+        $("btn-zoom-out")?.addEventListener("click", () => {
+          zoomNivel = Math.max(zoomNivel - 0.3, 0.9);
+          chartMapaEcharts?.setOption({ series: [{ zoom: zoomNivel }] });
+        });
+        $("btn-zoom-reset")?.addEventListener("click", () => {
+          zoomNivel = 1.15;
+          chartMapaEcharts?.setOption({ series: [{ zoom: 1.15, center: null }] });
+        });
+      } catch (e) {
+        console.warn("No se pudo cargar el mapa SVG de Colombia:", e);
+      }
+    }
+
+    function pintarMapaColombia(deptos) {
+      if (!chartMapaEcharts || !mapaSvgRegistrado) return;
+
+      const dptoActivo = (st.departamento || "").toUpperCase();
+      const mapDataMap = {};
+      deptos.forEach(d => {
+        mapDataMap[d.departamento.toUpperCase()] = d;
+      });
+
+      const maxVal = Math.max(...deptos.map(d => d.stock_activas), 1000);
+
+      const seriesData = Object.entries(MAPA_CODIGOS_DEPTO).map(([dpto, cod]) => {
+        const svgName = MAPA_ID_A_SVG_NAME[cod] || dpto;
+        const info = mapDataMap[dpto.toUpperCase()];
+        const val = info ? info.stock_activas : 0;
+        const rank = info ? info.ranking : "—";
+        const nuevas = info ? info.nuevas_empresas : 0;
+        const tasaSup = info ? info.tasa_supervivencia_pct : 0;
+        const establ = info ? info.establecimientos_activos : 0;
+        const estaSeleccionado = dptoActivo && dptoActivo === dpto.toUpperCase();
+
+        return {
+          name: svgName,
+          value: val,
+          dpto: dpto,
+          rank: rank,
+          nuevas: nuevas,
+          tasaSup: tasaSup,
+          establ: establ,
+          selected: estaSeleccionado
+        };
+      });
+
+      const option = {
+        tooltip: {
+          trigger: "item",
+          backgroundColor: "rgba(40, 48, 68, 0.96)",
+          borderColor: "#283044",
+          borderWidth: 1,
+          padding: [10, 14],
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+          formatter: params => {
+            const d = params.data;
+            if (!d) return `<b>${params.name}</b>`;
+            return `
+            <strong style="color:#FFCC00;font-size:14px;display:block;margin-bottom:4px;">${d.dpto}</strong>
+            Empresas Activas: <b>${fmt(d.value)}</b> (Puesto #${d.rank})<br/>
+            Nuevas en ${st.anio}: <b>${fmt(d.nuevas)}</b><br/>
+            Tasa de Supervivencia: <b>${fmt1(d.tasaSup)} %</b><br/>
+            Establecimientos Comerciales: <b>${fmt(d.establ)}</b><br/>
+            <span style="font-size:10.5px;color:#94A3B8;display:block;margin-top:6px;">
+              ${d.selected ? 'Filtro territorial activo · Clic para quitar' : 'Clic para filtrar este departamento'}
+            </span>
+          `;
+          }
+        },
+        visualMap: {
+          left: 10,
+          bottom: 10,
+          min: 0,
+          max: maxVal,
+          orient: "vertical",
+          text: ["Alto", "Bajo"],
+          textStyle: { color: "#64748B", fontSize: 11, fontFamily: "'IBM Plex Sans'" },
+          inRange: {
+            color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004E98", "#1E1B4B"]
+          },
+          calculable: true
+        },
+        series: [
+          {
+            name: "RUES",
+            type: "map",
+            map: "colombia_svg",
+            roam: true,
+            zoom: 1.15,
+            scaleLimit: { min: 0.9, max: 4.5 },
+            emphasis: {
+              label: { show: false },
+              itemStyle: {
+                areaColor: "#FFCC00",
+                borderColor: "#283044",
+                borderWidth: 1.5
+              }
+            },
+            select: {
+              itemStyle: {
+                areaColor: "#FFCC00",
+                borderColor: "#283044",
+                borderWidth: 2
+              }
+            },
+            data: seriesData
+          }
+        ]
+      };
+
+      chartMapaEcharts.setOption(option, true);
+    }
+
+    // ─── 3. Dona Ejecutiva de Composición Societaria ───
+    function pintarDonaSociedades(filtrados) {
+      destruirGrafico("g-sociedades");
+
+      let pn = 0, sas = 0, lim = 0, esal = 0, anon = 0;
+      if (st.departamento && filtrados.length) {
+        const d = filtrados[0];
+        pn = d.activas_persona_natural || 0;
+        sas = d.activas_sas || 0;
+        lim = d.activas_limitadas || 0;
+        esal = d.activas_esal || 0;
+        anon = d.activas_anonimas || 0;
+      } else {
+        const anio = String(st.anio);
+        const nal = DATA.kpis_nacionales[anio] || {};
+        pn = nal.activas_persona_natural || 0;
+        sas = nal.activas_sas || 0;
+        lim = nal.activas_limitadas || 0;
+        esal = nal.activas_esal || 0;
+        anon = (nal.stock_activas || 0) - (pn + sas + lim + esal);
+        if (anon < 0) anon = 0;
+      }
+
+      const etiquetas = ["Persona Natural", "SAS (Ley 1258)", "Sociedad Limitada", "ESAL / Solidario", "Sociedad Anónima"];
+      const valores = [pn, sas, lim, esal, anon];
+      const colores = ["#004E98", "#22C55E", "#FFCC00", "#9333EA", "#64748B"];
+      const totalRef = valores.reduce((a, b) => a + b, 0);
+
+      const ctx = $("g-sociedades").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            data: valores,
+            backgroundColor: colores,
+            borderWidth: 2,
+            borderColor: "#FFFFFF"
+          }]
+        },
+        plugins: [pluginCentroDona],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "68%",
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                boxWidth: 12,
+                font: { family: "'IBM Plex Sans'", size: 11.5 },
+                color: "#334155",
+                padding: 12
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: c => {
+                  const val = Number(c.raw || 0);
+                  const p = totalRef > 0 ? (val * 100.0 / totalRef).toFixed(1) + " %" : "0 %";
+                  return ` ${c.label}: ${fmt(val)} (${p})`;
+                }
+              }
+            }
+          }
+        }
+      });
+      chart._refTotal = totalRef;
+      graficos["g-sociedades"] = chart;
+    }
+
+    // ─── 4. Barras Horizontales de Macro-Sectores (CIIU) con Etiquetas de Datos ───
+    function pintarBarrasSectores(deptoClave) {
+      destruirGrafico("g-sectores");
+
+      const secLista = DATA.sectores[deptoClave] || DATA.sectores["NACIONAL"] || [];
+      const topSectores = secLista.slice(0, 8);
+
+      const etiquetas = topSectores.map(s => s.sector);
+      const valores = topSectores.map(s => s.activas);
+
+      const ctx = $("g-sectores").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            label: "Empresas Activas",
+            data: valores,
+            backgroundColor: "#004E98",
+            borderRadius: 4
+          }]
+        },
+        plugins: [pluginEtiquetasBarras],
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: c => ` ${fmt(c.raw)} empresas activas`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: "#F1F5F9" },
+              ticks: {
+                font: { family: "'IBM Plex Sans'", size: 11 },
+                callback: val => (val >= 1000) ? (val / 1000).toFixed(0) + "k" : val
+              }
+            },
+            y: {
+              grid: { display: false },
+              ticks: {
+                font: { family: "'IBM Plex Sans'", size: 11 },
+                color: "#334155",
+                callback: function (value) {
+                  const label = this.getLabelForValue(value);
+                  return label.length > 25 ? label.slice(0, 24) + "…" : label;
+                }
+              }
+            }
+          }
+        }
+      });
+      graficos["g-sectores"] = chart;
+    }
+
+    // ─── 5. Líneas Multianuales Históricas con Etiquetas de Datos ───
+    function pintarLineasHistorico() {
+      destruirGrafico("g-historico-rues");
+
+      const hist = DATA.historico_nacional || [];
+      const anios = hist.map(h => String(h.anio));
+      const nuevasTotal = hist.map(h => h.nuevas_empresas);
+      const nuevasSas = hist.map(h => h.nuevas_sas);
+      const nuevasPn = hist.map(h => h.nuevas_personas_naturales);
+
+      const ctx = $("g-historico-rues").getContext("2d");
+      const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: anios,
+          datasets: [
+            {
+              label: "Total Nuevas Empresas",
+              data: nuevasTotal,
+              borderColor: "#004E98",
+              backgroundColor: "rgba(0, 78, 152, 0.08)",
+              borderWidth: 2.5,
+              fill: true,
+              tension: 0.25,
+              pointRadius: 4,
+              pointBackgroundColor: "#004E98"
+            },
+            {
+              label: "Nuevas SAS",
+              data: nuevasSas,
+              borderColor: "#22C55E",
+              borderWidth: 2,
+              borderDash: [4, 4],
+              fill: false,
+              tension: 0.2,
+              pointRadius: 3,
+              pointBackgroundColor: "#22C55E"
+            },
+            {
+              label: "Nuevas Personas Naturales",
+              data: nuevasPn,
+              borderColor: "#E6B800",
+              borderWidth: 2,
+              borderDash: [2, 2],
+              fill: false,
+              tension: 0.2,
+              pointRadius: 3,
+              pointBackgroundColor: "#E6B800"
+            }
+          ]
+        },
+        plugins: [pluginEtiquetasLineas],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                boxWidth: 12,
+                font: { family: "'IBM Plex Sans'", size: 11 },
+                padding: 10
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: c => ` ${c.dataset.label}: ${fmt(c.raw)} empresas`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { family: "'IBM Plex Sans'" } } },
+            y: {
+              grid: { color: "#F1F5F9" },
+              ticks: {
+                font: { family: "'IBM Plex Sans'" },
+                callback: v => (v >= 1000) ? (v / 1000).toFixed(0) + "k" : v
+              }
+            }
+          }
+        }
+      });
+      graficos["g-historico-rues"] = chart;
+    }
+
+    // ─── Controladores de Eventos y Filtros ───
+    function fijarFiltroDepartamento(depto) {
+      st.departamento = depto;
+      $("f-departamento").value = depto;
+      st.pagina = 1;
+      actualizarDashboard();
+      if (depto) {
+        setTimeout(() => {
+          const ficha = $("ficha-territorial-activa");
+          if (ficha && !ficha.hidden) {
+            ficha.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        }, 50);
+      }
+    }
+
+    $("f-anio").addEventListener("change", e => {
+      st.anio = Number(e.target.value);
+      st.pagina = 1;
+      $("corte").textContent = `Corte Oficial RUES ${st.anio} · Confecámaras / 58 Cámaras`;
+      actualizarDashboard();
+    });
+
+    $("f-departamento").addEventListener("change", e => {
+      st.departamento = e.target.value;
+      st.pagina = 1;
+      actualizarDashboard();
+    });
+
+    $("btn-limpiar").addEventListener("click", () => {
+      st.anio = 2024;
+      st.departamento = "";
+      st.busqueda = "";
+      st.pagina = 1;
+      $("f-anio").value = "2024";
+      $("f-departamento").value = "";
+      $("buscar").value = "";
+      const res = $("resultados");
+      if (res) res.hidden = true;
+      $("corte").textContent = "Corte Oficial RUES 2024 · Confecámaras / 58 Cámaras";
+      actualizarDashboard();
+    });
+
+    // ─── Buscador Instantáneo Universal CADIT ───
+    let resultadosBusqueda = [];
+    const normalizar = t => String(t ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").trim();
+
+    function buscarEnCatalogo(texto) {
+      const q = normalizar(texto);
+      const caja = $("resultados");
+      if (!caja) return;
+      if (!q) {
+        caja.hidden = true;
+        resultadosBusqueda = [];
+        return;
+      }
+
+      const opciones = [];
+      const anioActual = String(st.anio) || "2024";
+      const deptosAnio = (DATA && DATA.por_anio && DATA.por_anio[anioActual]) ? DATA.por_anio[anioActual] : [];
+
+      // 1. Departamentos
+      deptosAnio.forEach(d => {
+        if (normalizar(d.departamento).includes(q) || normalizar(d.codigo_dane).includes(q)) {
+          opciones.push({
+            tipo: `Departamento · ${fmt(d.stock_activas)} empresas activas (Puesto #${d.ranking})`,
+            texto: d.departamento,
+            accion: () => {
+              fijarFiltroDepartamento(d.departamento);
+            }
+          });
+        }
+      });
+
+      if (opciones.length === 0) {
+        Object.keys(MAPA_CODIGOS_DEPTO).forEach(d => {
+          if (normalizar(d).includes(q)) {
+            opciones.push({
+              tipo: "Departamento de Colombia",
+              texto: d,
+              accion: () => {
+                fijarFiltroDepartamento(d);
+              }
+            });
+          }
+        });
+      }
+
+      // 2. Macro-Sectores Económicos
+      const sectores = [
+        "Comercio mayorista y minorista", "Alojamiento y servicios de comida", "Industrias manufactureras",
+        "Servicios administrativos y de apoyo", "Servicios profesionales, científicos y CTeI",
+        "Construcción", "Transporte y logística", "Información, comunicaciones y TIC",
+        "Agricultura, ganadería y pesca", "Educación y salud humana"
+      ];
+      sectores.forEach(sec => {
+        if (normalizar(sec).includes(q)) {
+          opciones.push({
+            tipo: "Macro-Sector Económico CIIU",
+            texto: sec,
+            accion: () => {
+              document.querySelector(".cuadricula-2")?.scrollIntoView({ behavior: "smooth" });
+            }
+          });
+        }
+      });
+
+      // 3. Formas Societarias
+      const sociedades = [
+        { t: "Sociedad por Acciones Simplificada (SAS)", desc: "Ley 1258 de 2008 · Modelo societario líder" },
+        { t: "Persona Natural", desc: "Comerciantes individuales y microempresas" },
+        { t: "Sociedad Limitada", desc: "Sociedades comerciales de responsabilidad limitada" },
+        { t: "ESAL / Sector Solidario", desc: "Entidades sin ánimo de lucro y cooperativas" }
+      ];
+      sociedades.forEach(s => {
+        if (normalizar(s.t).includes(q)) {
+          opciones.push({
+            tipo: `Estructura Societaria · ${s.desc}`,
+            texto: s.t,
+            accion: () => {
+              document.querySelector(".cuadricula-territorial")?.scrollIntoView({ behavior: "smooth" });
+            }
+          });
+        }
+      });
+
+      // 4. Cortes Históricos
+      (DATA.metadata?.anios_disponibles || [2024, 2023, 2022, 2021, 2020, 2019, 2018]).forEach(yr => {
+        if (String(yr).includes(q) || normalizar(`corte ${yr}`).includes(q) || normalizar(`rues ${yr}`).includes(q)) {
+          opciones.push({
+            tipo: "Corte Anual Oficial · Confecámaras / RUES",
+            texto: `Corte RUES ${yr}`,
+            accion: () => {
+              st.anio = yr;
+              $("f-anio").value = String(yr);
+              $("corte").textContent = `Corte Oficial RUES ${st.anio} · Confecámaras / 58 Cámaras`;
+              st.pagina = 1;
+              actualizarDashboard();
+            }
+          });
+        }
+      });
+
+      resultadosBusqueda = opciones.slice(0, 8);
+
+      if (!resultadosBusqueda.length) {
+        caja.innerHTML = '<p style="padding:10px 14px;margin:0;color:#64748B;font-size:12px;">No se encontraron coincidencias para la búsqueda.</p>';
+      } else {
+        caja.replaceChildren(...resultadosBusqueda.map(it => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.innerHTML = `<b>${it.texto}</b><small style="display:block;color:#64748B;font-size:11px;margin-top:2px;">${it.tipo}</small>`;
+          b.onclick = () => {
+            it.accion();
+            caja.hidden = true;
+            $("buscar").value = "";
+          };
+          return b;
+        }));
+      }
+      caja.hidden = false;
+    }
+
+    // ─── Listeners del Buscador Universal ───
+    $("buscar")?.addEventListener("input", e => buscarEnCatalogo(e.target.value));
+    $("buscar")?.addEventListener("keydown", e => {
+      if (e.key === "Enter" && resultadosBusqueda[0]) {
+        e.preventDefault();
+        resultadosBusqueda[0].accion();
+        $("resultados").hidden = true;
+        $("buscar").value = "";
+      }
+      if (e.key === "Escape") $("resultados").hidden = true;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        $("resultados")?.querySelector("button")?.focus();
+      }
+    });
+
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".buscar")) {
+        const res = $("resultados");
+        if (res) res.hidden = true;
+      }
+    });
+
+    // ─── Navegación Lateral Cruzada ───
+    document.querySelectorAll("aside.lateral nav#menu button[data-href]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const href = btn.getAttribute("data-href");
+        if (href && href !== "rues.html") {
+          window.location.href = href;
+        }
+      });
+    });
+
+    // Menú móvil
+    const btnMenuMovil = $("btn-menu-movil");
+    if (btnMenuMovil) {
+      btnMenuMovil.addEventListener("click", () => {
+        const lateral = document.querySelector(".lateral");
+        lateral.classList.toggle("abierta");
+        const abierta = lateral.classList.contains("abierta");
+        btnMenuMovil.setAttribute("aria-expanded", String(abierta));
+        btnMenuMovil.querySelector(".icono-hamburguesa").style.display = abierta ? "none" : "";
+        btnMenuMovil.querySelector(".icono-cerrar").style.display = abierta ? "" : "none";
+      });
+    }
+
+    // Redimensionamiento
+    window.addEventListener("resize", () => {
+      if (chartMapaEcharts) chartMapaEcharts.resize();
+      Object.values(graficos).forEach(g => g?.resize());
+    });
+
+    // Arranque inicial
+    document.addEventListener("DOMContentLoaded", cargarDatos);
+  </script>
+</body>
+
+</html>

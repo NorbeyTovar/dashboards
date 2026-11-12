@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SENA · Oferta de Formación y Aprendices · CADIT</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <!-- Tipografía institucional de marca -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Serif:wght@600&display=swap">
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/echarts.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="estilo-cadit.css"> <!-- Hoja de estilo maestra compartida CADIT -->
+  <style>
+    :root {
+      --marino: #283044;
+      --amarillo: #FFCC00;
+      --azul: #004E98;
+      --niebla: #F4F5F7;
+      --texto: #374151;
+      --azul-claro: #2A70B8;
+      --azul-sombra: #1B3556;
+      --ocre: #E6B800;
+      --suave: #6B7280;
+      --borde: #E5E7EB;
+    }
+
+    /* ─── Contenedor de KPIs Ejecutivos (Plantilla Maestra ICETEX) ─── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1240px) {
+      .kpis {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    /* Tarjeta base KPI */
+    .kpi-card {
+      min-width: 0;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 142px;
+      box-sizing: border-box;
+      position: relative;
+      scroll-margin-top: 80px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 3px 8px rgba(15, 23, 42, 0.02);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card:hover {
+      border-color: #004E98;
+      box-shadow: 0 6px 20px rgba(0, 78, 152, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .kpi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .kpi-card-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #64748B;
+    }
+
+    .kpi-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1E293B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+      scroll-margin-top: 80px;
+    }
+
+    .kpi-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      letter-spacing: .01em;
+      line-height: 1.3;
+    }
+
+    .kpi-badge.badge-primary {
+      background: rgba(0, 78, 152, 0.08);
+      color: #004E98;
+      border: 1px solid rgba(0, 78, 152, 0.2);
+    }
+
+    .kpi-badge.badge-gold {
+      background: rgba(255, 204, 0, 0.18);
+      color: #854D0E;
+      border: 1px solid rgba(255, 204, 0, 0.45);
+      font-weight: 700;
+    }
+
+    .kpi-badge.badge-neutral {
+      background: #F1F5F9;
+      color: #475569;
+      border: 1px solid #E2E8F0;
+    }
+
+    .kpi-badge.badge-success {
+      background: rgba(22, 163, 74, 0.08);
+      color: #15803D;
+      border: 1px solid rgba(22, 163, 74, 0.2);
+    }
+
+    .kpi-info-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 2px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s ease, transform .15s ease;
+    }
+
+    .kpi-info-btn:hover {
+      color: #004E98;
+      transform: scale(1.15);
+    }
+
+    .popup-info-kpi {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 250px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      z-index: 50;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #334155;
+      pointer-events: none;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi {
+      display: block;
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: #004E98;
+      margin-bottom: 6px;
+      font-size: 12px;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 4px;
+    }
+
+    .popup-info-meta {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #E2E8F0;
+      font-size: 10px;
+      color: #64748B;
+      font-style: italic;
+    }
+
+    .kpi-card-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin: 4px 0 2px;
+    }
+
+    .kpi-card-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0F172A;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'tnum';
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .kpi-card-val.val-hero {
+      font-size: 30px;
+      font-weight: 800;
+      color: #004E98;
+    }
+
+    .kpi-card-track {
+      width: 100%;
+      height: 4px;
+      background: #F1F5F9;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 6px 0 4px;
+      display: flex;
+    }
+
+    .kpi-card-track-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .kpi-card-sub {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #64748B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+
+    .kpi-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .kpi-delta.delta-up {
+      background: rgba(22, 163, 74, 0.1);
+      color: #15803D;
+    }
+
+    .kpi-delta.delta-down {
+      background: rgba(220, 38, 38, 0.1);
+      color: #B91C1C;
+    }
+
+    .kpi-delta.delta-neutral {
+      background: #F1F5F9;
+      color: #64748B;
+    }
+
+    /* ─── Cuadrícula Territorial: Mapa ECharts Continuo + Sedes ─── */
+    .cuadricula-territorial {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+      min-height: 500px;
+      margin-bottom: 26px;
+      min-width: 0;
+    }
+
+    @media (max-width: 1100px) {
+      .cuadricula-territorial {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mapa-colombia-columna {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    
+    /* ─── Ficha de Síntesis Territorial (Fondo Blanco + Popup Ejecutivo de Alta Gama) ─── */
+    .ficha-territorial-activa {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-top: 3.5px solid #004E98;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 16px 36px -4px rgba(0, 78, 152, 0.12), 0 0 0 1px rgba(0, 78, 152, 0.06);
+      color: #0F172A;
+      position: relative;
+      scroll-margin-top: 80px;
+    }
+
+    .ficha-territorial-activa.popup-activa {
+      animation: popupFichaTerritorial 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+    }
+
+    @keyframes popupFichaTerritorial {
+      0% {
+        opacity: 0;
+        transform: translateY(-24px) scale(0.965);
+        filter: blur(5px);
+      }
+      65% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.003);
+        filter: blur(0);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Entrada escalonada de las 4 sub-tarjetas para mayor suavidad */
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(1) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+    }
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(2) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both;
+    }
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(3) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+    }
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(4) {
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both;
+    }
+
+    @keyframes fichaCardIn {
+      0% {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ficha-territorial-cab {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .ficha-territorial-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ficha-tag {
+      background: rgba(0, 78, 152, 0.08);
+      color: #004E98;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 78, 152, 0.2);
+    }
+
+    .ficha-nombre {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0;
+      color: #0F172A;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+    }
+
+    .ficha-ranking-badge {
+      background: #004E98;
+      color: #FFFFFF;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 4px;
+      letter-spacing: .02em;
+    }
+
+    .btn-quitar-ficha {
+      background: #F8FAFC;
+      color: #475569;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .18s ease;
+    }
+
+    .btn-quitar-ficha:hover {
+      background: #004E98;
+      color: #FFFFFF;
+      border-color: #004E98;
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.18);
+    }
+
+    .ficha-metricas-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .ficha-metricas-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .ficha-metricas-grid {
+        grid-template-columns: 1fr;
+      }
+      .ficha-territorial-cab {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+    }
+
+    .ficha-metrica-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      transition: all .2s ease;
+    }
+
+    .ficha-metrica-card:hover {
+      border-color: #004E98;
+      background: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .ficha-metrica-card.ficha-destacada {
+      background: rgba(0, 78, 152, 0.04);
+      border-color: rgba(0, 78, 152, 0.25);
+    }
+
+    .ficha-metrica-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #64748B;
+      margin-bottom: 4px;
+    }
+
+    .ficha-metrica-num-fila {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .ficha-metrica-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0F172A;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'tnum';
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .ficha-metrica-val.acento {
+      color: #004E98;
+    }
+
+    .ficha-metrica-unit {
+      font-size: 11px;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    .ficha-metrica-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .ficha-metrica-sub {
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+
+    .mapa-echarts-contenedor {
+      width: 100%;
+      height: 480px;
+      border-radius: 8px;
+      background: #FFFFFF;
+      position: relative;
+      scroll-margin-top: 80px;
+    }
+
+    /* ─── Panel de Sedes Georreferenciadas ─── */
+    .panel-sedes-columna {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-width: 0;
+    }
+
+    .panel-sedes-lista {
+      flex: 1;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .panel-sedes-lista::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .panel-sedes-lista::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+
+    .panel-sedes-lista::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+
+    .sede-card-item {
+      padding: 10px 12px;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: #FAFAFA;
+      transition: all .2s ease;
+    }
+
+    .sede-card-item:hover {
+      background: #FFFFFF;
+      border-color: #004E98;
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .badge-coord {
+      display: inline-block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10.5px;
+      color: #64748B;
+      background: #F1F5F9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+    }
+
+    .seccion-espaciada {
+      margin-top: 28px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Menú lateral CADIT (Desktop y Móvil) -->
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>SENA Nacional</h3>
+      <button class="activa" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Tablero General</button>
+      <h3>Otros tableros</h3>
+      <button data-href="index.html">SNIES · Base Externa</button>
+      <button data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-href="latam.html">Educación Superior · LATAM</button>
+      <button data-href="minciencias.html">MinCiencias · Grupos</button>
+      <button data-href="idic.html">IDIC · Innovación</button>
+      <button data-href="rues.html">RUES · Empresas</button>
+    </nav>
+  </aside>
+
+  <!-- Contenedor principal -->
+  <div class="contenido">
+    <!-- Barra superior -->
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar regional, centro, municipio o programa…" autocomplete="off" aria-label="Buscar">
+        <div id="resultados" hidden></div>
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Corte: 2024-2 · Datos Abiertos SENA</span>
+        <div class="acciones">
+          <button id="pdf" type="button" style="display: none;">PDF</button>
+          <button id="xlsx" type="button" style="display: none;">XLSX</button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Encabezado con título analítico -->
+      <div class="encabezado">
+        <h1 id="titulo">SENA · Oferta de Formación y Aprendices</h1>
+        <p id="subtitulo">Consolidado analítico integral: programación de cursos, matrícula de aprendices y georreferenciación física de sedes.</p>
+      </div>
+
+      <!-- Sistema de Filtros CADIT 2.0 -->
+      <div class="area-filtros">
+        <div class="filtros-prioritarios">
+          <div class="filtro-campo">
+            <label for="f-regional">Regional</label>
+            <select id="f-regional">
+              <option value="">Todas las regionales</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-nivel">Nivel de formación</label>
+            <select id="f-nivel">
+              <option value="">Todos los niveles</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-modalidad">Modalidad</label>
+            <select id="f-modalidad">
+              <option value="">Todas las modalidades</option>
+            </select>
+          </div>
+          <div class="filtros-acciones">
+            <button id="limpiar" class="btn-limpiar" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Limpiar filtros</span>
+            </button>
+          </div>
+        </div>
+        <div id="chips-activos" class="chips-barra" hidden></div>
+      </div>
+
+      <div id="estado" hidden>Cargando datos…</div>
+
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <!-- TABLERO UNIFICADO SENA                                             -->
+      <!-- ══════════════════════════════════════════════════════════════════ -->
+      <div id="dashboard-sena" class="pagina">
+        <!-- 1. Bloque de Indicadores Ejecutivos (KPIs con Animación y Ficha Técnica) -->
+        <div class="kpis" id="kpis-resumen"></div>
+
+        <!-- 2. Sección: Análisis Territorial (Mapa ECharts Continuo) y Sedes Georreferenciadas -->
+        <h3 class="seccion seccion-espaciada">Distribución territorial y sedes físicas</h3>
+                <!-- Ficha de Síntesis Territorial cuando se selecciona una regional / departamento -->
+        <div class="ficha-territorial-activa" id="ficha-territorial-activa" hidden>
+          <div class="ficha-territorial-cab">
+            <div class="ficha-territorial-info">
+              <span class="ficha-tag">Territorio seleccionado</span>
+              <h3 id="ficha-dpto-nombre" class="ficha-nombre">—</h3>
+              <span class="ficha-ranking-badge" id="ficha-dpto-ranking">Puesto #— nacional</span>
+            </div>
+            <button type="button" id="btn-cerrar-ficha-dpto" class="btn-quitar-ficha"
+              title="Restablecer vista a todas las regionales">
+              Restablecer vista nacional ×
+            </button>
+          </div>
+          <div class="ficha-metricas-grid">
+            <div class="ficha-metrica-card">
+              <span class="ficha-metrica-label">Aprendices matriculados</span>
+              <div class="ficha-metrica-num-fila">
+                <span class="ficha-metrica-val" id="ficha-aprendices-val">—</span>
+                <span class="ficha-metrica-unit">aprendices</span>
+              </div>
+              <small class="ficha-metrica-sub" id="ficha-aprendices-sub">Volumen total en esta regional</small>
+            </div>
+            <div class="ficha-metrica-card ficha-destacada">
+              <span class="ficha-metrica-label">% del total nacional</span>
+              <div class="ficha-metrica-num-fila">
+                <span class="ficha-metrica-val acento" id="ficha-share-val">—</span>
+                <span class="ficha-metrica-unit">% nacional</span>
+              </div>
+              <small class="ficha-metrica-sub" id="ficha-share-sub">Concentración sobre el total país</small>
+            </div>
+            <div class="ficha-metrica-card">
+              <span class="ficha-metrica-label">Sedes oficiales</span>
+              <div class="ficha-metrica-num-fila">
+                <span class="ficha-metrica-val" id="ficha-sedes-val">—</span>
+                <span class="ficha-metrica-unit">sedes</span>
+              </div>
+              <small class="ficha-metrica-sub" id="ficha-sedes-sub">Centros con georreferenciación</small>
+            </div>
+            <div class="ficha-metrica-card">
+              <span class="ficha-metrica-label">Tasa de retención</span>
+              <div class="ficha-metrica-num-fila">
+                <span class="ficha-metrica-val" id="ficha-retencion-val">—</span>
+                <span class="ficha-metrica-badge" style="background:#ECFDF5;color:#065F46;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">Oficial</span>
+              </div>
+              <small class="ficha-metrica-sub" id="ficha-retencion-sub">Efectividad y permanencia formativa</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuadricula-territorial">
+          <!-- Columna 1: Mapa Interactivo de Colombia (ECharts Continuo) -->
+          <div class="panel">
+            <div class="mapa-colombia-columna">
+              <div class="panel-cab" style="margin-bottom:8px;">
+                <div>
+                  <h2 id="h-mapa" style="font-size:15px; margin:0 0 2px;">¿Dónde se concentran los aprendices?</h2>
+                  <p class="sub" id="s-mapa" style="margin:0 0 6px;">Mapa de Colombia · Clic en un departamento para filtrar la regional</p>
+                </div>
+              </div>
+              <div id="g-mapa-colombia" class="mapa-echarts-contenedor"></div>
+            </div>
+          </div>
+
+          <!-- Columna 2: Sedes Georreferenciadas Oficiales -->
+          <div class="panel panel-sedes-columna">
+            <h2 id="h-sedes-geo" style="font-size:15px; margin:0 0 2px;">Sedes Georreferenciadas</h2>
+            <p class="sub" id="s-sedes-geo" style="margin:0 0 10px;">Centros de formación con coordenadas en el territorio</p>
+            <div id="lista-sedes-geo" class="panel-sedes-lista"></div>
+          </div>
+        </div>
+
+        <!-- 3. Sección: Composición de la Matrícula (Donas Ejecutivas CADIT) -->
+        <h3 class="seccion seccion-espaciada">Composición de la matrícula</h3>
+        <div class="rejilla">
+          <div class="panel">
+            <h2 id="h-modalidad">¿Qué modalidad formativa predomina?</h2>
+            <p class="sub" id="s-modalidad">Distribución de aprendices por entorno formativo</p>
+            <div class="grafico"><canvas id="g-modalidad"></canvas></div>
+          </div>
+          <div class="panel">
+            <h2 id="h-genero">¿Cómo se distribuyen los aprendices por género?</h2>
+            <p class="sub" id="s-genero">Participación femenina y masculina en la formación</p>
+            <div class="grafico"><canvas id="g-genero"></canvas></div>
+          </div>
+        </div>
+
+        <!-- 4. Sección: Niveles y Programas de Mayor Matrícula -->
+        <h3 class="seccion seccion-espaciada">Niveles de formación y programas de mayor demanda</h3>
+        <div class="rejilla">
+          <div class="panel">
+            <h2 id="h-nivel">¿En qué niveles se concentra la oferta?</h2>
+            <p class="sub" id="s-nivel">Aprendices totales por tipo de programa educativo</p>
+            <div class="grafico"><canvas id="g-nivel"></canvas></div>
+          </div>
+          <div class="panel">
+            <h2 id="h-programas">¿Cuáles son los programas líderes?</h2>
+            <p class="sub">Top 10 programas con mayor matrícula de aprendices</p>
+            <div class="grafico"><canvas id="g-top-programas"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+    Chart.defaults.color = "#212844";
+
+    const SERIES_CADIT = ["#004E98", "#10B981", "#FFCC00", "#283044", "#3D7CC9", "#E0A800"];
+    const fmt = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 }));
+    const fmt1 = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 1 }));
+    const pct = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 1 }) + " %");
+    const $ = id => document.getElementById(id);
+
+    let DATA = null;
+    let graficos = {};
+    let chartMapaEcharts = null;
+    let ESTADO = { regional: "", nivel: "", modalidad: "" };
+    let detalle = { filas: [], cols: [], kpis: [] };
+
+    // ─── Animación Fluida de Números (Plantilla ICETEX) ───
+    function animarNumero(el, valorFinal, duracion = 500, formato = fmt) {
+      if (valorFinal == null || isNaN(valorFinal)) {
+        el.textContent = "—";
+        return;
+      }
+      const valFin = Number(valorFinal);
+      const valIni = Number(el.dataset.valorActual || 0);
+      el.dataset.valorActual = valFin;
+      if (valIni === valFin) {
+        el.textContent = formato(valFin);
+        return;
+      }
+      const inicio = performance.now();
+      function paso(ahora) {
+        const progreso = Math.min((ahora - inicio) / duracion, 1);
+        const factor = 1 - Math.pow(1 - progreso, 3);
+        const valorIntermedio = valIni + (valFin - valIni) * factor;
+        el.textContent = formato(Math.round(valorIntermedio));
+        if (progreso < 1) {
+          requestAnimationFrame(paso);
+        } else {
+          el.textContent = formato(valFin);
+        }
+      }
+      requestAnimationFrame(paso);
+    }
+
+    // ─── Componente Tarjeta KPI Ejecutiva (High-Fidelity ICETEX) ───
+    function tarjeta({
+      kicker,
+      t,
+      v,
+      texto = null,
+      nota = null,
+      esHero = false,
+      badge = null,
+      badgeClass = "badge-neutral",
+      progreso = null,
+      progresoColor = "#004E98",
+      delta = null,
+      deltaClass = "delta-neutral",
+      popupData = null
+    }) {
+      const el = document.createElement("div");
+      el.className = "kpi-card";
+
+      let popupHtml = "";
+      if (popupData) {
+        popupHtml = `
+          <div class="popup-info-kpi">
+            <div class="popup-info-header">${popupData.titulo || t}</div>
+            <p style="margin:0 0 5px 0;">${popupData.mide}</p>
+            ${popupData.calculo ? `<p style="margin:4px 0 0 0;font-size:10.5px;color:#004E98;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+            <div class="popup-info-meta">Fuente: ${popupData.fuente || "SENA · Datos Abiertos"}</div>
+          </div>
+        `;
+      }
+
+      const badgeHtml = badge ? `<span class="kpi-badge ${badgeClass}">${badge}</span>` : "";
+      const infoBtnHtml = popupData ? `<button type="button" class="kpi-info-btn" aria-label="Información">ⓘ</button>${popupHtml}` : "";
+
+      const barHtml = progreso != null ? `
+        <div class="kpi-card-track" title="${Number(progreso).toFixed(1)}%">
+          <div class="kpi-card-track-fill" style="width: ${Math.min(100, Math.max(0, progreso))}%; background: ${progresoColor};"></div>
+        </div>` : "";
+
+      const deltaHtml = delta ? `<span class="kpi-delta ${deltaClass}">${delta}</span>` : "";
+
+      el.innerHTML = `
+        <div class="kpi-card-header">
+          <div class="kpi-card-meta">
+            ${kicker ? `<span class="kpi-card-kicker">${kicker}</span>` : ""}
+            <h4 class="kpi-card-title" title="${t}">${t}</h4>
+          </div>
+          <div class="kpi-card-aside">
+            ${badgeHtml}
+            ${infoBtnHtml}
+          </div>
+        </div>
+        <div class="kpi-card-body">
+          <b class="kpi-card-val ${esHero ? "val-hero" : ""}"></b>
+        </div>
+        ${barHtml}
+        <div class="kpi-card-footer">
+          <p class="kpi-card-sub">${nota || "Datos consolidados"}</p>
+          ${deltaHtml}
+        </div>
+      `;
+
+      const bEl = el.querySelector(".kpi-card-val");
+      if (texto != null) {
+        bEl.className = "kpi-card-val val-text";
+        bEl.textContent = texto;
+      } else {
+        animarNumero(bEl, v, 500, fmt);
+      }
+
+      return el;
+    }
+
+    function kpis(id, items) {
+      const cont = $(id);
+      if (!cont) return;
+      cont.replaceChildren(...items.map(it => tarjeta(it)));
+    }
+
+    // ─── Inicialización del Mapa de Colombia en ECharts (Gradiente Continuo) ───
+    async function inicializarMapaColombia() {
+      try {
+        const svgRes = await fetch("colombia.svg");
+        if (!svgRes.ok) return;
+        const svgText = await svgRes.text();
+        echarts.registerMap("colombia_svg", { svg: svgText });
+
+        const dom = $("g-mapa-colombia");
+        if (!dom) return;
+        chartMapaEcharts = echarts.init(dom);
+
+        actualizarMapaColombia();
+
+        chartMapaEcharts.on("click", params => {
+          if (params.data && params.data.regional) {
+            if (ESTADO.regional && ESTADO.regional.toLowerCase() === params.data.regional.toLowerCase()) {
+              quitarFiltro("regional");
+            } else {
+              $("f-regional").value = params.data.regional;
+              aplicarFiltros();
+            }
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          chartMapaEcharts?.resize();
+        });
+      } catch (e) {
+        console.warn("No se pudo inicializar el mapa vectorial:", e);
+      }
+    }
+
+    function actualizarMapaColombia() {
+      if (!chartMapaEcharts || !DATA) return;
+
+      const fCubo = filtrarCubo();
+      const aprPorReg = {};
+      fCubo.forEach(r => { aprPorReg[r.reg.toLowerCase()] = (aprPorReg[r.reg.toLowerCase()] || 0) + r.apr; });
+
+      const totalNac = Object.values(aprPorReg).reduce((s, v) => s + v, 0);
+
+      const mapSeriesData = DATA.por_regional.map(r => {
+        const val = aprPorReg[r.regional.toLowerCase()] ?? r.aprendices;
+        const estaSeleccionada = ESTADO.regional && r.regional.toLowerCase() === ESTADO.regional.toLowerCase();
+        return {
+          name: r.svg_name,
+          value: val,
+          regional: r.regional,
+          centros: r.centros,
+          selected: estaSeleccionada
+        };
+      });
+
+      const maxVal = Math.max(...mapSeriesData.map(d => d.value), 1000);
+
+      chartMapaEcharts.setOption({
+        tooltip: {
+          trigger: "item",
+          backgroundColor: "rgba(40, 48, 68, 0.96)",
+          borderColor: "#283044",
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+          formatter: p => {
+            const d = p.data;
+            if (!d) return p.name;
+            const pShare = totalNac > 0 ? (d.value / totalNac * 100).toFixed(1).replace(".", ",") + " %" : "—";
+            return `
+              <strong style="color:#FFCC00;font-size:13px;">${d.regional || p.name}</strong><br/>
+              Aprendices: <b>${fmt(d.value)}</b> (${pShare})<br/>
+              Centros de formación: <b>${d.centros} sedes</b><br/>
+              <span style="font-size:10.5px;color:#94A3B8;">${d.selected ? 'Filtro activo · Clic para quitar' : 'Clic para filtrar esta regional'}</span>
+            `;
+          }
+        },
+        visualMap: {
+          min: 0,
+          max: maxVal,
+          left: 12,
+          bottom: 12,
+          text: ["Alto", "Bajo"],
+          calculable: true,
+          inRange: {
+            color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004E98", "#1E1B4B"]
+          },
+          textStyle: { color: "#64748B", fontSize: 11, fontFamily: "'IBM Plex Sans'" }
+        },
+        series: [{
+          name: "Aprendices SENA",
+          type: "map",
+          map: "colombia_svg",
+          roam: true,
+          scaleLimit: { min: 0.9, max: 4.5 },
+          emphasis: {
+            itemStyle: {
+              areaColor: "#FFCC00",
+              borderColor: "#283044",
+              borderWidth: 1.5
+            },
+            label: { show: false }
+          },
+          select: {
+            itemStyle: {
+              areaColor: "#FFCC00",
+              borderColor: "#283044",
+              borderWidth: 2
+            },
+            label: { show: false }
+          },
+          itemStyle: {
+            borderColor: "#FFFFFF",
+            borderWidth: 0.75
+          },
+          data: mapSeriesData
+        }]
+      });
+
+      renderizarListaSedesGeo();
+    }
+
+    // ─── Plugin Centro Dona Ejecutivo ───
+    const pluginCentroDona = {
+      id: "centroDona",
+      afterDraw(chart) {
+        if (chart.config.type !== "doughnut") return;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const centerY = (chartArea.top + chartArea.bottom) / 2;
+        const dataArr = chart.data.datasets[0].data || [];
+        const total = chart._refTotal || dataArr.reduce((a, b) => a + Number(b || 0), 0);
+        const val0 = Number(dataArr[0] || 0);
+        const pct0 = total > 0 ? (val0 / total * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+        const label0 = chart.data.labels[0] || "";
+
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.font = "800 23px 'IBM Plex Sans', sans-serif";
+        ctx.fillStyle = "#004E98";
+        ctx.fillText(pct0, centerX, centerY - 9);
+
+        ctx.font = "600 11.5px 'IBM Plex Sans', sans-serif";
+        ctx.fillStyle = "#64748B";
+        ctx.fillText(label0.length > 15 ? label0.slice(0, 14) + "…" : label0, centerX, centerY + 14);
+
+        ctx.restore();
+      }
+    };
+
+    function dona(id, etiquetas, valores, alClic, colores, refTotal = null) {
+      const chart = graficos[id];
+      const total = refTotal || valores.reduce((a, b) => a + Number(b || 0), 0);
+      const bg = Array.isArray(colores) ? colores : ["#004E98", "#10B981", "#94A3B8"];
+      const hoverBg = bg.map(c => c === "#004E98" ? "#003870" : (c === "#10B981" ? "#059669" : "#64748B"));
+
+      if (chart && chart.config.type === "doughnut") {
+        chart.data.labels = etiquetas;
+        chart.data.datasets[0].data = valores;
+        chart.data.datasets[0].backgroundColor = bg;
+        chart.data.datasets[0].hoverBackgroundColor = hoverBg;
+        chart._refTotal = total;
+        chart.options.onClick = (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); };
+        chart.update({ duration: 500, easing: "easeInOutCubic" });
+        return;
+      }
+
+      chart?.destroy();
+      const elCanvas = $(id);
+      if (!elCanvas) return;
+
+      graficos[id] = new Chart(elCanvas, {
+        type: "doughnut",
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            data: valores,
+            backgroundColor: bg,
+            hoverBackgroundColor: hoverBg,
+            borderWidth: 2,
+            borderColor: "#FFFFFF",
+            hoverOffset: 5
+          }]
+        },
+        plugins: [pluginCentroDona],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "68%",
+          animation: { duration: 600, easing: "easeOutQuart" },
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: true,
+                pointStyle: "circle",
+                font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: "600" },
+                color: "#1E293B",
+                padding: 14,
+                generateLabels: ch => {
+                  const data = ch.data;
+                  if (!data.labels.length || !data.datasets.length) return [];
+                  const ds = data.datasets[0];
+                  return data.labels.map((lbl, idx) => {
+                    const val = Number(ds.data[idx] || 0);
+                    const p = total > 0 ? (val / total * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+                    return { text: `${lbl}: ${p}`, fillStyle: ds.backgroundColor[idx], strokeStyle: ds.backgroundColor[idx], lineWidth: 0, hidden: false, index: idx };
+                  });
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.96)",
+              titleFont: { family: "'IBM Plex Sans', sans-serif", size: 12, weight: "700" },
+              bodyFont: { family: "'IBM Plex Sans', sans-serif", size: 11.5 },
+              padding: 10,
+              cornerRadius: 6,
+              callbacks: {
+                label: ctx => {
+                  const val = Number(ctx.raw || 0);
+                  const p = total > 0 ? (val / total * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+                  return ` ${ctx.label}: ${fmt(val)} (${p})`;
+                }
+              }
+            }
+          },
+          onClick: (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); }
+        }
+      });
+      graficos[id]._refTotal = total;
+    }
+
+    function barras(id, etiquetas, valores, alClic, colores, totalRef = null) {
+      const chart = graficos[id];
+      const bg = Array.isArray(colores) ? colores : "#004E98";
+
+      if (chart && chart.config.type === "bar") {
+        chart.data.labels = etiquetas;
+        chart.data.datasets[0].data = valores;
+        chart.data.datasets[0].backgroundColor = bg;
+        chart.options.onClick = (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); };
+        chart.update({ duration: 500, easing: "easeInOutCubic" });
+        return;
+      }
+
+      chart?.destroy();
+      const elCanvas = $(id);
+      if (!elCanvas) return;
+
+      graficos[id] = new Chart(elCanvas, {
+        type: "bar",
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            data: valores,
+            backgroundColor: bg,
+            borderRadius: 4,
+            barThickness: 16,
+            maxBarThickness: 22
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.96)",
+              callbacks: {
+                label: ctx => ` ${fmt(ctx.raw)}${totalRef ? ` (${(ctx.raw / totalRef * 100).toFixed(1)} %)` : ""}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { font: { family: "'IBM Plex Sans'" } } },
+            y: { grid: { display: false }, ticks: { font: { family: "'IBM Plex Sans'", weight: "600", size: 11 } } }
+          },
+          onClick: (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); }
+        }
+      });
+    }
+
+    function renderizarListaSedesGeo() {
+      let sedes = DATA.sedes_geo;
+      if (ESTADO.regional) {
+        sedes = sedes.filter(s => s.regional.toLowerCase() === ESTADO.regional.toLowerCase());
+      }
+      const q = $("buscar") ? $("buscar").value.trim().toLowerCase() : "";
+      if (q) {
+        sedes = sedes.filter(s => (s.centro && s.centro.toLowerCase().includes(q)) || (s.regional && s.regional.toLowerCase().includes(q)) || (s.municipio && s.municipio.toLowerCase().includes(q)));
+      }
+
+      $("h-sedes-geo").textContent = `Sedes Georreferenciadas (${sedes.length})`;
+      $("s-sedes-geo").textContent = ESTADO.regional ? `Centros en Regional ${ESTADO.regional}` : "Todas las sedes del territorio nacional";
+
+      const html = sedes.map(s => `
+        <div class="sede-card-item">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <strong style="color:#004E98;font-size:13px;">${s.centro}</strong>
+            <span class="badge ${s.retencion >= 90 ? 'badge-success' : 'badge-gold'}" style="font-size:9.5px;">${pct(s.retencion)}</span>
+          </div>
+          <div style="font-size:12px;color:#1E293B;margin-top:3px;">
+            <span>📍 <strong>${s.municipio}</strong> (${s.regional})</span>
+          </div>
+          <div style="display:flex;gap:12px;font-size:11.5px;color:#64748B;margin-top:4px;">
+            <span>Cursos: <strong>${fmt(s.cursos)}</strong></span>
+            <span>Aprendices: <strong style="color:#004E98">${fmt(s.aprendices)}</strong></span>
+          </div>
+          <span class="badge-coord">Lat: ${s.lat.toFixed(4)} | Lon: ${s.lon.toFixed(4)}</span>
+        </div>
+      `).join("");
+
+      $("lista-sedes-geo").innerHTML = html || "<p style='color:#64748B;font-size:13px;padding:12px;'>No hay sedes con coordenadas registradas bajo este filtro.</p>";
+    }
+
+    function poblarFiltros() {
+      const selReg = $("f-regional");
+      const selNiv = $("f-nivel");
+      const selMod = $("f-modalidad");
+
+      DATA.por_regional.map(r => r.regional).sort().forEach(reg => {
+        const opt = document.createElement("option");
+        opt.value = reg;
+        opt.textContent = reg;
+        selReg.appendChild(opt);
+      });
+
+      DATA.por_nivel.map(n => n.nivel).forEach(niv => {
+        const opt = document.createElement("option");
+        opt.value = niv;
+        opt.textContent = niv;
+        selNiv.appendChild(opt);
+      });
+
+      DATA.por_modalidad.map(m => m.modalidad).forEach(mod => {
+        const opt = document.createElement("option");
+        opt.value = mod;
+        opt.textContent = mod;
+        selMod.appendChild(opt);
+      });
+    }
+
+    function filtrarCubo() {
+      let filas = DATA.cubo;
+      if (ESTADO.regional) filas = filas.filter(f => f.reg.toLowerCase() === ESTADO.regional.toLowerCase());
+      if (ESTADO.nivel) filas = filas.filter(f => f.niv.toLowerCase() === ESTADO.nivel.toLowerCase());
+      if (ESTADO.modalidad) filas = filas.filter(f => f.mod.toLowerCase() === ESTADO.modalidad.toLowerCase());
+      return filas;
+    }
+
+    function actualizarTablero() {
+      const fCubo = filtrarCubo();
+
+      const totalFichas = fCubo.reduce((s, r) => s + r.fichas, 0);
+      const totalAprendices = fCubo.reduce((s, r) => s + r.apr, 0);
+      const totalActivos = fCubo.reduce((s, r) => s + r.act, 0);
+      const totalFem = fCubo.reduce((s, r) => s + r.fem, 0);
+      const totalMas = fCubo.reduce((s, r) => s + r.mas, 0);
+
+      const tasaActivos = totalAprendices > 0 ? (totalActivos / totalAprendices * 100) : 0;
+      const pctFem = totalAprendices > 0 ? (totalFem / totalAprendices * 100) : 0;
+
+      let sedesFiltradas = DATA.sedes_geo;
+      if (ESTADO.regional) {
+        sedesFiltradas = sedesFiltradas.filter(s => s.regional.toLowerCase() === ESTADO.regional.toLowerCase());
+      }
+
+      // 1. Tarjetas KPI Ejecutivas (Estándar ICETEX)
+      const itemsKpis = [
+        {
+          kicker: "MATRÍCULA TOTAL",
+          t: "Aprendices en Formación",
+          v: totalAprendices,
+          esHero: true,
+          badge: ESTADO.regional || ESTADO.nivel || ESTADO.modalidad ? "Filtrado" : "Nacional",
+          badgeClass: "badge-primary",
+          progreso: 100,
+          progresoColor: "#004E98",
+          nota: "Consolidado fichas vigentes",
+          delta: ESTADO.regional ? "Regional activa" : "+1.4M total",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Total de Aprendices",
+            mide: "Población total matriculada en programas de formación laboral y técnica del SENA.",
+            calculo: "Suma de aprendices masculinos y femeninos por grupo formativo.",
+            fuente: "SENA · Datos Abiertos Colombia"
+          }
+        },
+        {
+          kicker: "PERMANENCIA ACTIVA",
+          t: "Aprendices Activos",
+          v: totalActivos,
+          badge: pct(tasaActivos),
+          badgeClass: tasaActivos >= 90 ? "badge-success" : "badge-gold",
+          progreso: tasaActivos,
+          progresoColor: "#10B981",
+          nota: "Tasa de permanencia formativa",
+          delta: pct(tasaActivos) + " retención",
+          deltaClass: "delta-up",
+          popupData: {
+            titulo: "Aprendices Activos y Retención",
+            mide: "Aprendices que se encuentran cursando su ciclo formativo sin deserción ni retiro.",
+            calculo: "(Aprendices Activos / Total Aprendices) × 100",
+            fuente: "SENA · Oferta de Formación"
+          }
+        },
+        {
+          kicker: "OFERTA EDUCATIVA",
+          t: "Fichas y Cursos",
+          v: totalFichas,
+          badge: "Grupos abiertos",
+          badgeClass: "badge-neutral",
+          progreso: Math.min(100, totalFichas / (DATA.meta.total_fichas || 42080) * 100),
+          progresoColor: "#283044",
+          nota: "Grupos caracterizados con cupos",
+          delta: ESTADO.regional ? "Oferta regional" : "42.080 fichas",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Cursos y Fichas Programadas",
+            mide: "Fichas únicas de caracterización de programas de formación abiertos.",
+            calculo: "Conteo de identificadores únicos de ficha.",
+            fuente: "SENA · Programación de Cursos"
+          }
+        },
+        {
+          kicker: "ENFOQUE DE GÉNERO",
+          t: "Mujeres Aprendices",
+          v: totalFem,
+          badge: pct(pctFem),
+          badgeClass: pctFem >= 50 ? "badge-success" : "badge-primary",
+          progreso: pctFem,
+          progresoColor: "#004E98",
+          nota: "Participación femenina en matrícula",
+          delta: pct(pctFem) + " mujeres",
+          deltaClass: "delta-up",
+          popupData: {
+            titulo: "Distribución por Género",
+            mide: "Proporción de mujeres aprendices frente a la matrícula total del SENA.",
+            calculo: "(Total Aprendices Femeninos / Total Aprendices) × 100",
+            fuente: "SENA · Corte 2024-2"
+          }
+        },
+        {
+          kicker: "COBERTURA TERRITORIAL",
+          t: "Sedes Georreferenciadas",
+          v: sedesFiltradas.length,
+          badge: ESTADO.regional ? ESTADO.regional : "33 Regionales",
+          badgeClass: "badge-gold",
+          progreso: Math.min(100, sedesFiltradas.length / (DATA.meta.total_sedes_geo || 118) * 100),
+          progresoColor: "#FFCC00",
+          nota: "Centros oficiales con coordenadas",
+          delta: ESTADO.regional ? `${sedesFiltradas.length} sedes` : "118 sedes",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Centros de Formación Georreferenciados",
+            mide: "Sedes físicas y centros de formación profesional del SENA en Colombia.",
+            calculo: "Conteo de centros con coordenadas geográficas oficiales verificadas.",
+            fuente: "SENA · Georreferenciación de Centros"
+          }
+        }
+      ];
+
+      kpis("kpis-resumen", itemsKpis);
+      detalle.kpis = itemsKpis;
+
+      // 2. Gráfico de Modalidad (Dona)
+      const porMod = {};
+      fCubo.forEach(r => { porMod[r.mod] = (porMod[r.mod] || 0) + r.apr; });
+      const modLabels = Object.keys(porMod).sort((a, b) => porMod[b] - porMod[a]);
+      const modVals = modLabels.map(l => porMod[l]);
+      const topModPct = totalAprendices > 0 && modVals.length ? (modVals[0] / totalAprendices * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+      $("h-modalidad").textContent = `¿Qué modalidad formativa predomina? ${modLabels[0] || ""} reúne el ${topModPct}`;
+      dona("g-modalidad", modLabels, modVals, idx => {
+        $("f-modalidad").value = modLabels[idx];
+        aplicarFiltros();
+      }, ["#004E98", "#10B981", "#FFCC00"]);
+
+      // 3. Gráfico de Género (Dona)
+      const genLabels = ["Femenino", "Masculino"];
+      const genVals = [totalFem, totalMas];
+      $("h-genero").textContent = `¿Cómo se distribuyen por género? Mujeres representan el ${pct(pctFem)}`;
+      dona("g-genero", genLabels, genVals, null, ["#004E98", "#FFCC00"]);
+
+      // 4. Gráfico de Niveles de Formación (Barras)
+      const porNiv = {};
+      fCubo.forEach(r => { porNiv[r.niv] = (porNiv[r.niv] || 0) + r.apr; });
+      const nivLabels = Object.keys(porNiv).sort((a, b) => porNiv[b] - porNiv[a]);
+      const nivVals = nivLabels.map(l => porNiv[l]);
+      const topNivPct = totalAprendices > 0 && nivVals.length ? (nivVals[0] / totalAprendices * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+      $("h-nivel").textContent = `¿En qué niveles se concentra la oferta? ${nivLabels[0] || ""} lidera con ${topNivPct}`;
+      barras("g-nivel", nivLabels, nivVals, idx => {
+        $("f-nivel").value = nivLabels[idx];
+        aplicarFiltros();
+      }, "#004E98", totalAprendices);
+
+      // 5. Tabla y Mapa
+      actualizarChips();
+      actualizarMapaColombia();
+      actualizarFichaTerritorial();
+    }
+
+    
+    function actualizarFichaTerritorial() {
+      const ficha = $("ficha-territorial-activa");
+      if (!ficha || !DATA) return;
+
+      if (ESTADO.regional) {
+        const regNombre = ESTADO.regional;
+        const regItem = DATA.por_regional.find(r => r.regional.toLowerCase() === regNombre.toLowerCase()) || {
+          regional: regNombre,
+          aprendices: 0,
+          centros: 0
+        };
+
+        // Ranking nacional de la regional
+        const ranking = [...DATA.por_regional].sort((a, b) => b.aprendices - a.aprendices);
+        const puestoIdx = ranking.findIndex(r => r.regional.toLowerCase() === regNombre.toLowerCase());
+        const puestoStr = puestoIdx >= 0 ? `Puesto #${puestoIdx + 1} a nivel nacional` : "Regional seleccionada";
+
+        // Métricas de aprendices y sedes en la regional seleccionada
+        const fCuboReg = DATA.cubo.filter(r => r.reg.toLowerCase() === regNombre.toLowerCase());
+        const aprReg = fCuboReg.reduce((s, r) => s + r.apr, 0) || regItem.aprendices;
+        const totalNacional = DATA.meta.total_aprendices || 1447204;
+        const sharePct = totalNacional > 0 ? (aprReg / totalNacional * 100) : 0;
+
+        // Sedes oficiales de la regional
+        const sedesReg = DATA.sedes_geo.filter(s => s.regional.toLowerCase() === regNombre.toLowerCase());
+        const cursosReg = sedesReg.reduce((s, c) => s + (c.fichas || 0), 0);
+        const retProm = sedesReg.length > 0 
+          ? (sedesReg.reduce((s, c) => s + (c.retencion || 0), 0) / sedesReg.length) 
+          : (DATA.meta.tasa_retencion_prom || 96.4);
+
+        $("ficha-dpto-nombre").textContent = regNombre;
+        $("ficha-dpto-ranking").textContent = puestoStr;
+        
+        animarNumero($("ficha-aprendices-val"), aprReg);
+        $("ficha-aprendices-sub").textContent = `Volumen de aprendices en corte 2024-2`;
+
+        $("ficha-share-val").textContent = pct(sharePct);
+        $("ficha-share-sub").textContent = `${fmt(aprReg)} de ${fmt(totalNacional)} aprendices país`;
+
+        animarNumero($("ficha-sedes-val"), sedesReg.length);
+        $("ficha-sedes-sub").textContent = cursosReg > 0 ? `${fmt(cursosReg)} cursos y fichas en oferta` : "Sedes físicas georreferenciadas";
+
+        $("ficha-retencion-val").textContent = pct(retProm);
+        $("ficha-retencion-sub").textContent = "Efectividad y permanencia formativa";
+
+        $("btn-cerrar-ficha-dpto").onclick = () => {
+          ESTADO.regional = "";
+          $("f-regional").value = "";
+          actualizarTablero();
+        };
+
+        ficha.hidden = false;
+        ficha.classList.remove("popup-activa");
+        void ficha.offsetWidth;
+        ficha.classList.add("popup-activa");
+      } else {
+        ficha.hidden = true;
+        ficha.classList.remove("popup-activa");
+      }
+    }
+
+    function renderizarTopProgramas() {
+      const top10 = DATA.top_programas.slice(0, 10);
+      const progLabels = top10.map(p => p.programa.length > 28 ? p.programa.slice(0, 26) + "…" : p.programa);
+      const progVals = top10.map(p => p.aprendices);
+      $("h-programas").textContent = `¿Cuáles son los programas líderes? ${top10[0]?.programa || ""} reúne la mayor demanda`;
+      barras("g-top-programas", progLabels, progVals, null, "#283044");
+    }
+
+    function actualizarChips() {
+      const chips = [];
+      if (ESTADO.regional) chips.push({ tipo: "regional", texto: `Regional: ${ESTADO.regional}` });
+      if (ESTADO.nivel) chips.push({ tipo: "nivel", texto: `Nivel: ${ESTADO.nivel}` });
+      if (ESTADO.modalidad) chips.push({ tipo: "modalidad", texto: `Modalidad: ${ESTADO.modalidad}` });
+
+      const cont = $("chips-activos");
+      if (!chips.length) {
+        cont.hidden = true;
+        cont.innerHTML = "";
+        return;
+      }
+
+      cont.hidden = false;
+      cont.innerHTML = chips.map(c => `
+        <span class="chip">
+          <span><b>${c.texto}</b></span>
+          <button type="button" onclick="quitarFiltro('${c.tipo}')" aria-label="Quitar filtro">×</button>
+        </span>
+      `).join("");
+    }
+
+    window.quitarFiltro = function (tipo) {
+      if (tipo === "regional") { ESTADO.regional = ""; $("f-regional").value = ""; }
+      if (tipo === "nivel") { ESTADO.nivel = ""; $("f-nivel").value = ""; }
+      if (tipo === "modalidad") { ESTADO.modalidad = ""; $("f-modalidad").value = ""; }
+      actualizarTablero();
+    };
+
+    function aplicarFiltros() {
+      ESTADO.regional = $("f-regional").value;
+      ESTADO.nivel = $("f-nivel").value;
+      ESTADO.modalidad = $("f-modalidad").value;
+      actualizarTablero();
+    }
+
+    // ─── Listeners de Eventos ───
+    $("f-regional").addEventListener("change", aplicarFiltros);
+    $("f-nivel").addEventListener("change", aplicarFiltros);
+    $("f-modalidad").addEventListener("change", aplicarFiltros);
+
+    $("limpiar").addEventListener("click", () => {
+      ESTADO.regional = ""; $("f-regional").value = "";
+      ESTADO.nivel = ""; $("f-nivel").value = "";
+      ESTADO.modalidad = ""; $("f-modalidad").value = "";
+      $("buscar").value = "";
+      actualizarTablero();
+    });
+
+    $("buscar").addEventListener("input", () => {
+      renderizarListaSedesGeo();
+    });
+
+    $("btn-menu-movil")?.addEventListener("click", () => {
+      const aside = document.querySelector(".lateral");
+      aside.classList.toggle("abierto");
+      const abierto = aside.classList.contains("abierto");
+      $("btn-menu-movil").setAttribute("aria-expanded", String(abierto));
+      document.querySelector(".icono-hamburguesa").style.display = abierto ? "none" : "block";
+      document.querySelector(".icono-cerrar").style.display = abierto ? "block" : "none";
+    });
+
+    document.querySelectorAll("aside button[data-href]").forEach(b => {
+      b.addEventListener("click", () => { window.location.href = b.dataset.href; });
+    });
+
+    // ─── Exportación XLSX ───
+    $("xlsx").addEventListener("click", () => {
+      const wb = XLSX.utils.book_new();
+
+      const wsKpis = XLSX.utils.json_to_sheet(detalle.kpis.map(k => ({
+        "Indicador": k.t,
+        "Categoría": k.kicker,
+        "Valor": k.v,
+        "Estado / Contexto": k.delta
+      })));
+      XLSX.utils.book_append_sheet(wb, wsKpis, "Indicadores");
+
+      const wsCentros = XLSX.utils.json_to_sheet(DATA.tabla_centros);
+      XLSX.utils.book_append_sheet(wb, wsCentros, "Centros y Municipios");
+
+      const wsGeo = XLSX.utils.json_to_sheet(DATA.sedes_geo);
+      XLSX.utils.book_append_sheet(wb, wsGeo, "Sedes Georreferenciadas");
+
+      const wsProg = XLSX.utils.json_to_sheet(DATA.top_programas);
+      XLSX.utils.book_append_sheet(wb, wsProg, "Top Programas");
+
+      XLSX.writeFile(wb, `CADIT_SENA_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    });
+
+    // ─── Exportación PDF ───
+    $("pdf").addEventListener("click", async () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const azul = [0, 78, 152];
+      const marino = [40, 48, 68];
+
+      doc.setFillColor(marino[0], marino[1], marino[2]);
+      doc.rect(0, 0, 210, 24, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.text("SENA · REPORTE EJECUTIVO DE FORMACIÓN", 14, 11);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.text("Vicerrectoría Académica · UNIMINUTO · Base Externa CADIT", 14, 18);
+
+      let y = 32;
+      doc.setTextColor(azul[0], azul[1], azul[2]);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("Indicadores Clave de Formación", 14, y);
+      y += 6;
+
+      detalle.kpis.forEach(k => {
+        doc.setFillColor(244, 245, 247);
+        doc.roundedRect(14, y, 182, 10, 1.5, 1.5, "F");
+        doc.setTextColor(40, 48, 68);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9.5);
+        doc.text(`${k.kicker}: ${k.t}`, 18, y + 6.5);
+        doc.setTextColor(azul[0], azul[1], azul[2]);
+        doc.text(String(fmt(k.v)), 190, y + 6.5, { align: "right" });
+        y += 12;
+      });
+
+      y += 6;
+      doc.setTextColor(marino[0], marino[1], marino[2]);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("Muestra de Centros de Formación", 14, y);
+      y += 6;
+
+      doc.setFillColor(marino[0], marino[1], marino[2]);
+      doc.rect(14, y, 182, 6, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(8);
+      doc.text("Regional", 16, y + 4.2);
+      doc.text("Municipio", 55, y + 4.2);
+      doc.text("Centro", 100, y + 4.2);
+      doc.text("Aprendices", 192, y + 4.2, { align: "right" });
+      y += 6;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(55, 65, 81);
+
+      const muestra = DATA.tabla_centros.slice(0, 18);
+      muestra.forEach((c, idx) => {
+        if (idx % 2 === 1) {
+          doc.setFillColor(248, 250, 252);
+          doc.rect(14, y, 182, 5.5, "F");
+        }
+        doc.text(c.regional.slice(0, 20), 16, y + 3.8);
+        doc.text(c.municipio.slice(0, 24), 55, y + 3.8);
+        doc.text(c.centro.slice(0, 48), 100, y + 3.8);
+        doc.text(String(fmt(c.aprendices)), 192, y + 3.8, { align: "right" });
+        y += 5.5;
+      });
+
+      doc.save(`CADIT_SENA_${new Date().toISOString().slice(0, 10)}.pdf`);
+    });
+
+    // ─── Carga de Datos Inicial ───
+    async function cargarDatos() {
+      $("estado").hidden = false;
+      try {
+        const res = await fetch("datos/sena_datos.json");
+        if (!res.ok) throw new Error("No se pudo cargar sena_datos.json");
+        DATA = await res.json();
+        poblarFiltros();
+        actualizarTablero();
+        renderizarTopProgramas();
+        await inicializarMapaColombia();
+      } catch (err) {
+        console.error("Error al cargar datos:", err);
+        $("estado").textContent = "Error al cargar la información del SENA: " + err.message;
+        return;
+      }
+      $("estado").hidden = true;
+    }
+
+    cargarDatos();
+  </script>
+</body>
+
+</html>

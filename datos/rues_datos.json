@@ -1,0 +1,6197 @@
+{
+  "metadata": {
+    "titulo": "Registro Único Empresarial y Social (RUES)",
+    "subtitulo": "Sistema de Información de Cámaras de Comercio de Colombia",
+    "fuente": "Confecámaras · RUES Oficial · 58 Cámaras de Comercio",
+    "corte_default": 2024,
+    "anios_disponibles": [
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "generado_at": "2026-11-10T21:28:33.765877+00:00"
+  },
+  "kpis_nacionales": {
+    "2018": {
+      "nuevas_empresas": 346517,
+      "stock_activas": 1902012,
+      "stock_canceladas": 4703196,
+      "establecimientos_activos": 890088,
+      "tasa_supervivencia_pct": 28.8,
+      "activas_sas": 591095,
+      "activas_persona_natural": 588081,
+      "activas_limitadas": 399143,
+      "activas_esal": 253524,
+      "pct_sas": 31.1,
+      "pct_persona_natural": 30.9
+    },
+    "2019": {
+      "nuevas_empresas": 360165,
+      "stock_activas": 2064720,
+      "stock_canceladas": 4897667,
+      "establecimientos_activos": 990206,
+      "tasa_supervivencia_pct": 29.66,
+      "activas_sas": 655736,
+      "activas_persona_natural": 674582,
+      "activas_limitadas": 399764,
+      "activas_esal": 264020,
+      "pct_sas": 31.8,
+      "pct_persona_natural": 32.7
+    },
+    "2020": {
+      "nuevas_empresas": 325895,
+      "stock_activas": 2241452,
+      "stock_canceladas": 5044332,
+      "establecimientos_activos": 1104604,
+      "tasa_supervivencia_pct": 30.76,
+      "activas_sas": 715773,
+      "activas_persona_natural": 781733,
+      "activas_limitadas": 400274,
+      "activas_esal": 272722,
+      "pct_sas": 31.9,
+      "pct_persona_natural": 34.9
+    },
+    "2021": {
+      "nuevas_empresas": 366521,
+      "stock_activas": 2462293,
+      "stock_canceladas": 5187104,
+      "establecimientos_activos": 1256304,
+      "tasa_supervivencia_pct": 32.19,
+      "activas_sas": 785854,
+      "activas_persona_natural": 919686,
+      "activas_limitadas": 400773,
+      "activas_esal": 284604,
+      "pct_sas": 31.9,
+      "pct_persona_natural": 37.4
+    },
+    "2022": {
+      "nuevas_empresas": 374399,
+      "stock_activas": 2751999,
+      "stock_canceladas": 5268763,
+      "establecimientos_activos": 1464565,
+      "tasa_supervivencia_pct": 34.31,
+      "activas_sas": 859574,
+      "activas_persona_natural": 1124241,
+      "activas_limitadas": 401207,
+      "activas_esal": 295234,
+      "pct_sas": 31.2,
+      "pct_persona_natural": 40.9
+    },
+    "2023": {
+      "nuevas_empresas": 345143,
+      "stock_activas": 3030127,
+      "stock_canceladas": 5332388,
+      "establecimientos_activos": 1659766,
+      "tasa_supervivencia_pct": 36.23,
+      "activas_sas": 932397,
+      "activas_persona_natural": 1315525,
+      "activas_limitadas": 401650,
+      "activas_esal": 308440,
+      "pct_sas": 30.8,
+      "pct_persona_natural": 43.4
+    },
+    "2024": {
+      "nuevas_empresas": 346802,
+      "stock_activas": 3324326,
+      "stock_canceladas": 5381514,
+      "establecimientos_activos": 1867866,
+      "tasa_supervivencia_pct": 38.19,
+      "activas_sas": 1011896,
+      "activas_persona_natural": 1513267,
+      "activas_limitadas": 402135,
+      "activas_esal": 324561,
+      "pct_sas": 30.4,
+      "pct_persona_natural": 45.5
+    },
+    "2025": {
+      "nuevas_empresas": 350161,
+      "stock_activas": 3642084,
+      "stock_canceladas": 5410370,
+      "establecimientos_activos": 2101352,
+      "tasa_supervivencia_pct": 40.23,
+      "activas_sas": 1096533,
+      "activas_persona_natural": 1732800,
+      "activas_limitadas": 402610,
+      "activas_esal": 337121,
+      "pct_sas": 30.1,
+      "pct_persona_natural": 47.6
+    }
+  },
+  "historico_nacional": [
+    {
+      "anio": 2018,
+      "nuevas_empresas": 346517,
+      "nuevas_sas": 70995,
+      "nuevas_personas_naturales": 263828
+    },
+    {
+      "anio": 2019,
+      "nuevas_empresas": 360165,
+      "nuevas_sas": 78577,
+      "nuevas_personas_naturales": 268294
+    },
+    {
+      "anio": 2020,
+      "nuevas_empresas": 325895,
+      "nuevas_sas": 71383,
+      "nuevas_personas_naturales": 243727
+    },
+    {
+      "anio": 2021,
+      "nuevas_empresas": 366521,
+      "nuevas_sas": 81781,
+      "nuevas_personas_naturales": 270376
+    },
+    {
+      "anio": 2022,
+      "nuevas_empresas": 374399,
+      "nuevas_sas": 84412,
+      "nuevas_personas_naturales": 277300
+    },
+    {
+      "anio": 2023,
+      "nuevas_empresas": 345143,
+      "nuevas_sas": 81427,
+      "nuevas_personas_naturales": 248355
+    },
+    {
+      "anio": 2024,
+      "nuevas_empresas": 346802,
+      "nuevas_sas": 86452,
+      "nuevas_personas_naturales": 242124
+    },
+    {
+      "anio": 2025,
+      "nuevas_empresas": 350161,
+      "nuevas_sas": 89241,
+      "nuevas_personas_naturales": 246641
+    }
+  ],
+  "sectores": {
+    "NACIONAL": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 1259528,
+        "pct": 31.94
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 715947,
+        "pct": 18.16
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 371439,
+        "pct": 9.42
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 370934,
+        "pct": 9.41
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 284583,
+        "pct": 7.22
+      },
+      {
+        "sector": "Construcción",
+        "activas": 201578,
+        "pct": 5.11
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 166047,
+        "pct": 4.21
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 162418,
+        "pct": 4.12
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 117607,
+        "pct": 2.98
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 114899,
+        "pct": 2.91
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 97394,
+        "pct": 2.47
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 80788,
+        "pct": 2.05
+      }
+    ],
+    "AMAZONAS": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 1877,
+        "pct": 32.72
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 1020,
+        "pct": 17.78
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 811,
+        "pct": 14.14
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 433,
+        "pct": 7.55
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 338,
+        "pct": 5.89
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 224,
+        "pct": 3.9
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 218,
+        "pct": 3.8
+      },
+      {
+        "sector": "Construcción",
+        "activas": 187,
+        "pct": 3.26
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 183,
+        "pct": 3.19
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 175,
+        "pct": 3.05
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 174,
+        "pct": 3.03
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 97,
+        "pct": 1.69
+      }
+    ],
+    "ANTIOQUIA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 130072,
+        "pct": 28.23
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 87749,
+        "pct": 19.05
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 47272,
+        "pct": 10.26
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 45979,
+        "pct": 9.98
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 34368,
+        "pct": 7.46
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 25442,
+        "pct": 5.52
+      },
+      {
+        "sector": "Construcción",
+        "activas": 22977,
+        "pct": 4.99
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 17134,
+        "pct": 3.72
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 16382,
+        "pct": 3.56
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 11818,
+        "pct": 2.57
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 11112,
+        "pct": 2.41
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 10426,
+        "pct": 2.26
+      }
+    ],
+    "ARAUCA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 6678,
+        "pct": 37.12
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 3397,
+        "pct": 18.88
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 1709,
+        "pct": 9.5
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 1477,
+        "pct": 8.21
+      },
+      {
+        "sector": "Construcción",
+        "activas": 1049,
+        "pct": 5.83
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 935,
+        "pct": 5.2
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 834,
+        "pct": 4.64
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 515,
+        "pct": 2.86
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 491,
+        "pct": 2.73
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 411,
+        "pct": 2.28
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 293,
+        "pct": 1.63
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 202,
+        "pct": 1.12
+      }
+    ],
+    "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 3437,
+        "pct": 31.0
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 2097,
+        "pct": 18.92
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 1840,
+        "pct": 16.6
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 931,
+        "pct": 8.4
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 637,
+        "pct": 5.75
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 460,
+        "pct": 4.15
+      },
+      {
+        "sector": "Construcción",
+        "activas": 458,
+        "pct": 4.13
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 334,
+        "pct": 3.01
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 302,
+        "pct": 2.72
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 224,
+        "pct": 2.02
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 221,
+        "pct": 1.99
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 145,
+        "pct": 1.31
+      }
+    ],
+    "ATLÁNTICO": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 75233,
+        "pct": 34.14
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 33071,
+        "pct": 15.01
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 21307,
+        "pct": 9.67
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 16972,
+        "pct": 7.7
+      },
+      {
+        "sector": "Construcción",
+        "activas": 14765,
+        "pct": 6.7
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 13298,
+        "pct": 6.03
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 12870,
+        "pct": 5.84
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 8992,
+        "pct": 4.08
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 7972,
+        "pct": 3.62
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 6535,
+        "pct": 2.97
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 5373,
+        "pct": 2.44
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 3971,
+        "pct": 1.8
+      }
+    ],
+    "BOGOTÁ, D.C.": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 335111,
+        "pct": 28.15
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 197532,
+        "pct": 16.59
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 129848,
+        "pct": 10.91
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 124597,
+        "pct": 10.47
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 84911,
+        "pct": 7.13
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 64637,
+        "pct": 5.43
+      },
+      {
+        "sector": "Construcción",
+        "activas": 63502,
+        "pct": 5.33
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 58541,
+        "pct": 4.92
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 42884,
+        "pct": 3.6
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 39352,
+        "pct": 3.31
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 33438,
+        "pct": 2.81
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 16150,
+        "pct": 1.36
+      }
+    ],
+    "BOLÍVAR": [
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 39709,
+        "pct": 28.93
+      },
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 33906,
+        "pct": 24.7
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 12534,
+        "pct": 9.13
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 8740,
+        "pct": 6.37
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 8260,
+        "pct": 6.02
+      },
+      {
+        "sector": "Construcción",
+        "activas": 7875,
+        "pct": 5.74
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 6875,
+        "pct": 5.01
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 6123,
+        "pct": 4.46
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 4680,
+        "pct": 3.41
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 3803,
+        "pct": 2.77
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 2586,
+        "pct": 1.88
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2162,
+        "pct": 1.58
+      }
+    ],
+    "BOYACÁ": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 37006,
+        "pct": 37.03
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 16813,
+        "pct": 16.82
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 14371,
+        "pct": 14.38
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 7870,
+        "pct": 7.87
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 5099,
+        "pct": 5.1
+      },
+      {
+        "sector": "Construcción",
+        "activas": 4640,
+        "pct": 4.64
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 4189,
+        "pct": 4.19
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 2920,
+        "pct": 2.92
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1956,
+        "pct": 1.96
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 1825,
+        "pct": 1.83
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 1749,
+        "pct": 1.75
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1500,
+        "pct": 1.5
+      }
+    ],
+    "CALDAS": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 23400,
+        "pct": 36.18
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 10718,
+        "pct": 16.57
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 8442,
+        "pct": 13.05
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 4830,
+        "pct": 7.47
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 3506,
+        "pct": 5.42
+      },
+      {
+        "sector": "Construcción",
+        "activas": 3152,
+        "pct": 4.87
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 2566,
+        "pct": 3.97
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 2547,
+        "pct": 3.94
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 1614,
+        "pct": 2.5
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1323,
+        "pct": 2.05
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 1301,
+        "pct": 2.01
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1285,
+        "pct": 1.99
+      }
+    ],
+    "CAQUETÁ": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 9373,
+        "pct": 42.15
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 5118,
+        "pct": 23.02
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 2407,
+        "pct": 10.83
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 1421,
+        "pct": 6.39
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 825,
+        "pct": 3.71
+      },
+      {
+        "sector": "Construcción",
+        "activas": 683,
+        "pct": 3.07
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 583,
+        "pct": 2.62
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 473,
+        "pct": 2.13
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 395,
+        "pct": 1.78
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 341,
+        "pct": 1.53
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 332,
+        "pct": 1.49
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 284,
+        "pct": 1.28
+      }
+    ],
+    "CASANARE": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 12434,
+        "pct": 29.05
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 6711,
+        "pct": 15.68
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 5945,
+        "pct": 13.89
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 3421,
+        "pct": 7.99
+      },
+      {
+        "sector": "Construcción",
+        "activas": 3387,
+        "pct": 7.91
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 2776,
+        "pct": 6.49
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2482,
+        "pct": 5.8
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 1530,
+        "pct": 3.57
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 1454,
+        "pct": 3.4
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1310,
+        "pct": 3.06
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 718,
+        "pct": 1.68
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 633,
+        "pct": 1.48
+      }
+    ],
+    "CAUCA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 22096,
+        "pct": 37.47
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 13670,
+        "pct": 23.18
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 5944,
+        "pct": 10.08
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 4756,
+        "pct": 8.07
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 2367,
+        "pct": 4.01
+      },
+      {
+        "sector": "Construcción",
+        "activas": 2054,
+        "pct": 3.48
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 1854,
+        "pct": 3.14
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 1579,
+        "pct": 2.68
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1496,
+        "pct": 2.54
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1165,
+        "pct": 1.98
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 999,
+        "pct": 1.69
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 982,
+        "pct": 1.67
+      }
+    ],
+    "CESAR": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 26475,
+        "pct": 35.11
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 16745,
+        "pct": 22.21
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 7665,
+        "pct": 10.17
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 5249,
+        "pct": 6.96
+      },
+      {
+        "sector": "Construcción",
+        "activas": 4284,
+        "pct": 5.68
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 4170,
+        "pct": 5.53
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 2105,
+        "pct": 2.79
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2050,
+        "pct": 2.72
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 1983,
+        "pct": 2.63
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1935,
+        "pct": 2.57
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 1548,
+        "pct": 2.05
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1195,
+        "pct": 1.58
+      }
+    ],
+    "CHOCÓ": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 7479,
+        "pct": 32.64
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 7158,
+        "pct": 31.24
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 2068,
+        "pct": 9.02
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 1382,
+        "pct": 6.03
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 903,
+        "pct": 3.94
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 807,
+        "pct": 3.52
+      },
+      {
+        "sector": "Construcción",
+        "activas": 778,
+        "pct": 3.4
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 646,
+        "pct": 2.82
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 641,
+        "pct": 2.8
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 467,
+        "pct": 2.04
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 360,
+        "pct": 1.57
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 226,
+        "pct": 0.99
+      }
+    ],
+    "CUNDINAMARCA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 39691,
+        "pct": 36.28
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 17565,
+        "pct": 16.06
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 16747,
+        "pct": 15.31
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 10646,
+        "pct": 9.73
+      },
+      {
+        "sector": "Construcción",
+        "activas": 4684,
+        "pct": 4.28
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 3965,
+        "pct": 3.62
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 3929,
+        "pct": 3.59
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 3098,
+        "pct": 2.83
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 3082,
+        "pct": 2.82
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2591,
+        "pct": 2.37
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1701,
+        "pct": 1.56
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 1689,
+        "pct": 1.54
+      }
+    ],
+    "CÓRDOBA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 19688,
+        "pct": 32.73
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 14986,
+        "pct": 24.91
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 5254,
+        "pct": 8.73
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 3750,
+        "pct": 6.23
+      },
+      {
+        "sector": "Construcción",
+        "activas": 3374,
+        "pct": 5.61
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 2772,
+        "pct": 4.61
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 2432,
+        "pct": 4.04
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2032,
+        "pct": 3.38
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 1953,
+        "pct": 3.25
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 1685,
+        "pct": 2.8
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 1144,
+        "pct": 1.9
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1091,
+        "pct": 1.81
+      }
+    ],
+    "GUAVIARE": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 3471,
+        "pct": 43.1
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 1388,
+        "pct": 17.23
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 979,
+        "pct": 12.16
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 524,
+        "pct": 6.51
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 314,
+        "pct": 3.9
+      },
+      {
+        "sector": "Construcción",
+        "activas": 305,
+        "pct": 3.79
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 254,
+        "pct": 3.15
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 242,
+        "pct": 3.0
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 237,
+        "pct": 2.94
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 167,
+        "pct": 2.07
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 105,
+        "pct": 1.3
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 68,
+        "pct": 0.84
+      }
+    ],
+    "HUILA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 30030,
+        "pct": 37.59
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 15892,
+        "pct": 19.89
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 8986,
+        "pct": 11.25
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 5828,
+        "pct": 7.3
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 3760,
+        "pct": 4.71
+      },
+      {
+        "sector": "Construcción",
+        "activas": 3621,
+        "pct": 4.53
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 2871,
+        "pct": 3.59
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2289,
+        "pct": 2.87
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1812,
+        "pct": 2.27
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 1805,
+        "pct": 2.26
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 1676,
+        "pct": 2.1
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1312,
+        "pct": 1.64
+      }
+    ],
+    "LA GUAJIRA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 13004,
+        "pct": 32.54
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 10353,
+        "pct": 25.91
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 3624,
+        "pct": 9.07
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 2477,
+        "pct": 6.2
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 1948,
+        "pct": 4.88
+      },
+      {
+        "sector": "Construcción",
+        "activas": 1796,
+        "pct": 4.49
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1627,
+        "pct": 4.07
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 1627,
+        "pct": 4.07
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 1268,
+        "pct": 3.17
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 1016,
+        "pct": 2.54
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 640,
+        "pct": 1.6
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 577,
+        "pct": 1.44
+      }
+    ],
+    "MAGDALENA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 23555,
+        "pct": 32.32
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 13495,
+        "pct": 18.51
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 9589,
+        "pct": 13.16
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 4445,
+        "pct": 6.1
+      },
+      {
+        "sector": "Construcción",
+        "activas": 4003,
+        "pct": 5.49
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 3733,
+        "pct": 5.12
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 3668,
+        "pct": 5.03
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 2455,
+        "pct": 3.37
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 2221,
+        "pct": 3.05
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2218,
+        "pct": 3.04
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 2209,
+        "pct": 3.03
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1297,
+        "pct": 1.78
+      }
+    ],
+    "META": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 39799,
+        "pct": 34.69
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 19095,
+        "pct": 16.64
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 15780,
+        "pct": 13.75
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 8151,
+        "pct": 7.1
+      },
+      {
+        "sector": "Construcción",
+        "activas": 5930,
+        "pct": 5.17
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 5597,
+        "pct": 4.88
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 5100,
+        "pct": 4.44
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 4289,
+        "pct": 3.74
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 3952,
+        "pct": 3.44
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 2968,
+        "pct": 2.59
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 2364,
+        "pct": 2.06
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1717,
+        "pct": 1.5
+      }
+    ],
+    "NARIÑO": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 32835,
+        "pct": 38.91
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 19849,
+        "pct": 23.52
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 7921,
+        "pct": 9.39
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 6339,
+        "pct": 7.51
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 3199,
+        "pct": 3.79
+      },
+      {
+        "sector": "Construcción",
+        "activas": 2653,
+        "pct": 3.14
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 2374,
+        "pct": 2.81
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 2237,
+        "pct": 2.65
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 2104,
+        "pct": 2.49
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 1830,
+        "pct": 2.17
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 1757,
+        "pct": 2.08
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1286,
+        "pct": 1.52
+      }
+    ],
+    "NORTE DE SANTANDER": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 50322,
+        "pct": 42.03
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 18350,
+        "pct": 15.33
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 13583,
+        "pct": 11.34
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 10607,
+        "pct": 8.86
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 5377,
+        "pct": 4.49
+      },
+      {
+        "sector": "Construcción",
+        "activas": 4862,
+        "pct": 4.06
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 3578,
+        "pct": 2.99
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 3572,
+        "pct": 2.98
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 2867,
+        "pct": 2.39
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 2579,
+        "pct": 2.15
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 2184,
+        "pct": 1.82
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1854,
+        "pct": 1.55
+      }
+    ],
+    "PUTUMAYO": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 9818,
+        "pct": 36.34
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 5763,
+        "pct": 21.33
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 3414,
+        "pct": 12.64
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 1833,
+        "pct": 6.78
+      },
+      {
+        "sector": "Construcción",
+        "activas": 1254,
+        "pct": 4.64
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 1139,
+        "pct": 4.22
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 810,
+        "pct": 3.0
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 790,
+        "pct": 2.92
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 728,
+        "pct": 2.69
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 666,
+        "pct": 2.47
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 444,
+        "pct": 1.64
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 357,
+        "pct": 1.32
+      }
+    ],
+    "QUINDÍO": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 14360,
+        "pct": 33.32
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 7727,
+        "pct": 17.93
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 6853,
+        "pct": 15.9
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 3311,
+        "pct": 7.68
+      },
+      {
+        "sector": "Construcción",
+        "activas": 2258,
+        "pct": 5.24
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 1880,
+        "pct": 4.36
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 1701,
+        "pct": 3.95
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 1619,
+        "pct": 3.76
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 1009,
+        "pct": 2.34
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 809,
+        "pct": 1.88
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 784,
+        "pct": 1.82
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 782,
+        "pct": 1.81
+      }
+    ],
+    "RISARALDA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 24741,
+        "pct": 34.99
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 14136,
+        "pct": 19.99
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 7564,
+        "pct": 10.7
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 6144,
+        "pct": 8.69
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 3713,
+        "pct": 5.25
+      },
+      {
+        "sector": "Construcción",
+        "activas": 3371,
+        "pct": 4.77
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 2883,
+        "pct": 4.08
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 2566,
+        "pct": 3.63
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1581,
+        "pct": 2.24
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 1549,
+        "pct": 2.19
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1457,
+        "pct": 2.06
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 1009,
+        "pct": 1.43
+      }
+    ],
+    "SANTANDER": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 67532,
+        "pct": 35.42
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 29375,
+        "pct": 15.41
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 20146,
+        "pct": 10.57
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 17152,
+        "pct": 9.0
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 12655,
+        "pct": 6.64
+      },
+      {
+        "sector": "Construcción",
+        "activas": 11309,
+        "pct": 5.93
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 6673,
+        "pct": 3.5
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 6634,
+        "pct": 3.48
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 5437,
+        "pct": 2.85
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 5391,
+        "pct": 2.83
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 5014,
+        "pct": 2.63
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 3340,
+        "pct": 1.75
+      }
+    ],
+    "SUCRE": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 12218,
+        "pct": 32.79
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 10536,
+        "pct": 28.27
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 3845,
+        "pct": 10.32
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 2134,
+        "pct": 5.73
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 1838,
+        "pct": 4.93
+      },
+      {
+        "sector": "Construcción",
+        "activas": 1608,
+        "pct": 4.31
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 1231,
+        "pct": 3.3
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 986,
+        "pct": 2.65
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 982,
+        "pct": 2.64
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 766,
+        "pct": 2.06
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 635,
+        "pct": 1.7
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 488,
+        "pct": 1.31
+      }
+    ],
+    "TOLIMA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 39815,
+        "pct": 37.19
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 20512,
+        "pct": 19.16
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 15278,
+        "pct": 14.27
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 7596,
+        "pct": 7.1
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 4473,
+        "pct": 4.18
+      },
+      {
+        "sector": "Construcción",
+        "activas": 4468,
+        "pct": 4.17
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 4275,
+        "pct": 3.99
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 2654,
+        "pct": 2.48
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 2340,
+        "pct": 2.19
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 2049,
+        "pct": 1.91
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 1864,
+        "pct": 1.74
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 1724,
+        "pct": 1.61
+      }
+    ],
+    "VALLE DEL CAUCA": [
+      {
+        "sector": "Comercio mayorista y minorista",
+        "activas": 114072,
+        "pct": 32.82
+      },
+      {
+        "sector": "Otras actividades y servicios",
+        "activas": 56492,
+        "pct": 16.25
+      },
+      {
+        "sector": "Industrias manufactureras",
+        "activas": 35984,
+        "pct": 10.35
+      },
+      {
+        "sector": "Alojamiento y servicios de comida",
+        "activas": 28342,
+        "pct": 8.15
+      },
+      {
+        "sector": "Servicios profesionales, científicos y CTeI",
+        "activas": 22794,
+        "pct": 6.56
+      },
+      {
+        "sector": "Financiero, seguros e inmobiliario",
+        "activas": 18155,
+        "pct": 5.22
+      },
+      {
+        "sector": "Construcción",
+        "activas": 16291,
+        "pct": 4.69
+      },
+      {
+        "sector": "Servicios administrativos y de apoyo",
+        "activas": 15225,
+        "pct": 4.38
+      },
+      {
+        "sector": "Transporte y logística",
+        "activas": 12383,
+        "pct": 3.56
+      },
+      {
+        "sector": "Educación y salud humana",
+        "activas": 11676,
+        "pct": 3.36
+      },
+      {
+        "sector": "Información, comunicaciones y TIC",
+        "activas": 8437,
+        "pct": 2.43
+      },
+      {
+        "sector": "Agricultura, ganadería y pesca",
+        "activas": 7725,
+        "pct": 2.22
+      }
+    ]
+  },
+  "por_anio": {
+    "2018": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 92075,
+        "nuevas_sas": 26830,
+        "nuevas_personas_naturales": 63155,
+        "stock_activas": 646587,
+        "stock_canceladas": 1086517,
+        "tasa_supervivencia_pct": 37.31,
+        "activas_sas": 251041,
+        "activas_persona_natural": 148951,
+        "activas_limitadas": 174664,
+        "activas_anonimas": 12676,
+        "activas_esal": 44903,
+        "establecimientos_activos": 182876
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 41728,
+        "nuevas_sas": 11135,
+        "nuevas_personas_naturales": 29696,
+        "stock_activas": 211098,
+        "stock_canceladas": 540415,
+        "tasa_supervivencia_pct": 28.09,
+        "activas_sas": 73452,
+        "activas_persona_natural": 58767,
+        "activas_limitadas": 44146,
+        "activas_anonimas": 5199,
+        "activas_esal": 23298,
+        "establecimientos_activos": 126645
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 29573,
+        "nuevas_sas": 6318,
+        "nuevas_personas_naturales": 22200,
+        "stock_activas": 173194,
+        "stock_canceladas": 448407,
+        "tasa_supervivencia_pct": 27.86,
+        "activas_sas": 51322,
+        "activas_persona_natural": 49462,
+        "activas_limitadas": 40757,
+        "activas_anonimas": 3142,
+        "activas_esal": 23166,
+        "establecimientos_activos": 100692
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 18291,
+        "nuevas_sas": 5052,
+        "nuevas_personas_naturales": 12471,
+        "stock_activas": 119466,
+        "stock_canceladas": 219253,
+        "tasa_supervivencia_pct": 35.27,
+        "activas_sas": 40734,
+        "activas_persona_natural": 32031,
+        "activas_limitadas": 27859,
+        "activas_anonimas": 1478,
+        "activas_esal": 13319,
+        "establecimientos_activos": 62009
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 16752,
+        "nuevas_sas": 2592,
+        "nuevas_personas_naturales": 13717,
+        "stock_activas": 92952,
+        "stock_canceladas": 261655,
+        "tasa_supervivencia_pct": 26.21,
+        "activas_sas": 21849,
+        "activas_persona_natural": 38842,
+        "activas_limitadas": 16583,
+        "activas_anonimas": 1014,
+        "activas_esal": 13673,
+        "establecimientos_activos": 61303
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 11207,
+        "nuevas_sas": 2475,
+        "nuevas_personas_naturales": 7715,
+        "stock_activas": 67932,
+        "stock_canceladas": 129078,
+        "tasa_supervivencia_pct": 34.48,
+        "activas_sas": 23231,
+        "activas_persona_natural": 12349,
+        "activas_limitadas": 16640,
+        "activas_anonimas": 861,
+        "activas_esal": 12693,
+        "establecimientos_activos": 21742
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 11326,
+        "nuevas_sas": 1380,
+        "nuevas_personas_naturales": 9636,
+        "stock_activas": 48111,
+        "stock_canceladas": 162110,
+        "tasa_supervivencia_pct": 22.89,
+        "activas_sas": 9664,
+        "activas_persona_natural": 23555,
+        "activas_limitadas": 8359,
+        "activas_anonimas": 310,
+        "activas_esal": 5883,
+        "establecimientos_activos": 29666
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 11072,
+        "nuevas_sas": 1288,
+        "nuevas_personas_naturales": 9380,
+        "stock_activas": 44812,
+        "stock_canceladas": 153164,
+        "tasa_supervivencia_pct": 22.64,
+        "activas_sas": 10624,
+        "activas_persona_natural": 21827,
+        "activas_limitadas": 5157,
+        "activas_anonimas": 264,
+        "activas_esal": 6606,
+        "establecimientos_activos": 24505
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 9932,
+        "nuevas_sas": 1142,
+        "nuevas_personas_naturales": 8479,
+        "stock_activas": 44221,
+        "stock_canceladas": 195435,
+        "tasa_supervivencia_pct": 18.45,
+        "activas_sas": 8305,
+        "activas_persona_natural": 19325,
+        "activas_limitadas": 7383,
+        "activas_anonimas": 306,
+        "activas_esal": 8115,
+        "establecimientos_activos": 30169
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 10984,
+        "nuevas_sas": 1029,
+        "nuevas_personas_naturales": 9679,
+        "stock_activas": 43233,
+        "stock_canceladas": 144369,
+        "tasa_supervivencia_pct": 23.05,
+        "activas_sas": 7948,
+        "activas_persona_natural": 21425,
+        "activas_limitadas": 5789,
+        "activas_anonimas": 266,
+        "activas_esal": 7371,
+        "establecimientos_activos": 23553
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 9482,
+        "nuevas_sas": 1481,
+        "nuevas_personas_naturales": 7755,
+        "stock_activas": 39195,
+        "stock_canceladas": 94964,
+        "tasa_supervivencia_pct": 29.22,
+        "activas_sas": 9351,
+        "activas_persona_natural": 19124,
+        "activas_limitadas": 3946,
+        "activas_anonimas": 239,
+        "activas_esal": 6042,
+        "establecimientos_activos": 21220
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 7746,
+        "nuevas_sas": 698,
+        "nuevas_personas_naturales": 6642,
+        "stock_activas": 38853,
+        "stock_canceladas": 88342,
+        "tasa_supervivencia_pct": 30.55,
+        "activas_sas": 6353,
+        "activas_persona_natural": 17340,
+        "activas_limitadas": 3246,
+        "activas_anonimas": 222,
+        "activas_esal": 11500,
+        "establecimientos_activos": 21917
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 8455,
+        "nuevas_sas": 786,
+        "nuevas_personas_naturales": 7360,
+        "stock_activas": 36106,
+        "stock_canceladas": 146949,
+        "tasa_supervivencia_pct": 19.72,
+        "activas_sas": 7210,
+        "activas_persona_natural": 14716,
+        "activas_limitadas": 4298,
+        "activas_anonimas": 218,
+        "activas_esal": 8550,
+        "establecimientos_activos": 20234
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 8180,
+        "nuevas_sas": 1227,
+        "nuevas_personas_naturales": 6781,
+        "stock_activas": 32453,
+        "stock_canceladas": 171324,
+        "tasa_supervivencia_pct": 15.93,
+        "activas_sas": 7521,
+        "activas_persona_natural": 12353,
+        "activas_limitadas": 6056,
+        "activas_anonimas": 528,
+        "activas_esal": 5498,
+        "establecimientos_activos": 20633
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 6629,
+        "nuevas_sas": 937,
+        "nuevas_personas_naturales": 5369,
+        "stock_activas": 30875,
+        "stock_canceladas": 79547,
+        "tasa_supervivencia_pct": 27.96,
+        "activas_sas": 8719,
+        "activas_persona_natural": 10075,
+        "activas_limitadas": 3454,
+        "activas_anonimas": 146,
+        "activas_esal": 8169,
+        "establecimientos_activos": 14962
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 8175,
+        "nuevas_sas": 1173,
+        "nuevas_personas_naturales": 6621,
+        "stock_activas": 30801,
+        "stock_canceladas": 86865,
+        "tasa_supervivencia_pct": 26.18,
+        "activas_sas": 8954,
+        "activas_persona_natural": 10217,
+        "activas_limitadas": 4952,
+        "activas_anonimas": 283,
+        "activas_esal": 5941,
+        "establecimientos_activos": 13865
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 6939,
+        "nuevas_sas": 878,
+        "nuevas_personas_naturales": 5887,
+        "stock_activas": 28397,
+        "stock_canceladas": 140993,
+        "tasa_supervivencia_pct": 16.76,
+        "activas_sas": 6445,
+        "activas_persona_natural": 12270,
+        "activas_limitadas": 5147,
+        "activas_anonimas": 515,
+        "activas_esal": 3282,
+        "establecimientos_activos": 21694
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5645,
+        "nuevas_sas": 566,
+        "nuevas_personas_naturales": 4724,
+        "stock_activas": 26430,
+        "stock_canceladas": 72733,
+        "tasa_supervivencia_pct": 26.65,
+        "activas_sas": 4617,
+        "activas_persona_natural": 11165,
+        "activas_limitadas": 2329,
+        "activas_anonimas": 334,
+        "activas_esal": 7325,
+        "establecimientos_activos": 16142
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 4502,
+        "nuevas_sas": 811,
+        "nuevas_personas_naturales": 3401,
+        "stock_activas": 26294,
+        "stock_canceladas": 68518,
+        "tasa_supervivencia_pct": 27.73,
+        "activas_sas": 7413,
+        "activas_persona_natural": 7179,
+        "activas_limitadas": 3791,
+        "activas_anonimas": 189,
+        "activas_esal": 7483,
+        "establecimientos_activos": 12133
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 3833,
+        "nuevas_sas": 515,
+        "nuevas_personas_naturales": 3178,
+        "stock_activas": 19434,
+        "stock_canceladas": 61288,
+        "tasa_supervivencia_pct": 24.08,
+        "activas_sas": 5492,
+        "activas_persona_natural": 8048,
+        "activas_limitadas": 2271,
+        "activas_anonimas": 79,
+        "activas_esal": 3477,
+        "establecimientos_activos": 9551
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3625,
+        "nuevas_sas": 480,
+        "nuevas_personas_naturales": 2889,
+        "stock_activas": 17688,
+        "stock_canceladas": 45665,
+        "tasa_supervivencia_pct": 27.92,
+        "activas_sas": 3570,
+        "activas_persona_natural": 5078,
+        "activas_limitadas": 2507,
+        "activas_anonimas": 113,
+        "activas_esal": 6113,
+        "establecimientos_activos": 7757
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 3729,
+        "nuevas_sas": 455,
+        "nuevas_personas_naturales": 3031,
+        "stock_activas": 17455,
+        "stock_canceladas": 48932,
+        "tasa_supervivencia_pct": 26.29,
+        "activas_sas": 3963,
+        "activas_persona_natural": 5000,
+        "activas_limitadas": 2580,
+        "activas_anonimas": 62,
+        "activas_esal": 5563,
+        "establecimientos_activos": 6178
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 4766,
+        "nuevas_sas": 649,
+        "nuevas_personas_naturales": 3995,
+        "stock_activas": 17442,
+        "stock_canceladas": 101085,
+        "tasa_supervivencia_pct": 14.72,
+        "activas_sas": 3662,
+        "activas_persona_natural": 7281,
+        "activas_limitadas": 2781,
+        "activas_anonimas": 218,
+        "activas_esal": 3202,
+        "establecimientos_activos": 12798
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 2583,
+        "nuevas_sas": 213,
+        "nuevas_personas_naturales": 2235,
+        "stock_activas": 11554,
+        "stock_canceladas": 24939,
+        "tasa_supervivencia_pct": 31.66,
+        "activas_sas": 1992,
+        "activas_persona_natural": 5265,
+        "activas_limitadas": 551,
+        "activas_anonimas": 45,
+        "activas_esal": 3604,
+        "establecimientos_activos": 6018
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 2525,
+        "nuevas_sas": 256,
+        "nuevas_personas_naturales": 2059,
+        "stock_activas": 9414,
+        "stock_canceladas": 23985,
+        "tasa_supervivencia_pct": 28.19,
+        "activas_sas": 2329,
+        "activas_persona_natural": 3582,
+        "activas_limitadas": 491,
+        "activas_anonimas": 65,
+        "activas_esal": 2858,
+        "establecimientos_activos": 5517
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 3032,
+        "nuevas_sas": 249,
+        "nuevas_personas_naturales": 2595,
+        "stock_activas": 8796,
+        "stock_canceladas": 49419,
+        "tasa_supervivencia_pct": 15.11,
+        "activas_sas": 1454,
+        "activas_persona_natural": 4278,
+        "activas_limitadas": 509,
+        "activas_anonimas": 41,
+        "activas_esal": 2381,
+        "establecimientos_activos": 5896
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 1949,
+        "nuevas_sas": 143,
+        "nuevas_personas_naturales": 1705,
+        "stock_activas": 8378,
+        "stock_canceladas": 26770,
+        "tasa_supervivencia_pct": 23.84,
+        "activas_sas": 1428,
+        "activas_persona_natural": 3877,
+        "activas_limitadas": 1250,
+        "activas_anonimas": 29,
+        "activas_esal": 1763,
+        "establecimientos_activos": 4114
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 661,
+        "nuevas_sas": 127,
+        "nuevas_personas_naturales": 507,
+        "stock_activas": 5559,
+        "stock_canceladas": 13465,
+        "tasa_supervivencia_pct": 29.22,
+        "activas_sas": 1271,
+        "activas_persona_natural": 2207,
+        "activas_limitadas": 1247,
+        "activas_anonimas": 63,
+        "activas_esal": 612,
+        "establecimientos_activos": 3656
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 664,
+        "nuevas_sas": 72,
+        "nuevas_personas_naturales": 554,
+        "stock_activas": 2677,
+        "stock_canceladas": 9429,
+        "tasa_supervivencia_pct": 22.11,
+        "activas_sas": 414,
+        "activas_persona_natural": 1440,
+        "activas_limitadas": 131,
+        "activas_anonimas": 10,
+        "activas_esal": 650,
+        "establecimientos_activos": 1403
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 457,
+        "nuevas_sas": 38,
+        "nuevas_personas_naturales": 412,
+        "stock_activas": 2605,
+        "stock_canceladas": 7581,
+        "tasa_supervivencia_pct": 25.57,
+        "activas_sas": 767,
+        "activas_persona_natural": 1052,
+        "activas_limitadas": 269,
+        "activas_anonimas": 8,
+        "activas_esal": 484,
+        "establecimientos_activos": 1240
+      }
+    ],
+    "2019": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 95749,
+        "nuevas_sas": 28652,
+        "nuevas_personas_naturales": 64767,
+        "stock_activas": 694372,
+        "stock_canceladas": 1134474,
+        "tasa_supervivencia_pct": 37.97,
+        "activas_sas": 275601,
+        "activas_persona_natural": 170229,
+        "activas_limitadas": 174943,
+        "activas_anonimas": 12695,
+        "activas_esal": 46384,
+        "establecimientos_activos": 204325
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 43811,
+        "nuevas_sas": 12847,
+        "nuevas_personas_naturales": 29888,
+        "stock_activas": 230359,
+        "stock_canceladas": 563944,
+        "tasa_supervivencia_pct": 29.0,
+        "activas_sas": 82979,
+        "activas_persona_natural": 67538,
+        "activas_limitadas": 44205,
+        "activas_anonimas": 5203,
+        "activas_esal": 24174,
+        "establecimientos_activos": 139490
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 31527,
+        "nuevas_sas": 6797,
+        "nuevas_personas_naturales": 23670,
+        "stock_activas": 187187,
+        "stock_canceladas": 465688,
+        "tasa_supervivencia_pct": 28.67,
+        "activas_sas": 56731,
+        "activas_persona_natural": 57115,
+        "activas_limitadas": 40804,
+        "activas_anonimas": 3147,
+        "activas_esal": 24026,
+        "establecimientos_activos": 109707
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 17673,
+        "nuevas_sas": 5494,
+        "nuevas_personas_naturales": 11348,
+        "stock_activas": 128682,
+        "stock_canceladas": 227696,
+        "tasa_supervivencia_pct": 36.11,
+        "activas_sas": 45612,
+        "activas_persona_natural": 35587,
+        "activas_limitadas": 27910,
+        "activas_anonimas": 1484,
+        "activas_esal": 13997,
+        "establecimientos_activos": 66632
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 17762,
+        "nuevas_sas": 3056,
+        "nuevas_personas_naturales": 14185,
+        "stock_activas": 100991,
+        "stock_canceladas": 271341,
+        "tasa_supervivencia_pct": 27.12,
+        "activas_sas": 24330,
+        "activas_persona_natural": 43929,
+        "activas_limitadas": 16621,
+        "activas_anonimas": 1015,
+        "activas_esal": 14096,
+        "establecimientos_activos": 67803
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 11238,
+        "nuevas_sas": 2802,
+        "nuevas_personas_naturales": 7329,
+        "stock_activas": 73107,
+        "stock_canceladas": 134613,
+        "tasa_supervivencia_pct": 35.19,
+        "activas_sas": 25707,
+        "activas_persona_natural": 14434,
+        "activas_limitadas": 16659,
+        "activas_anonimas": 862,
+        "activas_esal": 13263,
+        "establecimientos_activos": 24665
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 13408,
+        "nuevas_sas": 1793,
+        "nuevas_personas_naturales": 11283,
+        "stock_activas": 54066,
+        "stock_canceladas": 169504,
+        "tasa_supervivencia_pct": 24.18,
+        "activas_sas": 11103,
+        "activas_persona_natural": 27764,
+        "activas_limitadas": 8368,
+        "activas_anonimas": 310,
+        "activas_esal": 6171,
+        "establecimientos_activos": 34666
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 11596,
+        "nuevas_sas": 1527,
+        "nuevas_personas_naturales": 9606,
+        "stock_activas": 49862,
+        "stock_canceladas": 159640,
+        "tasa_supervivencia_pct": 23.8,
+        "activas_sas": 11915,
+        "activas_persona_natural": 25149,
+        "activas_limitadas": 5168,
+        "activas_anonimas": 264,
+        "activas_esal": 7027,
+        "establecimientos_activos": 27717
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 10593,
+        "nuevas_sas": 1235,
+        "nuevas_personas_naturales": 8969,
+        "stock_activas": 48384,
+        "stock_canceladas": 201776,
+        "tasa_supervivencia_pct": 19.34,
+        "activas_sas": 9298,
+        "activas_persona_natural": 22133,
+        "activas_limitadas": 7393,
+        "activas_anonimas": 307,
+        "activas_esal": 8465,
+        "establecimientos_activos": 33853
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 11294,
+        "nuevas_sas": 1196,
+        "nuevas_personas_naturales": 9789,
+        "stock_activas": 47707,
+        "stock_canceladas": 151128,
+        "tasa_supervivencia_pct": 23.99,
+        "activas_sas": 8951,
+        "activas_persona_natural": 24623,
+        "activas_limitadas": 5802,
+        "activas_anonimas": 266,
+        "activas_esal": 7623,
+        "establecimientos_activos": 26518
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 10405,
+        "nuevas_sas": 1669,
+        "nuevas_personas_naturales": 8320,
+        "stock_activas": 44333,
+        "stock_canceladas": 99963,
+        "tasa_supervivencia_pct": 30.72,
+        "activas_sas": 10632,
+        "activas_persona_natural": 22600,
+        "activas_limitadas": 3954,
+        "activas_anonimas": 239,
+        "activas_esal": 6408,
+        "establecimientos_activos": 24947
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 8668,
+        "nuevas_sas": 810,
+        "nuevas_personas_naturales": 7332,
+        "stock_activas": 42457,
+        "stock_canceladas": 93375,
+        "tasa_supervivencia_pct": 31.26,
+        "activas_sas": 7040,
+        "activas_persona_natural": 19778,
+        "activas_limitadas": 3250,
+        "activas_anonimas": 224,
+        "activas_esal": 11969,
+        "establecimientos_activos": 24618
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 8134,
+        "nuevas_sas": 896,
+        "nuevas_personas_naturales": 6909,
+        "stock_activas": 39220,
+        "stock_canceladas": 151929,
+        "tasa_supervivencia_pct": 20.52,
+        "activas_sas": 7971,
+        "activas_persona_natural": 16782,
+        "activas_limitadas": 4307,
+        "activas_anonimas": 218,
+        "activas_esal": 8810,
+        "establecimientos_activos": 22569
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 8102,
+        "nuevas_sas": 1365,
+        "nuevas_personas_naturales": 6534,
+        "stock_activas": 35267,
+        "stock_canceladas": 176483,
+        "tasa_supervivencia_pct": 16.66,
+        "activas_sas": 8422,
+        "activas_persona_natural": 14099,
+        "activas_limitadas": 6065,
+        "activas_anonimas": 530,
+        "activas_esal": 5646,
+        "establecimientos_activos": 22770
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 8185,
+        "nuevas_sas": 1243,
+        "nuevas_personas_naturales": 6509,
+        "stock_activas": 34000,
+        "stock_canceladas": 91808,
+        "tasa_supervivencia_pct": 27.03,
+        "activas_sas": 9976,
+        "activas_persona_natural": 11981,
+        "activas_limitadas": 4964,
+        "activas_anonimas": 283,
+        "activas_esal": 6333,
+        "establecimientos_activos": 15824
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 6484,
+        "nuevas_sas": 1042,
+        "nuevas_personas_naturales": 4989,
+        "stock_activas": 33809,
+        "stock_canceladas": 83048,
+        "tasa_supervivencia_pct": 28.93,
+        "activas_sas": 9618,
+        "activas_persona_natural": 11686,
+        "activas_limitadas": 3458,
+        "activas_anonimas": 147,
+        "activas_esal": 8582,
+        "establecimientos_activos": 17189
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 6598,
+        "nuevas_sas": 1050,
+        "nuevas_personas_naturales": 5376,
+        "stock_activas": 30870,
+        "stock_canceladas": 145075,
+        "tasa_supervivencia_pct": 17.55,
+        "activas_sas": 7238,
+        "activas_persona_natural": 13809,
+        "activas_limitadas": 5155,
+        "activas_anonimas": 517,
+        "activas_esal": 3408,
+        "establecimientos_activos": 23228
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5810,
+        "nuevas_sas": 731,
+        "nuevas_personas_naturales": 4733,
+        "stock_activas": 28943,
+        "stock_canceladas": 76005,
+        "tasa_supervivencia_pct": 27.58,
+        "activas_sas": 5230,
+        "activas_persona_natural": 12748,
+        "activas_limitadas": 2335,
+        "activas_anonimas": 334,
+        "activas_esal": 7634,
+        "establecimientos_activos": 18121
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 4687,
+        "nuevas_sas": 878,
+        "nuevas_personas_naturales": 3458,
+        "stock_activas": 28526,
+        "stock_canceladas": 70934,
+        "tasa_supervivencia_pct": 28.68,
+        "activas_sas": 8164,
+        "activas_persona_natural": 8317,
+        "activas_limitadas": 3798,
+        "activas_anonimas": 189,
+        "activas_esal": 7814,
+        "establecimientos_activos": 13578
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 4063,
+        "nuevas_sas": 587,
+        "nuevas_personas_naturales": 3324,
+        "stock_activas": 21106,
+        "stock_canceladas": 63641,
+        "tasa_supervivencia_pct": 24.9,
+        "activas_sas": 5990,
+        "activas_persona_natural": 9087,
+        "activas_limitadas": 2273,
+        "activas_anonimas": 79,
+        "activas_esal": 3604,
+        "establecimientos_activos": 10687
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 4483,
+        "nuevas_sas": 502,
+        "nuevas_personas_naturales": 3708,
+        "stock_activas": 19209,
+        "stock_canceladas": 51651,
+        "tasa_supervivencia_pct": 27.11,
+        "activas_sas": 4407,
+        "activas_persona_natural": 6042,
+        "activas_limitadas": 2583,
+        "activas_anonimas": 64,
+        "activas_esal": 5824,
+        "establecimientos_activos": 7179
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 4908,
+        "nuevas_sas": 679,
+        "nuevas_personas_naturales": 4114,
+        "stock_activas": 19140,
+        "stock_canceladas": 104265,
+        "tasa_supervivencia_pct": 15.51,
+        "activas_sas": 4135,
+        "activas_persona_natural": 8417,
+        "activas_limitadas": 2786,
+        "activas_anonimas": 219,
+        "activas_esal": 3285,
+        "establecimientos_activos": 14109
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3329,
+        "nuevas_sas": 454,
+        "nuevas_personas_naturales": 2599,
+        "stock_activas": 19054,
+        "stock_canceladas": 47613,
+        "tasa_supervivencia_pct": 28.58,
+        "activas_sas": 3952,
+        "activas_persona_natural": 5806,
+        "activas_limitadas": 2509,
+        "activas_anonimas": 113,
+        "activas_esal": 6362,
+        "establecimientos_activos": 8634
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 2417,
+        "nuevas_sas": 262,
+        "nuevas_personas_naturales": 1978,
+        "stock_activas": 12704,
+        "stock_canceladas": 26187,
+        "tasa_supervivencia_pct": 32.67,
+        "activas_sas": 2226,
+        "activas_persona_natural": 6018,
+        "activas_limitadas": 553,
+        "activas_anonimas": 45,
+        "activas_esal": 3765,
+        "establecimientos_activos": 6798
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 2282,
+        "nuevas_sas": 264,
+        "nuevas_personas_naturales": 1720,
+        "stock_activas": 10551,
+        "stock_canceladas": 25127,
+        "tasa_supervivencia_pct": 29.57,
+        "activas_sas": 2565,
+        "activas_persona_natural": 4191,
+        "activas_limitadas": 492,
+        "activas_anonimas": 65,
+        "activas_esal": 3143,
+        "establecimientos_activos": 6254
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 2929,
+        "nuevas_sas": 265,
+        "nuevas_personas_naturales": 2488,
+        "stock_activas": 9805,
+        "stock_canceladas": 51319,
+        "tasa_supervivencia_pct": 16.04,
+        "activas_sas": 1659,
+        "activas_persona_natural": 4930,
+        "activas_limitadas": 510,
+        "activas_anonimas": 41,
+        "activas_esal": 2529,
+        "establecimientos_activos": 6657
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 2109,
+        "nuevas_sas": 202,
+        "nuevas_personas_naturales": 1806,
+        "stock_activas": 9194,
+        "stock_canceladas": 28042,
+        "tasa_supervivencia_pct": 24.69,
+        "activas_sas": 1604,
+        "activas_persona_natural": 4421,
+        "activas_limitadas": 1250,
+        "activas_anonimas": 29,
+        "activas_esal": 1859,
+        "establecimientos_activos": 4642
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 619,
+        "nuevas_sas": 142,
+        "nuevas_personas_naturales": 455,
+        "stock_activas": 5935,
+        "stock_canceladas": 13705,
+        "tasa_supervivencia_pct": 30.22,
+        "activas_sas": 1384,
+        "activas_persona_natural": 2449,
+        "activas_limitadas": 1248,
+        "activas_anonimas": 63,
+        "activas_esal": 632,
+        "establecimientos_activos": 3949
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 846,
+        "nuevas_sas": 86,
+        "nuevas_personas_naturales": 715,
+        "stock_activas": 3072,
+        "stock_canceladas": 9863,
+        "tasa_supervivencia_pct": 23.75,
+        "activas_sas": 483,
+        "activas_persona_natural": 1723,
+        "activas_limitadas": 131,
+        "activas_anonimas": 10,
+        "activas_esal": 692,
+        "establecimientos_activos": 1680
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 456,
+        "nuevas_sas": 51,
+        "nuevas_personas_naturales": 393,
+        "stock_activas": 2808,
+        "stock_canceladas": 7830,
+        "tasa_supervivencia_pct": 26.4,
+        "activas_sas": 813,
+        "activas_persona_natural": 1197,
+        "activas_limitadas": 270,
+        "activas_anonimas": 8,
+        "activas_esal": 495,
+        "establecimientos_activos": 1397
+      }
+    ],
+    "2020": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 77620,
+        "nuevas_sas": 24614,
+        "nuevas_personas_naturales": 51191,
+        "stock_activas": 748291,
+        "stock_canceladas": 1158158,
+        "tasa_supervivencia_pct": 39.25,
+        "activas_sas": 297065,
+        "activas_persona_natural": 201084,
+        "activas_limitadas": 175157,
+        "activas_anonimas": 12716,
+        "activas_esal": 47635,
+        "establecimientos_activos": 230954
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 38074,
+        "nuevas_sas": 11135,
+        "nuevas_personas_naturales": 26095,
+        "stock_activas": 249159,
+        "stock_canceladas": 582358,
+        "tasa_supervivencia_pct": 29.96,
+        "activas_sas": 91541,
+        "activas_persona_natural": 77021,
+        "activas_limitadas": 44271,
+        "activas_anonimas": 5206,
+        "activas_esal": 24839,
+        "establecimientos_activos": 152492
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 29867,
+        "nuevas_sas": 6411,
+        "nuevas_personas_naturales": 22440,
+        "stock_activas": 202361,
+        "stock_canceladas": 480194,
+        "tasa_supervivencia_pct": 29.65,
+        "activas_sas": 61992,
+        "activas_persona_natural": 66093,
+        "activas_limitadas": 40845,
+        "activas_anonimas": 3151,
+        "activas_esal": 24898,
+        "establecimientos_activos": 119466
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 14661,
+        "nuevas_sas": 4538,
+        "nuevas_personas_naturales": 9530,
+        "stock_activas": 137408,
+        "stock_canceladas": 233624,
+        "tasa_supervivencia_pct": 37.03,
+        "activas_sas": 49718,
+        "activas_persona_natural": 39638,
+        "activas_limitadas": 27942,
+        "activas_anonimas": 1486,
+        "activas_esal": 14486,
+        "establecimientos_activos": 71320
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 18720,
+        "nuevas_sas": 3041,
+        "nuevas_personas_naturales": 15214,
+        "stock_activas": 110488,
+        "stock_canceladas": 280530,
+        "tasa_supervivencia_pct": 28.26,
+        "activas_sas": 26828,
+        "activas_persona_natural": 50505,
+        "activas_limitadas": 16655,
+        "activas_anonimas": 1016,
+        "activas_esal": 14478,
+        "establecimientos_activos": 75124
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 9404,
+        "nuevas_sas": 2414,
+        "nuevas_personas_naturales": 6052,
+        "stock_activas": 78077,
+        "stock_canceladas": 138614,
+        "tasa_supervivencia_pct": 36.03,
+        "activas_sas": 27892,
+        "activas_persona_natural": 16673,
+        "activas_limitadas": 16674,
+        "activas_anonimas": 863,
+        "activas_esal": 13771,
+        "establecimientos_activos": 27855
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 12831,
+        "nuevas_sas": 1730,
+        "nuevas_personas_naturales": 10857,
+        "stock_activas": 60605,
+        "stock_canceladas": 175766,
+        "tasa_supervivencia_pct": 25.64,
+        "activas_sas": 12517,
+        "activas_persona_natural": 32661,
+        "activas_limitadas": 8373,
+        "activas_anonimas": 310,
+        "activas_esal": 6386,
+        "establecimientos_activos": 40390
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 12318,
+        "nuevas_sas": 1784,
+        "nuevas_personas_naturales": 10134,
+        "stock_activas": 56136,
+        "stock_canceladas": 165621,
+        "tasa_supervivencia_pct": 25.31,
+        "activas_sas": 13476,
+        "activas_persona_natural": 29499,
+        "activas_limitadas": 5176,
+        "activas_anonimas": 264,
+        "activas_esal": 7381,
+        "establecimientos_activos": 32028
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 10609,
+        "nuevas_sas": 1348,
+        "nuevas_personas_naturales": 8956,
+        "stock_activas": 53192,
+        "stock_canceladas": 207515,
+        "tasa_supervivencia_pct": 20.4,
+        "activas_sas": 10439,
+        "activas_persona_natural": 25525,
+        "activas_limitadas": 7406,
+        "activas_anonimas": 307,
+        "activas_esal": 8724,
+        "establecimientos_activos": 38270
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 10325,
+        "nuevas_sas": 1194,
+        "nuevas_personas_naturales": 8880,
+        "stock_activas": 52465,
+        "stock_canceladas": 156631,
+        "tasa_supervivencia_pct": 25.09,
+        "activas_sas": 9960,
+        "activas_persona_natural": 28134,
+        "activas_limitadas": 5814,
+        "activas_anonimas": 267,
+        "activas_esal": 7847,
+        "establecimientos_activos": 29720
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 10196,
+        "nuevas_sas": 1584,
+        "nuevas_personas_naturales": 8369,
+        "stock_activas": 49761,
+        "stock_canceladas": 104573,
+        "tasa_supervivencia_pct": 32.24,
+        "activas_sas": 11924,
+        "activas_persona_natural": 26524,
+        "activas_limitadas": 3960,
+        "activas_anonimas": 239,
+        "activas_esal": 6610,
+        "establecimientos_activos": 28697
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 7885,
+        "nuevas_sas": 769,
+        "nuevas_personas_naturales": 6819,
+        "stock_activas": 46238,
+        "stock_canceladas": 97446,
+        "tasa_supervivencia_pct": 32.18,
+        "activas_sas": 7686,
+        "activas_persona_natural": 22634,
+        "activas_limitadas": 3253,
+        "activas_anonimas": 224,
+        "activas_esal": 12242,
+        "establecimientos_activos": 27717
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 7776,
+        "nuevas_sas": 878,
+        "nuevas_personas_naturales": 6627,
+        "stock_activas": 42612,
+        "stock_canceladas": 156268,
+        "tasa_supervivencia_pct": 21.43,
+        "activas_sas": 8703,
+        "activas_persona_natural": 19206,
+        "activas_limitadas": 4310,
+        "activas_anonimas": 218,
+        "activas_esal": 9039,
+        "establecimientos_activos": 25308
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 8285,
+        "nuevas_sas": 1293,
+        "nuevas_personas_naturales": 6814,
+        "stock_activas": 38459,
+        "stock_canceladas": 181445,
+        "tasa_supervivencia_pct": 17.49,
+        "activas_sas": 9303,
+        "activas_persona_natural": 16278,
+        "activas_limitadas": 6079,
+        "activas_anonimas": 531,
+        "activas_esal": 5761,
+        "establecimientos_activos": 25371
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 6939,
+        "nuevas_sas": 1176,
+        "nuevas_personas_naturales": 5318,
+        "stock_activas": 37329,
+        "stock_canceladas": 86414,
+        "tasa_supervivencia_pct": 30.17,
+        "activas_sas": 10647,
+        "activas_persona_natural": 13746,
+        "activas_limitadas": 3463,
+        "activas_anonimas": 147,
+        "activas_esal": 9003,
+        "establecimientos_activos": 19928
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 7899,
+        "nuevas_sas": 1210,
+        "nuevas_personas_naturales": 6350,
+        "stock_activas": 37285,
+        "stock_canceladas": 96379,
+        "tasa_supervivencia_pct": 27.89,
+        "activas_sas": 10988,
+        "activas_persona_natural": 13933,
+        "activas_limitadas": 4973,
+        "activas_anonimas": 283,
+        "activas_esal": 6640,
+        "establecimientos_activos": 17956
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 6176,
+        "nuevas_sas": 1050,
+        "nuevas_personas_naturales": 4958,
+        "stock_activas": 33550,
+        "stock_canceladas": 148518,
+        "tasa_supervivencia_pct": 18.43,
+        "activas_sas": 8061,
+        "activas_persona_natural": 15521,
+        "activas_limitadas": 5160,
+        "activas_anonimas": 518,
+        "activas_esal": 3538,
+        "establecimientos_activos": 24978
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5160,
+        "nuevas_sas": 570,
+        "nuevas_personas_naturales": 4340,
+        "stock_activas": 31515,
+        "stock_canceladas": 78564,
+        "tasa_supervivencia_pct": 28.63,
+        "activas_sas": 5716,
+        "activas_persona_natural": 14596,
+        "activas_limitadas": 2336,
+        "activas_anonimas": 336,
+        "activas_esal": 7867,
+        "establecimientos_activos": 20302
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 4335,
+        "nuevas_sas": 852,
+        "nuevas_personas_naturales": 3211,
+        "stock_activas": 30970,
+        "stock_canceladas": 72794,
+        "tasa_supervivencia_pct": 29.85,
+        "activas_sas": 8925,
+        "activas_persona_natural": 9741,
+        "activas_limitadas": 3803,
+        "activas_anonimas": 190,
+        "activas_esal": 8065,
+        "establecimientos_activos": 15268
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 4062,
+        "nuevas_sas": 625,
+        "nuevas_personas_naturales": 3291,
+        "stock_activas": 22998,
+        "stock_canceladas": 65772,
+        "tasa_supervivencia_pct": 25.91,
+        "activas_sas": 6524,
+        "activas_persona_natural": 10314,
+        "activas_limitadas": 2279,
+        "activas_anonimas": 79,
+        "activas_esal": 3724,
+        "establecimientos_activos": 12095
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 4954,
+        "nuevas_sas": 712,
+        "nuevas_personas_naturales": 4095,
+        "stock_activas": 21086,
+        "stock_canceladas": 107239,
+        "tasa_supervivencia_pct": 16.43,
+        "activas_sas": 4633,
+        "activas_persona_natural": 9742,
+        "activas_limitadas": 2789,
+        "activas_anonimas": 220,
+        "activas_esal": 3403,
+        "establecimientos_activos": 15693
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 3062,
+        "nuevas_sas": 438,
+        "nuevas_personas_naturales": 2414,
+        "stock_activas": 20804,
+        "stock_canceladas": 53110,
+        "tasa_supervivencia_pct": 28.15,
+        "activas_sas": 4798,
+        "activas_persona_natural": 7039,
+        "activas_limitadas": 2584,
+        "activas_anonimas": 65,
+        "activas_esal": 6026,
+        "establecimientos_activos": 8274
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3252,
+        "nuevas_sas": 479,
+        "nuevas_personas_naturales": 2594,
+        "stock_activas": 20670,
+        "stock_canceladas": 49230,
+        "tasa_supervivencia_pct": 29.57,
+        "activas_sas": 4362,
+        "activas_persona_natural": 6842,
+        "activas_limitadas": 2511,
+        "activas_anonimas": 113,
+        "activas_esal": 6528,
+        "establecimientos_activos": 9847
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 2902,
+        "nuevas_sas": 330,
+        "nuevas_personas_naturales": 2377,
+        "stock_activas": 14248,
+        "stock_canceladas": 27528,
+        "tasa_supervivencia_pct": 34.11,
+        "activas_sas": 2521,
+        "activas_persona_natural": 7083,
+        "activas_limitadas": 553,
+        "activas_anonimas": 45,
+        "activas_esal": 3949,
+        "establecimientos_activos": 7941
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 1821,
+        "nuevas_sas": 318,
+        "nuevas_personas_naturales": 1278,
+        "stock_activas": 11667,
+        "stock_canceladas": 25832,
+        "tasa_supervivencia_pct": 31.11,
+        "activas_sas": 2860,
+        "activas_persona_natural": 4793,
+        "activas_limitadas": 495,
+        "activas_anonimas": 65,
+        "activas_esal": 3357,
+        "establecimientos_activos": 7039
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 2661,
+        "nuevas_sas": 287,
+        "nuevas_personas_naturales": 2245,
+        "stock_activas": 10968,
+        "stock_canceladas": 52802,
+        "tasa_supervivencia_pct": 17.2,
+        "activas_sas": 1886,
+        "activas_persona_natural": 5745,
+        "activas_limitadas": 512,
+        "activas_anonimas": 41,
+        "activas_esal": 2646,
+        "establecimientos_activos": 7528
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 2220,
+        "nuevas_sas": 283,
+        "nuevas_personas_naturales": 1830,
+        "stock_activas": 10244,
+        "stock_canceladas": 29195,
+        "tasa_supervivencia_pct": 25.97,
+        "activas_sas": 1850,
+        "activas_persona_natural": 5123,
+        "activas_limitadas": 1251,
+        "activas_anonimas": 29,
+        "activas_esal": 1960,
+        "establecimientos_activos": 5311
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 614,
+        "nuevas_sas": 160,
+        "nuevas_personas_naturales": 411,
+        "stock_activas": 6353,
+        "stock_canceladas": 13897,
+        "tasa_supervivencia_pct": 31.37,
+        "activas_sas": 1527,
+        "activas_persona_natural": 2686,
+        "activas_limitadas": 1248,
+        "activas_anonimas": 63,
+        "activas_esal": 669,
+        "establecimientos_activos": 4212
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 914,
+        "nuevas_sas": 118,
+        "nuevas_personas_naturales": 743,
+        "stock_activas": 3527,
+        "stock_canceladas": 10312,
+        "tasa_supervivencia_pct": 25.49,
+        "activas_sas": 578,
+        "activas_persona_natural": 2035,
+        "activas_limitadas": 131,
+        "activas_anonimas": 10,
+        "activas_esal": 740,
+        "establecimientos_activos": 1981
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 353,
+        "nuevas_sas": 42,
+        "nuevas_personas_naturales": 294,
+        "stock_activas": 2986,
+        "stock_canceladas": 8003,
+        "tasa_supervivencia_pct": 27.17,
+        "activas_sas": 853,
+        "activas_persona_natural": 1319,
+        "activas_limitadas": 271,
+        "activas_anonimas": 8,
+        "activas_esal": 510,
+        "establecimientos_activos": 1539
+      }
+    ],
+    "2021": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 88596,
+        "nuevas_sas": 27110,
+        "nuevas_personas_naturales": 59235,
+        "stock_activas": 811410,
+        "stock_canceladas": 1183625,
+        "tasa_supervivencia_pct": 40.67,
+        "activas_sas": 320973,
+        "activas_persona_natural": 238284,
+        "activas_limitadas": 175379,
+        "activas_anonimas": 12728,
+        "activas_esal": 49274,
+        "establecimientos_activos": 265882
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 43818,
+        "nuevas_sas": 13855,
+        "nuevas_personas_naturales": 28898,
+        "stock_activas": 274090,
+        "stock_canceladas": 600424,
+        "tasa_supervivencia_pct": 31.34,
+        "activas_sas": 102622,
+        "activas_persona_natural": 89888,
+        "activas_limitadas": 44322,
+        "activas_anonimas": 5211,
+        "activas_esal": 25730,
+        "establecimientos_activos": 170810
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 30873,
+        "nuevas_sas": 6771,
+        "nuevas_personas_naturales": 23015,
+        "stock_activas": 220012,
+        "stock_canceladas": 493206,
+        "tasa_supervivencia_pct": 30.85,
+        "activas_sas": 67622,
+        "activas_persona_natural": 77119,
+        "activas_limitadas": 40876,
+        "activas_anonimas": 3155,
+        "activas_esal": 25841,
+        "establecimientos_activos": 131366
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 18454,
+        "nuevas_sas": 5615,
+        "nuevas_personas_naturales": 12017,
+        "stock_activas": 149143,
+        "stock_canceladas": 240329,
+        "tasa_supervivencia_pct": 38.29,
+        "activas_sas": 54857,
+        "activas_persona_natural": 45449,
+        "activas_limitadas": 27977,
+        "activas_anonimas": 1487,
+        "activas_esal": 15186,
+        "establecimientos_activos": 78156
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 18892,
+        "nuevas_sas": 3343,
+        "nuevas_personas_naturales": 14999,
+        "stock_activas": 121399,
+        "stock_canceladas": 288472,
+        "tasa_supervivencia_pct": 29.62,
+        "activas_sas": 29673,
+        "activas_persona_natural": 58058,
+        "activas_limitadas": 16677,
+        "activas_anonimas": 1018,
+        "activas_esal": 14955,
+        "establecimientos_activos": 83795
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 12320,
+        "nuevas_sas": 3215,
+        "nuevas_personas_naturales": 7498,
+        "stock_activas": 85543,
+        "stock_canceladas": 142791,
+        "tasa_supervivencia_pct": 37.46,
+        "activas_sas": 30816,
+        "activas_persona_natural": 20256,
+        "activas_limitadas": 16684,
+        "activas_anonimas": 868,
+        "activas_esal": 14692,
+        "establecimientos_activos": 32807
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 14641,
+        "nuevas_sas": 1914,
+        "nuevas_personas_naturales": 12403,
+        "stock_activas": 69127,
+        "stock_canceladas": 181821,
+        "tasa_supervivencia_pct": 27.55,
+        "activas_sas": 14142,
+        "activas_persona_natural": 39258,
+        "activas_limitadas": 8381,
+        "activas_anonimas": 312,
+        "activas_esal": 6667,
+        "establecimientos_activos": 48050
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 13407,
+        "nuevas_sas": 1910,
+        "nuevas_personas_naturales": 10973,
+        "stock_activas": 63768,
+        "stock_canceladas": 171316,
+        "tasa_supervivencia_pct": 27.13,
+        "activas_sas": 15175,
+        "activas_persona_natural": 34927,
+        "activas_limitadas": 5186,
+        "activas_anonimas": 264,
+        "activas_esal": 7867,
+        "establecimientos_activos": 37538
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 12363,
+        "nuevas_sas": 1528,
+        "nuevas_personas_naturales": 10451,
+        "stock_activas": 59571,
+        "stock_canceladas": 213403,
+        "tasa_supervivencia_pct": 21.82,
+        "activas_sas": 11746,
+        "activas_persona_natural": 30236,
+        "activas_limitadas": 7419,
+        "activas_anonimas": 307,
+        "activas_esal": 9063,
+        "establecimientos_activos": 44178
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 10650,
+        "nuevas_sas": 1336,
+        "nuevas_personas_naturales": 9062,
+        "stock_activas": 57884,
+        "stock_canceladas": 161766,
+        "tasa_supervivencia_pct": 26.35,
+        "activas_sas": 11112,
+        "activas_persona_natural": 32175,
+        "activas_limitadas": 5824,
+        "activas_anonimas": 268,
+        "activas_esal": 8057,
+        "establecimientos_activos": 33465
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 11295,
+        "nuevas_sas": 1806,
+        "nuevas_personas_naturales": 9181,
+        "stock_activas": 56766,
+        "stock_canceladas": 108679,
+        "tasa_supervivencia_pct": 34.31,
+        "activas_sas": 13480,
+        "activas_persona_natural": 31701,
+        "activas_limitadas": 3964,
+        "activas_anonimas": 240,
+        "activas_esal": 6873,
+        "establecimientos_activos": 33922
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 9083,
+        "nuevas_sas": 914,
+        "nuevas_personas_naturales": 7555,
+        "stock_activas": 51411,
+        "stock_canceladas": 101314,
+        "tasa_supervivencia_pct": 33.66,
+        "activas_sas": 8485,
+        "activas_persona_natural": 26423,
+        "activas_limitadas": 3263,
+        "activas_anonimas": 225,
+        "activas_esal": 12811,
+        "establecimientos_activos": 31824
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 9065,
+        "nuevas_sas": 1014,
+        "nuevas_personas_naturales": 7715,
+        "stock_activas": 47202,
+        "stock_canceladas": 160709,
+        "tasa_supervivencia_pct": 22.7,
+        "activas_sas": 9584,
+        "activas_persona_natural": 22618,
+        "activas_limitadas": 4318,
+        "activas_anonimas": 218,
+        "activas_esal": 9315,
+        "establecimientos_activos": 28862
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 8982,
+        "nuevas_sas": 1501,
+        "nuevas_personas_naturales": 7298,
+        "stock_activas": 42456,
+        "stock_canceladas": 186286,
+        "tasa_supervivencia_pct": 18.56,
+        "activas_sas": 10363,
+        "activas_persona_natural": 19060,
+        "activas_limitadas": 6089,
+        "activas_anonimas": 531,
+        "activas_esal": 5902,
+        "establecimientos_activos": 28559
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 7785,
+        "nuevas_sas": 1267,
+        "nuevas_personas_naturales": 5931,
+        "stock_activas": 41923,
+        "stock_canceladas": 89556,
+        "tasa_supervivencia_pct": 31.89,
+        "activas_sas": 11755,
+        "activas_persona_natural": 16675,
+        "activas_limitadas": 3470,
+        "activas_anonimas": 147,
+        "activas_esal": 9546,
+        "establecimientos_activos": 23766
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 7275,
+        "nuevas_sas": 1391,
+        "nuevas_personas_naturales": 5491,
+        "stock_activas": 41569,
+        "stock_canceladas": 99329,
+        "tasa_supervivencia_pct": 29.5,
+        "activas_sas": 12165,
+        "activas_persona_natural": 16656,
+        "activas_limitadas": 4978,
+        "activas_anonimas": 284,
+        "activas_esal": 7012,
+        "establecimientos_activos": 21153
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 7341,
+        "nuevas_sas": 1195,
+        "nuevas_personas_naturales": 5934,
+        "stock_activas": 37228,
+        "stock_canceladas": 152126,
+        "tasa_supervivencia_pct": 19.66,
+        "activas_sas": 9021,
+        "activas_persona_natural": 18050,
+        "activas_limitadas": 5169,
+        "activas_anonimas": 520,
+        "activas_esal": 3706,
+        "establecimientos_activos": 27459
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5753,
+        "nuevas_sas": 690,
+        "nuevas_personas_naturales": 4777,
+        "stock_activas": 34809,
+        "stock_canceladas": 80993,
+        "tasa_supervivencia_pct": 30.06,
+        "activas_sas": 6317,
+        "activas_persona_natural": 17016,
+        "activas_limitadas": 2338,
+        "activas_anonimas": 337,
+        "activas_esal": 8135,
+        "establecimientos_activos": 23065
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 5420,
+        "nuevas_sas": 1096,
+        "nuevas_personas_naturales": 3907,
+        "stock_activas": 34328,
+        "stock_canceladas": 74823,
+        "tasa_supervivencia_pct": 31.45,
+        "activas_sas": 9898,
+        "activas_persona_natural": 11716,
+        "activas_limitadas": 3811,
+        "activas_anonimas": 191,
+        "activas_esal": 8459,
+        "establecimientos_activos": 17704
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 4380,
+        "nuevas_sas": 670,
+        "nuevas_personas_naturales": 3521,
+        "stock_activas": 25345,
+        "stock_canceladas": 67765,
+        "tasa_supervivencia_pct": 27.22,
+        "activas_sas": 7097,
+        "activas_persona_natural": 11917,
+        "activas_limitadas": 2287,
+        "activas_anonimas": 79,
+        "activas_esal": 3884,
+        "establecimientos_activos": 13860
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 5181,
+        "nuevas_sas": 856,
+        "nuevas_personas_naturales": 4196,
+        "stock_activas": 23528,
+        "stock_canceladas": 109942,
+        "tasa_supervivencia_pct": 17.63,
+        "activas_sas": 5259,
+        "activas_persona_natural": 11445,
+        "activas_limitadas": 2795,
+        "activas_anonimas": 222,
+        "activas_esal": 3503,
+        "establecimientos_activos": 17622
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 4325,
+        "nuevas_sas": 622,
+        "nuevas_personas_naturales": 3334,
+        "stock_activas": 23289,
+        "stock_canceladas": 54943,
+        "tasa_supervivencia_pct": 29.77,
+        "activas_sas": 5362,
+        "activas_persona_natural": 8598,
+        "activas_limitadas": 2586,
+        "activas_anonimas": 65,
+        "activas_esal": 6386,
+        "establecimientos_activos": 9909
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3739,
+        "nuevas_sas": 567,
+        "nuevas_personas_naturales": 2791,
+        "stock_activas": 22924,
+        "stock_canceladas": 50690,
+        "tasa_supervivencia_pct": 31.14,
+        "activas_sas": 4840,
+        "activas_persona_natural": 8246,
+        "activas_limitadas": 2512,
+        "activas_anonimas": 113,
+        "activas_esal": 6894,
+        "establecimientos_activos": 11423
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 3062,
+        "nuevas_sas": 317,
+        "nuevas_personas_naturales": 2510,
+        "stock_activas": 16088,
+        "stock_canceladas": 28726,
+        "tasa_supervivencia_pct": 35.9,
+        "activas_sas": 2811,
+        "activas_persona_natural": 8416,
+        "activas_limitadas": 555,
+        "activas_anonimas": 46,
+        "activas_esal": 4163,
+        "establecimientos_activos": 9256
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 2392,
+        "nuevas_sas": 417,
+        "nuevas_personas_naturales": 1626,
+        "stock_activas": 13271,
+        "stock_canceladas": 26620,
+        "tasa_supervivencia_pct": 33.27,
+        "activas_sas": 3247,
+        "activas_persona_natural": 5672,
+        "activas_limitadas": 496,
+        "activas_anonimas": 65,
+        "activas_esal": 3694,
+        "establecimientos_activos": 8152
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 2946,
+        "nuevas_sas": 281,
+        "nuevas_personas_naturales": 2433,
+        "stock_activas": 12452,
+        "stock_canceladas": 54243,
+        "tasa_supervivencia_pct": 18.67,
+        "activas_sas": 2108,
+        "activas_persona_natural": 6793,
+        "activas_limitadas": 514,
+        "activas_anonimas": 41,
+        "activas_esal": 2853,
+        "establecimientos_activos": 8673
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 2242,
+        "nuevas_sas": 229,
+        "nuevas_personas_naturales": 1886,
+        "stock_activas": 11446,
+        "stock_canceladas": 30220,
+        "tasa_supervivencia_pct": 27.47,
+        "activas_sas": 2050,
+        "activas_persona_natural": 6005,
+        "activas_limitadas": 1252,
+        "activas_anonimas": 29,
+        "activas_esal": 2079,
+        "establecimientos_activos": 6210
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 678,
+        "nuevas_sas": 162,
+        "nuevas_personas_naturales": 484,
+        "stock_activas": 6875,
+        "stock_canceladas": 14047,
+        "tasa_supervivencia_pct": 32.86,
+        "activas_sas": 1671,
+        "activas_persona_natural": 3033,
+        "activas_limitadas": 1249,
+        "activas_anonimas": 64,
+        "activas_esal": 698,
+        "establecimientos_activos": 4658
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 1158,
+        "nuevas_sas": 129,
+        "nuevas_personas_naturales": 928,
+        "stock_activas": 4213,
+        "stock_canceladas": 10779,
+        "tasa_supervivencia_pct": 28.1,
+        "activas_sas": 695,
+        "activas_persona_natural": 2508,
+        "activas_limitadas": 131,
+        "activas_anonimas": 10,
+        "activas_esal": 836,
+        "establecimientos_activos": 2446
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 405,
+        "nuevas_sas": 60,
+        "nuevas_personas_naturales": 327,
+        "stock_activas": 3223,
+        "stock_canceladas": 8161,
+        "tasa_supervivencia_pct": 28.31,
+        "activas_sas": 908,
+        "activas_persona_natural": 1488,
+        "activas_limitadas": 271,
+        "activas_anonimas": 8,
+        "activas_esal": 523,
+        "establecimientos_activos": 1734
+      }
+    ],
+    "2022": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 93250,
+        "nuevas_sas": 27124,
+        "nuevas_personas_naturales": 64148,
+        "stock_activas": 886353,
+        "stock_canceladas": 1201909,
+        "tasa_supervivencia_pct": 42.44,
+        "activas_sas": 345324,
+        "activas_persona_natural": 287089,
+        "activas_limitadas": 175555,
+        "activas_anonimas": 12739,
+        "activas_esal": 50763,
+        "establecimientos_activos": 310107
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 46623,
+        "nuevas_sas": 15186,
+        "nuevas_personas_naturales": 30439,
+        "stock_activas": 307385,
+        "stock_canceladas": 612935,
+        "tasa_supervivencia_pct": 33.4,
+        "activas_sas": 115282,
+        "activas_persona_natural": 109597,
+        "activas_limitadas": 44362,
+        "activas_anonimas": 5218,
+        "activas_esal": 26590,
+        "establecimientos_activos": 195923
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 32350,
+        "nuevas_sas": 6873,
+        "nuevas_personas_naturales": 24364,
+        "stock_activas": 244657,
+        "stock_canceladas": 500685,
+        "tasa_supervivencia_pct": 32.82,
+        "activas_sas": 73507,
+        "activas_persona_natural": 94839,
+        "activas_limitadas": 40907,
+        "activas_anonimas": 3157,
+        "activas_esal": 26836,
+        "establecimientos_activos": 149014
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 18406,
+        "nuevas_sas": 5841,
+        "nuevas_personas_naturales": 11749,
+        "stock_activas": 165763,
+        "stock_canceladas": 242085,
+        "tasa_supervivencia_pct": 40.64,
+        "activas_sas": 60242,
+        "activas_persona_natural": 55891,
+        "activas_limitadas": 28014,
+        "activas_anonimas": 1494,
+        "activas_esal": 15887,
+        "establecimientos_activos": 88790
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 17921,
+        "nuevas_sas": 3135,
+        "nuevas_personas_naturales": 14329,
+        "stock_activas": 134195,
+        "stock_canceladas": 293543,
+        "tasa_supervivencia_pct": 31.37,
+        "activas_sas": 32422,
+        "activas_persona_natural": 67672,
+        "activas_limitadas": 16698,
+        "activas_anonimas": 1018,
+        "activas_esal": 15352,
+        "establecimientos_activos": 94210
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 12028,
+        "nuevas_sas": 3172,
+        "nuevas_personas_naturales": 7620,
+        "stock_activas": 96036,
+        "stock_canceladas": 143790,
+        "tasa_supervivencia_pct": 40.04,
+        "activas_sas": 33753,
+        "activas_persona_natural": 27086,
+        "activas_limitadas": 16700,
+        "activas_anonimas": 869,
+        "activas_esal": 15377,
+        "establecimientos_activos": 41099
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 14319,
+        "nuevas_sas": 2204,
+        "nuevas_personas_naturales": 11757,
+        "stock_activas": 80472,
+        "stock_canceladas": 184710,
+        "tasa_supervivencia_pct": 30.35,
+        "activas_sas": 16012,
+        "activas_persona_natural": 48400,
+        "activas_limitadas": 8387,
+        "activas_anonimas": 314,
+        "activas_esal": 6978,
+        "establecimientos_activos": 58153
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 12956,
+        "nuevas_sas": 2064,
+        "nuevas_personas_naturales": 10524,
+        "stock_activas": 74371,
+        "stock_canceladas": 173583,
+        "tasa_supervivencia_pct": 29.99,
+        "activas_sas": 16994,
+        "activas_persona_natural": 43363,
+        "activas_limitadas": 5204,
+        "activas_anonimas": 265,
+        "activas_esal": 8192,
+        "establecimientos_activos": 44882
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 12298,
+        "nuevas_sas": 1479,
+        "nuevas_personas_naturales": 10440,
+        "stock_activas": 68509,
+        "stock_canceladas": 216656,
+        "tasa_supervivencia_pct": 24.02,
+        "activas_sas": 13034,
+        "activas_persona_natural": 37534,
+        "activas_limitadas": 7430,
+        "activas_anonimas": 307,
+        "activas_esal": 9399,
+        "establecimientos_activos": 52636
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 12835,
+        "nuevas_sas": 1946,
+        "nuevas_personas_naturales": 10568,
+        "stock_activas": 67080,
+        "stock_canceladas": 110976,
+        "tasa_supervivencia_pct": 37.67,
+        "activas_sas": 15156,
+        "activas_persona_natural": 40053,
+        "activas_limitadas": 3972,
+        "activas_anonimas": 240,
+        "activas_esal": 7144,
+        "establecimientos_activos": 41588
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 10553,
+        "nuevas_sas": 1441,
+        "nuevas_personas_naturales": 8890,
+        "stock_activas": 65466,
+        "stock_canceladas": 164660,
+        "tasa_supervivencia_pct": 28.45,
+        "activas_sas": 12357,
+        "activas_persona_natural": 38301,
+        "activas_limitadas": 5835,
+        "activas_anonimas": 268,
+        "activas_esal": 8249,
+        "establecimientos_activos": 38864
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 8107,
+        "nuevas_sas": 854,
+        "nuevas_personas_naturales": 6811,
+        "stock_activas": 57454,
+        "stock_canceladas": 103344,
+        "tasa_supervivencia_pct": 35.73,
+        "activas_sas": 9234,
+        "activas_persona_natural": 31290,
+        "activas_limitadas": 3267,
+        "activas_anonimas": 226,
+        "activas_esal": 13230,
+        "establecimientos_activos": 36832
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 9190,
+        "nuevas_sas": 1063,
+        "nuevas_personas_naturales": 7757,
+        "stock_activas": 53557,
+        "stock_canceladas": 163489,
+        "tasa_supervivencia_pct": 24.68,
+        "activas_sas": 10496,
+        "activas_persona_natural": 27732,
+        "activas_limitadas": 4325,
+        "activas_anonimas": 218,
+        "activas_esal": 9621,
+        "establecimientos_activos": 33820
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 7931,
+        "nuevas_sas": 1564,
+        "nuevas_personas_naturales": 6011,
+        "stock_activas": 48465,
+        "stock_canceladas": 100308,
+        "tasa_supervivencia_pct": 32.58,
+        "activas_sas": 13528,
+        "activas_persona_natural": 21847,
+        "activas_limitadas": 4986,
+        "activas_anonimas": 284,
+        "activas_esal": 7343,
+        "establecimientos_activos": 26539
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 7662,
+        "nuevas_sas": 1217,
+        "nuevas_personas_naturales": 5965,
+        "stock_activas": 48433,
+        "stock_canceladas": 90656,
+        "tasa_supervivencia_pct": 34.82,
+        "activas_sas": 12832,
+        "activas_persona_natural": 21642,
+        "activas_limitadas": 3473,
+        "activas_anonimas": 147,
+        "activas_esal": 10003,
+        "establecimientos_activos": 29520
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 8851,
+        "nuevas_sas": 1671,
+        "nuevas_personas_naturales": 6995,
+        "stock_activas": 47608,
+        "stock_canceladas": 189834,
+        "tasa_supervivencia_pct": 20.05,
+        "activas_sas": 11630,
+        "activas_persona_natural": 22794,
+        "activas_limitadas": 6100,
+        "activas_anonimas": 532,
+        "activas_esal": 6036,
+        "establecimientos_activos": 32421
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 7378,
+        "nuevas_sas": 1214,
+        "nuevas_personas_naturales": 5993,
+        "stock_activas": 41948,
+        "stock_canceladas": 154722,
+        "tasa_supervivencia_pct": 21.33,
+        "activas_sas": 10017,
+        "activas_persona_natural": 21622,
+        "activas_limitadas": 5173,
+        "activas_anonimas": 520,
+        "activas_esal": 3847,
+        "establecimientos_activos": 30490
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5920,
+        "nuevas_sas": 701,
+        "nuevas_personas_naturales": 4925,
+        "stock_activas": 39548,
+        "stock_canceladas": 82139,
+        "tasa_supervivencia_pct": 32.5,
+        "activas_sas": 6943,
+        "activas_persona_natural": 20851,
+        "activas_limitadas": 2344,
+        "activas_anonimas": 337,
+        "activas_esal": 8405,
+        "establecimientos_activos": 27171
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 5528,
+        "nuevas_sas": 1095,
+        "nuevas_personas_naturales": 3976,
+        "stock_activas": 39068,
+        "stock_canceladas": 75550,
+        "tasa_supervivencia_pct": 34.09,
+        "activas_sas": 10873,
+        "activas_persona_natural": 15034,
+        "activas_limitadas": 3815,
+        "activas_anonimas": 192,
+        "activas_esal": 8898,
+        "establecimientos_activos": 21333
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 4383,
+        "nuevas_sas": 709,
+        "nuevas_personas_naturales": 3511,
+        "stock_activas": 28392,
+        "stock_canceladas": 69052,
+        "tasa_supervivencia_pct": 29.14,
+        "activas_sas": 7720,
+        "activas_persona_natural": 14191,
+        "activas_limitadas": 2289,
+        "activas_anonimas": 79,
+        "activas_esal": 4029,
+        "establecimientos_activos": 16050
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 5795,
+        "nuevas_sas": 1145,
+        "nuevas_personas_naturales": 4533,
+        "stock_activas": 27200,
+        "stock_canceladas": 111995,
+        "tasa_supervivencia_pct": 19.54,
+        "activas_sas": 6089,
+        "activas_persona_natural": 14191,
+        "activas_limitadas": 2797,
+        "activas_anonimas": 222,
+        "activas_esal": 3595,
+        "establecimientos_activos": 20399
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 4272,
+        "nuevas_sas": 652,
+        "nuevas_personas_naturales": 3254,
+        "stock_activas": 27192,
+        "stock_canceladas": 55294,
+        "tasa_supervivencia_pct": 32.97,
+        "activas_sas": 5957,
+        "activas_persona_natural": 11546,
+        "activas_limitadas": 2591,
+        "activas_anonimas": 66,
+        "activas_esal": 6735,
+        "establecimientos_activos": 12768
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3490,
+        "nuevas_sas": 575,
+        "nuevas_personas_naturales": 2568,
+        "stock_activas": 25705,
+        "stock_canceladas": 51358,
+        "tasa_supervivencia_pct": 33.36,
+        "activas_sas": 5337,
+        "activas_persona_natural": 10195,
+        "activas_limitadas": 2513,
+        "activas_anonimas": 113,
+        "activas_esal": 7225,
+        "establecimientos_activos": 13553
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 3005,
+        "nuevas_sas": 252,
+        "nuevas_personas_naturales": 2617,
+        "stock_activas": 18435,
+        "stock_canceladas": 29360,
+        "tasa_supervivencia_pct": 38.57,
+        "activas_sas": 3049,
+        "activas_persona_natural": 10395,
+        "activas_limitadas": 556,
+        "activas_anonimas": 46,
+        "activas_esal": 4292,
+        "establecimientos_activos": 11083
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 2015,
+        "nuevas_sas": 353,
+        "nuevas_personas_naturales": 1393,
+        "stock_activas": 15050,
+        "stock_canceladas": 26855,
+        "tasa_supervivencia_pct": 35.91,
+        "activas_sas": 3582,
+        "activas_persona_natural": 6853,
+        "activas_limitadas": 496,
+        "activas_anonimas": 65,
+        "activas_esal": 3955,
+        "establecimientos_activos": 9560
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 2773,
+        "nuevas_sas": 253,
+        "nuevas_personas_naturales": 2392,
+        "stock_activas": 14211,
+        "stock_canceladas": 55235,
+        "tasa_supervivencia_pct": 20.46,
+        "activas_sas": 2319,
+        "activas_persona_natural": 8223,
+        "activas_limitadas": 515,
+        "activas_anonimas": 41,
+        "activas_esal": 2967,
+        "establecimientos_activos": 10049
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 2034,
+        "nuevas_sas": 239,
+        "nuevas_personas_naturales": 1720,
+        "stock_activas": 12984,
+        "stock_canceladas": 30696,
+        "tasa_supervivencia_pct": 29.73,
+        "activas_sas": 2261,
+        "activas_persona_natural": 7262,
+        "activas_limitadas": 1252,
+        "activas_anonimas": 29,
+        "activas_esal": 2149,
+        "establecimientos_activos": 7263
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 950,
+        "nuevas_sas": 188,
+        "nuevas_personas_naturales": 740,
+        "stock_activas": 7748,
+        "stock_canceladas": 14112,
+        "tasa_supervivencia_pct": 35.44,
+        "activas_sas": 1836,
+        "activas_persona_natural": 3719,
+        "activas_limitadas": 1249,
+        "activas_anonimas": 64,
+        "activas_esal": 718,
+        "establecimientos_activos": 5357
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 1055,
+        "nuevas_sas": 133,
+        "nuevas_personas_naturales": 869,
+        "stock_activas": 5045,
+        "stock_canceladas": 10998,
+        "tasa_supervivencia_pct": 31.45,
+        "activas_sas": 814,
+        "activas_persona_natural": 3170,
+        "activas_limitadas": 131,
+        "activas_anonimas": 10,
+        "activas_esal": 887,
+        "establecimientos_activos": 2991
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 521,
+        "nuevas_sas": 69,
+        "nuevas_personas_naturales": 442,
+        "stock_activas": 3669,
+        "stock_canceladas": 8234,
+        "tasa_supervivencia_pct": 30.82,
+        "activas_sas": 974,
+        "activas_persona_natural": 1859,
+        "activas_limitadas": 271,
+        "activas_anonimas": 8,
+        "activas_esal": 532,
+        "establecimientos_activos": 2100
+      }
+    ],
+    "2023": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 87748,
+        "nuevas_sas": 27021,
+        "nuevas_personas_naturales": 58522,
+        "stock_activas": 959148,
+        "stock_canceladas": 1216854,
+        "tasa_supervivencia_pct": 44.08,
+        "activas_sas": 370093,
+        "activas_persona_natural": 333102,
+        "activas_limitadas": 175756,
+        "activas_anonimas": 12754,
+        "activas_esal": 52454,
+        "establecimientos_activos": 353467
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 44068,
+        "nuevas_sas": 14517,
+        "nuevas_personas_naturales": 28497,
+        "stock_activas": 340543,
+        "stock_canceladas": 623065,
+        "tasa_supervivencia_pct": 35.34,
+        "activas_sas": 127788,
+        "activas_persona_natural": 129257,
+        "activas_limitadas": 44412,
+        "activas_anonimas": 5222,
+        "activas_esal": 27503,
+        "establecimientos_activos": 221380
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 30547,
+        "nuevas_sas": 6880,
+        "nuevas_personas_naturales": 22488,
+        "stock_activas": 268958,
+        "stock_canceladas": 506599,
+        "tasa_supervivencia_pct": 34.68,
+        "activas_sas": 79473,
+        "activas_persona_natural": 112067,
+        "activas_limitadas": 40948,
+        "activas_anonimas": 3160,
+        "activas_esal": 27880,
+        "establecimientos_activos": 165567
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 15259,
+        "nuevas_sas": 5620,
+        "nuevas_personas_naturales": 8715,
+        "stock_activas": 179932,
+        "stock_canceladas": 243152,
+        "tasa_supervivencia_pct": 42.53,
+        "activas_sas": 65490,
+        "activas_persona_natural": 63902,
+        "activas_limitadas": 28045,
+        "activas_anonimas": 1497,
+        "activas_esal": 16723,
+        "establecimientos_activos": 96985
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 17251,
+        "nuevas_sas": 3288,
+        "nuevas_personas_naturales": 13363,
+        "stock_activas": 147307,
+        "stock_canceladas": 297625,
+        "tasa_supervivencia_pct": 33.11,
+        "activas_sas": 35381,
+        "activas_persona_natural": 77266,
+        "activas_limitadas": 16725,
+        "activas_anonimas": 1020,
+        "activas_esal": 15873,
+        "establecimientos_activos": 104403
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 11552,
+        "nuevas_sas": 3350,
+        "nuevas_personas_naturales": 6505,
+        "stock_activas": 106172,
+        "stock_canceladas": 144550,
+        "tasa_supervivencia_pct": 42.35,
+        "activas_sas": 36928,
+        "activas_persona_natural": 32978,
+        "activas_limitadas": 16714,
+        "activas_anonimas": 869,
+        "activas_esal": 16406,
+        "establecimientos_activos": 48944
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 11959,
+        "nuevas_sas": 1394,
+        "nuevas_personas_naturales": 10093,
+        "stock_activas": 90235,
+        "stock_canceladas": 186812,
+        "tasa_supervivencia_pct": 32.57,
+        "activas_sas": 17179,
+        "activas_persona_natural": 56544,
+        "activas_limitadas": 8388,
+        "activas_anonimas": 314,
+        "activas_esal": 7409,
+        "establecimientos_activos": 66513
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 11357,
+        "nuevas_sas": 1903,
+        "nuevas_personas_naturales": 9037,
+        "stock_activas": 83955,
+        "stock_canceladas": 175245,
+        "tasa_supervivencia_pct": 32.39,
+        "activas_sas": 18714,
+        "activas_persona_natural": 50819,
+        "activas_limitadas": 5208,
+        "activas_anonimas": 266,
+        "activas_esal": 8591,
+        "establecimientos_activos": 51728
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 11870,
+        "nuevas_sas": 1891,
+        "nuevas_personas_naturales": 9603,
+        "stock_activas": 77067,
+        "stock_canceladas": 112634,
+        "tasa_supervivencia_pct": 40.63,
+        "activas_sas": 16817,
+        "activas_persona_natural": 48025,
+        "activas_limitadas": 3978,
+        "activas_anonimas": 244,
+        "activas_esal": 7482,
+        "establecimientos_activos": 48836
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 10895,
+        "nuevas_sas": 1435,
+        "nuevas_personas_naturales": 9046,
+        "stock_activas": 76804,
+        "stock_canceladas": 219126,
+        "tasa_supervivencia_pct": 25.95,
+        "activas_sas": 14289,
+        "activas_persona_natural": 44183,
+        "activas_limitadas": 7442,
+        "activas_anonimas": 307,
+        "activas_esal": 9771,
+        "establecimientos_activos": 60245
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 9894,
+        "nuevas_sas": 1312,
+        "nuevas_personas_naturales": 8310,
+        "stock_activas": 73012,
+        "stock_canceladas": 166916,
+        "tasa_supervivencia_pct": 30.43,
+        "activas_sas": 13546,
+        "activas_persona_natural": 44405,
+        "activas_limitadas": 5843,
+        "activas_anonimas": 268,
+        "activas_esal": 8488,
+        "establecimientos_activos": 44211
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 7576,
+        "nuevas_sas": 846,
+        "nuevas_personas_naturales": 6190,
+        "stock_activas": 63473,
+        "stock_canceladas": 104845,
+        "tasa_supervivencia_pct": 37.71,
+        "activas_sas": 9986,
+        "activas_persona_natural": 36036,
+        "activas_limitadas": 3268,
+        "activas_anonimas": 228,
+        "activas_esal": 13743,
+        "establecimientos_activos": 41563
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 8365,
+        "nuevas_sas": 1044,
+        "nuevas_personas_naturales": 6879,
+        "stock_activas": 59666,
+        "stock_canceladas": 165688,
+        "tasa_supervivencia_pct": 26.48,
+        "activas_sas": 11407,
+        "activas_persona_natural": 32534,
+        "activas_limitadas": 4330,
+        "activas_anonimas": 218,
+        "activas_esal": 10001,
+        "establecimientos_activos": 38401
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 7363,
+        "nuevas_sas": 1234,
+        "nuevas_personas_naturales": 5538,
+        "stock_activas": 54905,
+        "stock_canceladas": 91482,
+        "tasa_supervivencia_pct": 37.51,
+        "activas_sas": 13967,
+        "activas_persona_natural": 26399,
+        "activas_limitadas": 3478,
+        "activas_anonimas": 147,
+        "activas_esal": 10568,
+        "establecimientos_activos": 35036
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 6949,
+        "nuevas_sas": 1412,
+        "nuevas_personas_naturales": 5064,
+        "stock_activas": 54607,
+        "stock_canceladas": 101044,
+        "tasa_supervivencia_pct": 35.08,
+        "activas_sas": 14751,
+        "activas_persona_natural": 26305,
+        "activas_limitadas": 4986,
+        "activas_anonimas": 284,
+        "activas_esal": 7800,
+        "establecimientos_activos": 31013
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 7950,
+        "nuevas_sas": 1524,
+        "nuevas_personas_naturales": 6219,
+        "stock_activas": 52631,
+        "stock_canceladas": 192563,
+        "tasa_supervivencia_pct": 21.47,
+        "activas_sas": 12824,
+        "activas_persona_natural": 26439,
+        "activas_limitadas": 6112,
+        "activas_anonimas": 532,
+        "activas_esal": 6204,
+        "establecimientos_activos": 36144
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 6831,
+        "nuevas_sas": 1077,
+        "nuevas_personas_naturales": 5532,
+        "stock_activas": 46717,
+        "stock_canceladas": 156705,
+        "tasa_supervivencia_pct": 22.97,
+        "activas_sas": 10944,
+        "activas_persona_natural": 25257,
+        "activas_limitadas": 5177,
+        "activas_anonimas": 521,
+        "activas_esal": 4036,
+        "establecimientos_activos": 33343
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 5495,
+        "nuevas_sas": 1119,
+        "nuevas_personas_naturales": 3704,
+        "stock_activas": 43932,
+        "stock_canceladas": 76144,
+        "tasa_supervivencia_pct": 36.59,
+        "activas_sas": 11906,
+        "activas_persona_natural": 18201,
+        "activas_limitadas": 3816,
+        "activas_anonimas": 192,
+        "activas_esal": 9557,
+        "establecimientos_activos": 24550
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5204,
+        "nuevas_sas": 575,
+        "nuevas_personas_naturales": 4273,
+        "stock_activas": 43885,
+        "stock_canceladas": 82975,
+        "tasa_supervivencia_pct": 34.59,
+        "activas_sas": 7464,
+        "activas_persona_natural": 24330,
+        "activas_limitadas": 2347,
+        "activas_anonimas": 337,
+        "activas_esal": 8739,
+        "establecimientos_activos": 30932
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 4249,
+        "nuevas_sas": 782,
+        "nuevas_personas_naturales": 3255,
+        "stock_activas": 31606,
+        "stock_canceladas": 70024,
+        "tasa_supervivencia_pct": 31.1,
+        "activas_sas": 8412,
+        "activas_persona_natural": 16520,
+        "activas_limitadas": 2293,
+        "activas_anonimas": 79,
+        "activas_esal": 4217,
+        "establecimientos_activos": 18265
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 3847,
+        "nuevas_sas": 525,
+        "nuevas_personas_naturales": 2844,
+        "stock_activas": 30701,
+        "stock_canceladas": 55595,
+        "tasa_supervivencia_pct": 35.58,
+        "activas_sas": 6445,
+        "activas_persona_natural": 14107,
+        "activas_limitadas": 2595,
+        "activas_anonimas": 66,
+        "activas_esal": 7190,
+        "establecimientos_activos": 15091
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 4907,
+        "nuevas_sas": 726,
+        "nuevas_personas_naturales": 4073,
+        "stock_activas": 30480,
+        "stock_canceladas": 113553,
+        "tasa_supervivencia_pct": 21.16,
+        "activas_sas": 6664,
+        "activas_persona_natural": 16801,
+        "activas_limitadas": 2798,
+        "activas_anonimas": 222,
+        "activas_esal": 3686,
+        "establecimientos_activos": 22938
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3254,
+        "nuevas_sas": 588,
+        "nuevas_personas_naturales": 2196,
+        "stock_activas": 28417,
+        "stock_canceladas": 51866,
+        "tasa_supervivencia_pct": 35.4,
+        "activas_sas": 5858,
+        "activas_persona_natural": 11923,
+        "activas_limitadas": 2516,
+        "activas_anonimas": 114,
+        "activas_esal": 7678,
+        "establecimientos_activos": 15454
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 2528,
+        "nuevas_sas": 256,
+        "nuevas_personas_naturales": 1988,
+        "stock_activas": 20517,
+        "stock_canceladas": 29784,
+        "tasa_supervivencia_pct": 40.79,
+        "activas_sas": 3289,
+        "activas_persona_natural": 11966,
+        "activas_limitadas": 556,
+        "activas_anonimas": 46,
+        "activas_esal": 4563,
+        "establecimientos_activos": 12508
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 1826,
+        "nuevas_sas": 297,
+        "nuevas_personas_naturales": 1214,
+        "stock_activas": 16718,
+        "stock_canceladas": 27012,
+        "tasa_supervivencia_pct": 38.23,
+        "activas_sas": 3868,
+        "activas_persona_natural": 7924,
+        "activas_limitadas": 498,
+        "activas_anonimas": 65,
+        "activas_esal": 4264,
+        "establecimientos_activos": 10860
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 2455,
+        "nuevas_sas": 253,
+        "nuevas_personas_naturales": 2040,
+        "stock_activas": 15953,
+        "stock_canceladas": 55929,
+        "tasa_supervivencia_pct": 22.19,
+        "activas_sas": 2525,
+        "activas_persona_natural": 9602,
+        "activas_limitadas": 516,
+        "activas_anonimas": 41,
+        "activas_esal": 3121,
+        "establecimientos_activos": 11419
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 1665,
+        "nuevas_sas": 170,
+        "nuevas_personas_naturales": 1392,
+        "stock_activas": 14310,
+        "stock_canceladas": 31008,
+        "tasa_supervivencia_pct": 31.58,
+        "activas_sas": 2412,
+        "activas_persona_natural": 8337,
+        "activas_limitadas": 1252,
+        "activas_anonimas": 29,
+        "activas_esal": 2248,
+        "establecimientos_activos": 8170
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 845,
+        "nuevas_sas": 174,
+        "nuevas_personas_naturales": 631,
+        "stock_activas": 8541,
+        "stock_canceladas": 14160,
+        "tasa_supervivencia_pct": 37.62,
+        "activas_sas": 1994,
+        "activas_persona_natural": 4314,
+        "activas_limitadas": 1250,
+        "activas_anonimas": 64,
+        "activas_esal": 754,
+        "establecimientos_activos": 5920
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 899,
+        "nuevas_sas": 135,
+        "nuevas_personas_naturales": 708,
+        "stock_activas": 5796,
+        "stock_canceladas": 11143,
+        "tasa_supervivencia_pct": 34.22,
+        "activas_sas": 939,
+        "activas_persona_natural": 3740,
+        "activas_limitadas": 132,
+        "activas_anonimas": 10,
+        "activas_esal": 942,
+        "establecimientos_activos": 3436
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 535,
+        "nuevas_sas": 79,
+        "nuevas_personas_naturales": 436,
+        "stock_activas": 4139,
+        "stock_canceladas": 8290,
+        "tasa_supervivencia_pct": 33.3,
+        "activas_sas": 1044,
+        "activas_persona_natural": 2242,
+        "activas_limitadas": 271,
+        "activas_anonimas": 8,
+        "activas_esal": 549,
+        "establecimientos_activos": 2444
+      }
+    ],
+    "2024": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 84051,
+        "nuevas_sas": 28229,
+        "nuevas_personas_naturales": 53388,
+        "stock_activas": 1032100,
+        "stock_canceladas": 1227943,
+        "tasa_supervivencia_pct": 45.67,
+        "activas_sas": 396612,
+        "activas_persona_natural": 377249,
+        "activas_limitadas": 175960,
+        "activas_anonimas": 12773,
+        "activas_esal": 54401,
+        "establecimientos_activos": 397617
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 46223,
+        "nuevas_sas": 15362,
+        "nuevas_personas_naturales": 29677,
+        "stock_activas": 377919,
+        "stock_canceladas": 631155,
+        "tasa_supervivencia_pct": 37.45,
+        "activas_sas": 141562,
+        "activas_persona_natural": 151720,
+        "activas_limitadas": 44466,
+        "activas_anonimas": 5225,
+        "activas_esal": 28566,
+        "establecimientos_activos": 249191
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 30974,
+        "nuevas_sas": 7287,
+        "nuevas_personas_naturales": 22463,
+        "stock_activas": 294689,
+        "stock_canceladas": 511443,
+        "tasa_supervivencia_pct": 36.56,
+        "activas_sas": 85961,
+        "activas_persona_natural": 130152,
+        "activas_limitadas": 40988,
+        "activas_anonimas": 3165,
+        "activas_esal": 28986,
+        "establecimientos_activos": 184114
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 14371,
+        "nuevas_sas": 5647,
+        "nuevas_personas_naturales": 7740,
+        "stock_activas": 193418,
+        "stock_canceladas": 244020,
+        "tasa_supervivencia_pct": 44.22,
+        "activas_sas": 70892,
+        "activas_persona_natural": 71010,
+        "activas_limitadas": 28091,
+        "activas_anonimas": 1499,
+        "activas_esal": 17614,
+        "establecimientos_activos": 104696
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 16998,
+        "nuevas_sas": 3718,
+        "nuevas_personas_naturales": 12608,
+        "stock_activas": 161336,
+        "stock_canceladas": 300524,
+        "tasa_supervivencia_pct": 34.93,
+        "activas_sas": 38832,
+        "activas_persona_natural": 87199,
+        "activas_limitadas": 16748,
+        "activas_anonimas": 1022,
+        "activas_esal": 16485,
+        "establecimientos_activos": 116127
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 11559,
+        "nuevas_sas": 3233,
+        "nuevas_personas_naturales": 6525,
+        "stock_activas": 116480,
+        "stock_canceladas": 145111,
+        "tasa_supervivencia_pct": 44.53,
+        "activas_sas": 40006,
+        "activas_persona_natural": 39076,
+        "activas_limitadas": 16735,
+        "activas_anonimas": 870,
+        "activas_esal": 17502,
+        "establecimientos_activos": 57051
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 11275,
+        "nuevas_sas": 1469,
+        "nuevas_personas_naturales": 9329,
+        "stock_activas": 99993,
+        "stock_canceladas": 188242,
+        "tasa_supervivencia_pct": 34.69,
+        "activas_sas": 18490,
+        "activas_persona_natural": 64539,
+        "activas_limitadas": 8393,
+        "activas_anonimas": 315,
+        "activas_esal": 7839,
+        "establecimientos_activos": 74756
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 11524,
+        "nuevas_sas": 2162,
+        "nuevas_personas_naturales": 8770,
+        "stock_activas": 94128,
+        "stock_canceladas": 176459,
+        "tasa_supervivencia_pct": 34.79,
+        "activas_sas": 20708,
+        "activas_persona_natural": 58420,
+        "activas_limitadas": 5220,
+        "activas_anonimas": 266,
+        "activas_esal": 9143,
+        "establecimientos_activos": 58968
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 11952,
+        "nuevas_sas": 1810,
+        "nuevas_personas_naturales": 9687,
+        "stock_activas": 87553,
+        "stock_canceladas": 113860,
+        "tasa_supervivencia_pct": 43.47,
+        "activas_sas": 18429,
+        "activas_persona_natural": 56479,
+        "activas_limitadas": 3981,
+        "activas_anonimas": 246,
+        "activas_esal": 7892,
+        "establecimientos_activos": 56695
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 11506,
+        "nuevas_sas": 1637,
+        "nuevas_personas_naturales": 9087,
+        "stock_activas": 86131,
+        "stock_canceladas": 221171,
+        "tasa_supervivencia_pct": 28.03,
+        "activas_sas": 15760,
+        "activas_persona_natural": 51284,
+        "activas_limitadas": 7450,
+        "activas_anonimas": 307,
+        "activas_esal": 10510,
+        "establecimientos_activos": 68488
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 10676,
+        "nuevas_sas": 1468,
+        "nuevas_personas_naturales": 8825,
+        "stock_activas": 81724,
+        "stock_canceladas": 168798,
+        "tasa_supervivencia_pct": 32.62,
+        "activas_sas": 14903,
+        "activas_persona_natural": 51390,
+        "activas_limitadas": 5856,
+        "activas_anonimas": 268,
+        "activas_esal": 8840,
+        "establecimientos_activos": 50597
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 8281,
+        "nuevas_sas": 972,
+        "nuevas_personas_naturales": 6483,
+        "stock_activas": 70494,
+        "stock_canceladas": 106056,
+        "tasa_supervivencia_pct": 39.93,
+        "activas_sas": 10895,
+        "activas_persona_natural": 41340,
+        "activas_limitadas": 3273,
+        "activas_anonimas": 229,
+        "activas_esal": 14539,
+        "establecimientos_activos": 46722
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 7867,
+        "nuevas_sas": 1177,
+        "nuevas_personas_naturales": 6163,
+        "stock_activas": 65955,
+        "stock_canceladas": 167215,
+        "tasa_supervivencia_pct": 28.29,
+        "activas_sas": 12493,
+        "activas_persona_natural": 37238,
+        "activas_limitadas": 4337,
+        "activas_anonimas": 218,
+        "activas_esal": 10477,
+        "establecimientos_activos": 43203
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 7976,
+        "nuevas_sas": 1388,
+        "nuevas_personas_naturales": 5473,
+        "stock_activas": 62108,
+        "stock_canceladas": 92181,
+        "tasa_supervivencia_pct": 40.25,
+        "activas_sas": 15254,
+        "activas_persona_natural": 31221,
+        "activas_limitadas": 3484,
+        "activas_anonimas": 148,
+        "activas_esal": 11648,
+        "establecimientos_activos": 40760
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 7145,
+        "nuevas_sas": 1647,
+        "nuevas_personas_naturales": 4903,
+        "stock_activas": 61105,
+        "stock_canceladas": 101618,
+        "tasa_supervivencia_pct": 37.55,
+        "activas_sas": 16239,
+        "activas_persona_natural": 30740,
+        "activas_limitadas": 4993,
+        "activas_anonimas": 284,
+        "activas_esal": 8358,
+        "establecimientos_activos": 35441
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 7890,
+        "nuevas_sas": 1596,
+        "nuevas_personas_naturales": 6088,
+        "stock_activas": 58083,
+        "stock_canceladas": 194810,
+        "tasa_supervivencia_pct": 22.97,
+        "activas_sas": 14149,
+        "activas_persona_natural": 30379,
+        "activas_limitadas": 6116,
+        "activas_anonimas": 532,
+        "activas_esal": 6384,
+        "establecimientos_activos": 40168
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 7100,
+        "nuevas_sas": 1155,
+        "nuevas_personas_naturales": 5696,
+        "stock_activas": 52131,
+        "stock_canceladas": 158303,
+        "tasa_supervivencia_pct": 24.77,
+        "activas_sas": 11945,
+        "activas_persona_natural": 29431,
+        "activas_limitadas": 5179,
+        "activas_anonimas": 521,
+        "activas_esal": 4268,
+        "establecimientos_activos": 36704
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 5740,
+        "nuevas_sas": 1311,
+        "nuevas_personas_naturales": 3622,
+        "stock_activas": 49221,
+        "stock_canceladas": 76557,
+        "tasa_supervivencia_pct": 39.13,
+        "activas_sas": 13134,
+        "activas_persona_natural": 21463,
+        "activas_limitadas": 3822,
+        "activas_anonimas": 194,
+        "activas_esal": 10346,
+        "establecimientos_activos": 27988
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5705,
+        "nuevas_sas": 673,
+        "nuevas_personas_naturales": 4624,
+        "stock_activas": 48912,
+        "stock_canceladas": 83612,
+        "tasa_supervivencia_pct": 36.91,
+        "activas_sas": 8087,
+        "activas_persona_natural": 28339,
+        "activas_limitadas": 2349,
+        "activas_anonimas": 337,
+        "activas_esal": 9132,
+        "establecimientos_activos": 35317
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 4241,
+        "nuevas_sas": 788,
+        "nuevas_personas_naturales": 3232,
+        "stock_activas": 35061,
+        "stock_canceladas": 70754,
+        "tasa_supervivencia_pct": 33.13,
+        "activas_sas": 9119,
+        "activas_persona_natural": 19049,
+        "activas_limitadas": 2295,
+        "activas_anonimas": 79,
+        "activas_esal": 4434,
+        "establecimientos_activos": 20578
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 5155,
+        "nuevas_sas": 760,
+        "nuevas_personas_naturales": 4263,
+        "stock_activas": 34279,
+        "stock_canceladas": 114853,
+        "tasa_supervivencia_pct": 22.99,
+        "activas_sas": 7299,
+        "activas_persona_natural": 19847,
+        "activas_limitadas": 2804,
+        "activas_anonimas": 222,
+        "activas_esal": 3796,
+        "establecimientos_activos": 25965
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 3517,
+        "nuevas_sas": 517,
+        "nuevas_personas_naturales": 2526,
+        "stock_activas": 34013,
+        "stock_canceladas": 55782,
+        "tasa_supervivencia_pct": 37.88,
+        "activas_sas": 6926,
+        "activas_persona_natural": 16473,
+        "activas_limitadas": 2597,
+        "activas_anonimas": 66,
+        "activas_esal": 7652,
+        "establecimientos_activos": 17564
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3235,
+        "nuevas_sas": 664,
+        "nuevas_personas_naturales": 2109,
+        "stock_activas": 31215,
+        "stock_canceladas": 52259,
+        "tasa_supervivencia_pct": 37.39,
+        "activas_sas": 6452,
+        "activas_persona_natural": 13675,
+        "activas_limitadas": 2519,
+        "activas_anonimas": 114,
+        "activas_esal": 8122,
+        "establecimientos_activos": 17216
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 2592,
+        "nuevas_sas": 286,
+        "nuevas_personas_naturales": 1985,
+        "stock_activas": 22777,
+        "stock_canceladas": 30097,
+        "tasa_supervivencia_pct": 43.08,
+        "activas_sas": 3558,
+        "activas_persona_natural": 13641,
+        "activas_limitadas": 557,
+        "activas_anonimas": 46,
+        "activas_esal": 4878,
+        "establecimientos_activos": 14039
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 2248,
+        "nuevas_sas": 440,
+        "nuevas_personas_naturales": 1415,
+        "stock_activas": 18813,
+        "stock_canceladas": 27162,
+        "tasa_supervivencia_pct": 40.92,
+        "activas_sas": 4299,
+        "activas_persona_natural": 9199,
+        "activas_limitadas": 498,
+        "activas_anonimas": 66,
+        "activas_esal": 4652,
+        "establecimientos_activos": 12504
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 2697,
+        "nuevas_sas": 369,
+        "nuevas_personas_naturales": 2093,
+        "stock_activas": 18075,
+        "stock_canceladas": 56487,
+        "tasa_supervivencia_pct": 24.24,
+        "activas_sas": 2868,
+        "activas_persona_natural": 11151,
+        "activas_limitadas": 518,
+        "activas_anonimas": 41,
+        "activas_esal": 3347,
+        "establecimientos_activos": 13015
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 1551,
+        "nuevas_sas": 204,
+        "nuevas_personas_naturales": 1244,
+        "stock_activas": 15623,
+        "stock_canceladas": 31238,
+        "tasa_supervivencia_pct": 33.34,
+        "activas_sas": 2602,
+        "activas_persona_natural": 9359,
+        "activas_limitadas": 1253,
+        "activas_anonimas": 29,
+        "activas_esal": 2348,
+        "establecimientos_activos": 9040
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 1099,
+        "nuevas_sas": 183,
+        "nuevas_personas_naturales": 846,
+        "stock_activas": 9602,
+        "stock_canceladas": 14196,
+        "tasa_supervivencia_pct": 40.35,
+        "activas_sas": 2165,
+        "activas_persona_natural": 5135,
+        "activas_limitadas": 1250,
+        "activas_anonimas": 64,
+        "activas_esal": 821,
+        "establecimientos_activos": 6616
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 1002,
+        "nuevas_sas": 196,
+        "nuevas_personas_naturales": 736,
+        "stock_activas": 6649,
+        "stock_canceladas": 11274,
+        "tasa_supervivencia_pct": 37.1,
+        "activas_sas": 1119,
+        "activas_persona_natural": 4345,
+        "activas_limitadas": 132,
+        "activas_anonimas": 10,
+        "activas_esal": 1008,
+        "establecimientos_activos": 3936
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 652,
+        "nuevas_sas": 104,
+        "nuevas_personas_naturales": 524,
+        "stock_activas": 4739,
+        "stock_canceladas": 8334,
+        "tasa_supervivencia_pct": 36.25,
+        "activas_sas": 1138,
+        "activas_persona_natural": 2724,
+        "activas_limitadas": 271,
+        "activas_anonimas": 8,
+        "activas_esal": 573,
+        "establecimientos_activos": 2790
+      }
+    ],
+    "2025": [
+      {
+        "ranking": 1,
+        "codigo_dane": "11",
+        "departamento": "BOGOTÁ, D.C.",
+        "nuevas_empresas": 86658,
+        "nuevas_sas": 29444,
+        "nuevas_personas_naturales": 55214,
+        "stock_activas": 1112667,
+        "stock_canceladas": 1233917,
+        "tasa_supervivencia_pct": 47.42,
+        "activas_sas": 425136,
+        "activas_persona_natural": 427339,
+        "activas_limitadas": 176145,
+        "activas_anonimas": 12784,
+        "activas_esal": 56074,
+        "establecimientos_activos": 448215
+      },
+      {
+        "ranking": 2,
+        "codigo_dane": "05",
+        "departamento": "ANTIOQUIA",
+        "nuevas_empresas": 47484,
+        "nuevas_sas": 16295,
+        "nuevas_personas_naturales": 30163,
+        "stock_activas": 419805,
+        "stock_canceladas": 636072,
+        "tasa_supervivencia_pct": 39.76,
+        "activas_sas": 156836,
+        "activas_persona_natural": 177330,
+        "activas_limitadas": 44528,
+        "activas_anonimas": 5226,
+        "activas_esal": 29457,
+        "establecimientos_activos": 281081
+      },
+      {
+        "ranking": 3,
+        "codigo_dane": "76",
+        "departamento": "VALLE DEL CAUCA",
+        "nuevas_empresas": 30563,
+        "nuevas_sas": 7369,
+        "nuevas_personas_naturales": 22198,
+        "stock_activas": 322105,
+        "stock_canceladas": 514112,
+        "tasa_supervivencia_pct": 38.52,
+        "activas_sas": 92758,
+        "activas_persona_natural": 149809,
+        "activas_limitadas": 41032,
+        "activas_anonimas": 3169,
+        "activas_esal": 29880,
+        "establecimientos_activos": 204299
+      },
+      {
+        "ranking": 4,
+        "codigo_dane": "08",
+        "departamento": "ATLÁNTICO",
+        "nuevas_empresas": 14882,
+        "nuevas_sas": 5962,
+        "nuevas_personas_naturales": 8077,
+        "stock_activas": 207794,
+        "stock_canceladas": 244482,
+        "tasa_supervivencia_pct": 45.94,
+        "activas_sas": 76707,
+        "activas_persona_natural": 78747,
+        "activas_limitadas": 28135,
+        "activas_anonimas": 1502,
+        "activas_esal": 18366,
+        "establecimientos_activos": 113175
+      },
+      {
+        "ranking": 5,
+        "codigo_dane": "68",
+        "departamento": "SANTANDER",
+        "nuevas_empresas": 16679,
+        "nuevas_sas": 3395,
+        "nuevas_personas_naturales": 12689,
+        "stock_activas": 176205,
+        "stock_canceladas": 302237,
+        "tasa_supervivencia_pct": 36.83,
+        "activas_sas": 42067,
+        "activas_persona_natural": 98248,
+        "activas_limitadas": 16768,
+        "activas_anonimas": 1023,
+        "activas_esal": 17006,
+        "establecimientos_activos": 129080
+      },
+      {
+        "ranking": 6,
+        "codigo_dane": "13",
+        "departamento": "BOLÍVAR",
+        "nuevas_empresas": 11883,
+        "nuevas_sas": 3594,
+        "nuevas_personas_naturales": 7052,
+        "stock_activas": 127589,
+        "stock_canceladas": 145451,
+        "tasa_supervivencia_pct": 46.73,
+        "activas_sas": 43490,
+        "activas_persona_natural": 45849,
+        "activas_limitadas": 16762,
+        "activas_anonimas": 874,
+        "activas_esal": 18284,
+        "establecimientos_activos": 65840
+      },
+      {
+        "ranking": 7,
+        "codigo_dane": "54",
+        "departamento": "NORTE DE SANTANDER",
+        "nuevas_empresas": 10896,
+        "nuevas_sas": 1437,
+        "nuevas_personas_naturales": 9127,
+        "stock_activas": 109956,
+        "stock_canceladas": 189078,
+        "tasa_supervivencia_pct": 36.77,
+        "activas_sas": 19839,
+        "activas_persona_natural": 72827,
+        "activas_limitadas": 8397,
+        "activas_anonimas": 315,
+        "activas_esal": 8115,
+        "establecimientos_activos": 83630
+      },
+      {
+        "ranking": 8,
+        "codigo_dane": "50",
+        "departamento": "META",
+        "nuevas_empresas": 11628,
+        "nuevas_sas": 2268,
+        "nuevas_personas_naturales": 8817,
+        "stock_activas": 104871,
+        "stock_canceladas": 177215,
+        "tasa_supervivencia_pct": 37.18,
+        "activas_sas": 22853,
+        "activas_persona_natural": 66482,
+        "activas_limitadas": 5228,
+        "activas_anonimas": 270,
+        "activas_esal": 9663,
+        "establecimientos_activos": 67021
+      },
+      {
+        "ranking": 9,
+        "codigo_dane": "25",
+        "departamento": "CUNDINAMARCA",
+        "nuevas_empresas": 12516,
+        "nuevas_sas": 1808,
+        "nuevas_personas_naturales": 10343,
+        "stock_activas": 98760,
+        "stock_canceladas": 114898,
+        "tasa_supervivencia_pct": 46.22,
+        "activas_sas": 20014,
+        "activas_persona_natural": 65757,
+        "activas_limitadas": 3988,
+        "activas_anonimas": 246,
+        "activas_esal": 8225,
+        "establecimientos_activos": 65971
+      },
+      {
+        "ranking": 10,
+        "codigo_dane": "73",
+        "departamento": "TOLIMA",
+        "nuevas_empresas": 12027,
+        "nuevas_sas": 1630,
+        "nuevas_personas_naturales": 9804,
+        "stock_activas": 96784,
+        "stock_canceladas": 222392,
+        "tasa_supervivencia_pct": 30.32,
+        "activas_sas": 17275,
+        "activas_persona_natural": 59843,
+        "activas_limitadas": 7459,
+        "activas_anonimas": 307,
+        "activas_esal": 11058,
+        "establecimientos_activos": 78174
+      },
+      {
+        "ranking": 11,
+        "codigo_dane": "15",
+        "departamento": "BOYACÁ",
+        "nuevas_empresas": 10504,
+        "nuevas_sas": 1347,
+        "nuevas_personas_naturales": 8817,
+        "stock_activas": 90998,
+        "stock_canceladas": 169955,
+        "tasa_supervivencia_pct": 34.87,
+        "activas_sas": 16193,
+        "activas_persona_natural": 59040,
+        "activas_limitadas": 5865,
+        "activas_anonimas": 268,
+        "activas_esal": 9157,
+        "establecimientos_activos": 57834
+      },
+      {
+        "ranking": 12,
+        "codigo_dane": "52",
+        "departamento": "NARIÑO",
+        "nuevas_empresas": 8034,
+        "nuevas_sas": 931,
+        "nuevas_personas_naturales": 6567,
+        "stock_activas": 77763,
+        "stock_canceladas": 106768,
+        "tasa_supervivencia_pct": 42.14,
+        "activas_sas": 11787,
+        "activas_persona_natural": 47187,
+        "activas_limitadas": 3280,
+        "activas_anonimas": 229,
+        "activas_esal": 15059,
+        "establecimientos_activos": 52332
+      },
+      {
+        "ranking": 13,
+        "codigo_dane": "41",
+        "departamento": "HUILA",
+        "nuevas_empresas": 8058,
+        "nuevas_sas": 1348,
+        "nuevas_personas_naturales": 6337,
+        "stock_activas": 73034,
+        "stock_canceladas": 168120,
+        "tasa_supervivencia_pct": 30.29,
+        "activas_sas": 13765,
+        "activas_persona_natural": 42687,
+        "activas_limitadas": 4344,
+        "activas_anonimas": 218,
+        "activas_esal": 10800,
+        "establecimientos_activos": 48710
+      },
+      {
+        "ranking": 14,
+        "codigo_dane": "20",
+        "departamento": "CESAR",
+        "nuevas_empresas": 7193,
+        "nuevas_sas": 1359,
+        "nuevas_personas_naturales": 5180,
+        "stock_activas": 68873,
+        "stock_canceladas": 92543,
+        "tasa_supervivencia_pct": 42.67,
+        "activas_sas": 16538,
+        "activas_persona_natural": 36056,
+        "activas_limitadas": 3486,
+        "activas_anonimas": 151,
+        "activas_esal": 12262,
+        "establecimientos_activos": 46518
+      },
+      {
+        "ranking": 15,
+        "codigo_dane": "47",
+        "departamento": "MAGDALENA",
+        "nuevas_empresas": 6773,
+        "nuevas_sas": 1614,
+        "nuevas_personas_naturales": 4612,
+        "stock_activas": 67436,
+        "stock_canceladas": 101990,
+        "tasa_supervivencia_pct": 39.8,
+        "activas_sas": 17713,
+        "activas_persona_natural": 35065,
+        "activas_limitadas": 4997,
+        "activas_anonimas": 285,
+        "activas_esal": 8869,
+        "establecimientos_activos": 39859
+      },
+      {
+        "ranking": 16,
+        "codigo_dane": "66",
+        "departamento": "RISARALDA",
+        "nuevas_empresas": 8081,
+        "nuevas_sas": 1693,
+        "nuevas_personas_naturales": 6184,
+        "stock_activas": 64578,
+        "stock_canceladas": 196172,
+        "tasa_supervivencia_pct": 24.77,
+        "activas_sas": 15631,
+        "activas_persona_natural": 35208,
+        "activas_limitadas": 6129,
+        "activas_anonimas": 532,
+        "activas_esal": 6549,
+        "establecimientos_activos": 44932
+      },
+      {
+        "ranking": 17,
+        "codigo_dane": "17",
+        "departamento": "CALDAS",
+        "nuevas_empresas": 7165,
+        "nuevas_sas": 1193,
+        "nuevas_personas_naturales": 5729,
+        "stock_activas": 58251,
+        "stock_canceladas": 159238,
+        "tasa_supervivencia_pct": 26.78,
+        "activas_sas": 13032,
+        "activas_persona_natural": 34233,
+        "activas_limitadas": 5184,
+        "activas_anonimas": 522,
+        "activas_esal": 4468,
+        "establecimientos_activos": 40527
+      },
+      {
+        "ranking": 18,
+        "codigo_dane": "23",
+        "departamento": "CÓRDOBA",
+        "nuevas_empresas": 6204,
+        "nuevas_sas": 1490,
+        "nuevas_personas_naturales": 3976,
+        "stock_activas": 55130,
+        "stock_canceladas": 76797,
+        "tasa_supervivencia_pct": 41.79,
+        "activas_sas": 14550,
+        "activas_persona_natural": 25229,
+        "activas_limitadas": 3825,
+        "activas_anonimas": 197,
+        "activas_esal": 11038,
+        "establecimientos_activos": 32067
+      },
+      {
+        "ranking": 19,
+        "codigo_dane": "19",
+        "departamento": "CAUCA",
+        "nuevas_empresas": 5537,
+        "nuevas_sas": 634,
+        "nuevas_personas_naturales": 4583,
+        "stock_activas": 54009,
+        "stock_canceladas": 84020,
+        "tasa_supervivencia_pct": 39.13,
+        "activas_sas": 8692,
+        "activas_persona_natural": 32516,
+        "activas_limitadas": 2350,
+        "activas_anonimas": 338,
+        "activas_esal": 9442,
+        "establecimientos_activos": 39686
+      },
+      {
+        "ranking": 20,
+        "codigo_dane": "85",
+        "departamento": "CASANARE",
+        "nuevas_empresas": 4458,
+        "nuevas_sas": 799,
+        "nuevas_personas_naturales": 3512,
+        "stock_activas": 38960,
+        "stock_canceladas": 71237,
+        "tasa_supervivencia_pct": 35.35,
+        "activas_sas": 9846,
+        "activas_persona_natural": 22076,
+        "activas_limitadas": 2296,
+        "activas_anonimas": 79,
+        "activas_esal": 4578,
+        "establecimientos_activos": 23564
+      },
+      {
+        "ranking": 21,
+        "codigo_dane": "63",
+        "departamento": "QUINDÍO",
+        "nuevas_empresas": 5340,
+        "nuevas_sas": 887,
+        "nuevas_personas_naturales": 4356,
+        "stock_activas": 38705,
+        "stock_canceladas": 115709,
+        "tasa_supervivencia_pct": 25.07,
+        "activas_sas": 8090,
+        "activas_persona_natural": 23388,
+        "activas_limitadas": 2809,
+        "activas_anonimas": 222,
+        "activas_esal": 3883,
+        "establecimientos_activos": 29654
+      },
+      {
+        "ranking": 22,
+        "codigo_dane": "44",
+        "departamento": "LA GUAJIRA",
+        "nuevas_empresas": 3367,
+        "nuevas_sas": 566,
+        "nuevas_personas_naturales": 2411,
+        "stock_activas": 37208,
+        "stock_canceladas": 55910,
+        "tasa_supervivencia_pct": 39.96,
+        "activas_sas": 7442,
+        "activas_persona_natural": 18768,
+        "activas_limitadas": 2600,
+        "activas_anonimas": 66,
+        "activas_esal": 8029,
+        "establecimientos_activos": 20121
+      },
+      {
+        "ranking": 23,
+        "codigo_dane": "70",
+        "departamento": "SUCRE",
+        "nuevas_empresas": 3755,
+        "nuevas_sas": 668,
+        "nuevas_personas_naturales": 2771,
+        "stock_activas": 34701,
+        "stock_canceladas": 52493,
+        "tasa_supervivencia_pct": 39.8,
+        "activas_sas": 7078,
+        "activas_persona_natural": 16225,
+        "activas_limitadas": 2520,
+        "activas_anonimas": 114,
+        "activas_esal": 8415,
+        "establecimientos_activos": 19722
+      },
+      {
+        "ranking": 24,
+        "codigo_dane": "86",
+        "departamento": "PUTUMAYO",
+        "nuevas_empresas": 2376,
+        "nuevas_sas": 248,
+        "nuevas_personas_naturales": 1928,
+        "stock_activas": 24943,
+        "stock_canceladas": 30285,
+        "tasa_supervivencia_pct": 45.16,
+        "activas_sas": 3791,
+        "activas_persona_natural": 15375,
+        "activas_limitadas": 557,
+        "activas_anonimas": 46,
+        "activas_esal": 5071,
+        "establecimientos_activos": 15682
+      },
+      {
+        "ranking": 25,
+        "codigo_dane": "27",
+        "departamento": "CHOCÓ",
+        "nuevas_empresas": 2046,
+        "nuevas_sas": 351,
+        "nuevas_personas_naturales": 1410,
+        "stock_activas": 20793,
+        "stock_canceladas": 27227,
+        "tasa_supervivencia_pct": 43.3,
+        "activas_sas": 4648,
+        "activas_persona_natural": 10545,
+        "activas_limitadas": 499,
+        "activas_anonimas": 66,
+        "activas_esal": 4935,
+        "establecimientos_activos": 14169
+      },
+      {
+        "ranking": 26,
+        "codigo_dane": "18",
+        "departamento": "CAQUETÁ",
+        "nuevas_empresas": 2477,
+        "nuevas_sas": 346,
+        "nuevas_personas_naturales": 1961,
+        "stock_activas": 20252,
+        "stock_canceladas": 56770,
+        "tasa_supervivencia_pct": 26.29,
+        "activas_sas": 3199,
+        "activas_persona_natural": 12829,
+        "activas_limitadas": 519,
+        "activas_anonimas": 41,
+        "activas_esal": 3511,
+        "establecimientos_activos": 14775
+      },
+      {
+        "ranking": 27,
+        "codigo_dane": "81",
+        "departamento": "ARAUCA",
+        "nuevas_empresas": 1414,
+        "nuevas_sas": 164,
+        "nuevas_personas_naturales": 1177,
+        "stock_activas": 16885,
+        "stock_canceladas": 31373,
+        "tasa_supervivencia_pct": 34.99,
+        "activas_sas": 2754,
+        "activas_persona_natural": 10399,
+        "activas_limitadas": 1253,
+        "activas_anonimas": 29,
+        "activas_esal": 2418,
+        "establecimientos_activos": 9970
+      },
+      {
+        "ranking": 28,
+        "codigo_dane": "88",
+        "departamento": "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA",
+        "nuevas_empresas": 852,
+        "nuevas_sas": 191,
+        "nuevas_personas_naturales": 618,
+        "stock_activas": 10434,
+        "stock_canceladas": 14210,
+        "tasa_supervivencia_pct": 42.34,
+        "activas_sas": 2351,
+        "activas_persona_natural": 5739,
+        "activas_limitadas": 1250,
+        "activas_anonimas": 64,
+        "activas_esal": 860,
+        "establecimientos_activos": 7248
+      },
+      {
+        "ranking": 29,
+        "codigo_dane": "95",
+        "departamento": "GUAVIARE",
+        "nuevas_empresas": 713,
+        "nuevas_sas": 127,
+        "nuevas_personas_naturales": 546,
+        "stock_activas": 7299,
+        "stock_canceladas": 11330,
+        "tasa_supervivencia_pct": 39.18,
+        "activas_sas": 1243,
+        "activas_persona_natural": 4831,
+        "activas_limitadas": 132,
+        "activas_anonimas": 10,
+        "activas_esal": 1047,
+        "establecimientos_activos": 4301
+      },
+      {
+        "ranking": 30,
+        "codigo_dane": "91",
+        "departamento": "AMAZONAS",
+        "nuevas_empresas": 598,
+        "nuevas_sas": 83,
+        "nuevas_personas_naturales": 482,
+        "stock_activas": 5296,
+        "stock_canceladas": 8369,
+        "tasa_supervivencia_pct": 38.76,
+        "activas_sas": 1215,
+        "activas_persona_natural": 3173,
+        "activas_limitadas": 273,
+        "activas_anonimas": 8,
+        "activas_esal": 602,
+        "establecimientos_activos": 3195
+      }
+    ]
+  }
+}

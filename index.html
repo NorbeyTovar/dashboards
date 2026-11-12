@@ -1,0 +1,2506 @@
+<!doctype html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Tablero SNIES · CADIT</title>
+
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+
+  <!-- Tipografía de marca; sin internet el navegador usa su sans-serif. -->
+
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Serif:wght@600&display=swap">
+
+  <script src="vendor/chart.umd.min.js"></script>
+
+  <script src="vendor/jspdf.umd.min.js"></script>
+
+  <script src="vendor/xlsx.full.min.js"></script>
+
+  <script src="vendor/echarts.min.js"></script>
+
+  <link rel="stylesheet" href="estilo-cadit.css"> <!-- estilo común de los tableros CADIT -->
+
+  <style>
+    /* ── Estándar Visual CADIT 2.0 · Tablero SNIES ── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1280px) {
+      .kpis {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 540px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    .kpi-card {
+      min-height: 138px;
+      position: relative;
+    }
+
+    .kpi-card.clicable {
+      cursor: pointer;
+    }
+
+    .kpi-card.clicable:hover {
+      border-color: var(--azul, #004A93);
+      box-shadow: 0 6px 20px rgba(0, 74, 147, 0.1);
+      transform: translateY(-2px);
+      z-index: 30;
+    }
+
+    .kpi-card.activa {
+      border-color: #004A93;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFD 100%);
+      box-shadow: inset 0 -3.5px 0 #FFD300, 0 4px 14px rgba(0, 74, 147, 0.08);
+    }
+
+    .kpi-card-header {
+      position: relative;
+    }
+
+    .kpi-card-aside {
+      position: static;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Anular apertura accidental en toda la tarjeta de estilo-cadit.css; solo abrir en botón ⓘ */
+    .kpi-card:hover .popup-info-kpi,
+    .kpi-card .popup-info-kpi:hover {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+    }
+
+    .kpi-info-btn:hover+.popup-info-kpi,
+    .kpi-info-btn:focus-visible+.popup-info-kpi {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      pointer-events: none !important;
+      transition-delay: 0.08s !important;
+      z-index: 1000;
+    }
+
+    .kpi-card:has(.kpi-info-btn:hover),
+    .kpi-card:has(.kpi-info-btn:focus-visible) {
+      z-index: 100;
+    }
+
+    .popup-info-kpi {
+      z-index: 1000;
+      top: calc(100% + 6px);
+      right: 0;
+      left: auto;
+      width: min(270px, calc(100vw - 48px));
+      border-top: 3.5px solid #004A93;
+    }
+
+    .kpis>.kpi-card:nth-child(4n+1) .popup-info-kpi {
+      left: 0;
+      right: auto;
+    }
+
+    @media (max-width: 1280px) {
+      .kpis>.kpi-card:nth-child(4n+1) .popup-info-kpi {
+        left: auto;
+        right: 0;
+      }
+
+      .kpis>.kpi-card:nth-child(3n+1) .popup-info-kpi {
+        left: 0;
+        right: auto;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .kpis>.kpi-card:nth-child(3n+1) .popup-info-kpi {
+        left: auto;
+        right: 0;
+      }
+
+      .kpis>.kpi-card:nth-child(2n+1) .popup-info-kpi {
+        left: 0;
+        right: auto;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .kpis>.kpi-card .popup-info-kpi {
+        left: 0 !important;
+        right: 0 !important;
+        width: auto !important;
+      }
+    }
+
+    #kpis-acreditacion {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    #kpis-acreditacion>.kpi-card:nth-child(4n+1) .popup-info-kpi {
+      left: auto;
+      right: 0;
+    }
+
+    #kpis-acreditacion>.kpi-card:nth-child(3n+1) .popup-info-kpi {
+      left: 0;
+      right: auto;
+    }
+
+    @media (max-width: 900px) {
+      #kpis-acreditacion {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #kpis-acreditacion>.kpi-card:nth-child(3n+1) .popup-info-kpi {
+        left: auto;
+        right: 0;
+      }
+
+      #kpis-acreditacion>.kpi-card:nth-child(2n+1) .popup-info-kpi {
+        left: 0;
+        right: auto;
+      }
+    }
+
+    @media (max-width: 540px) {
+      #kpis-acreditacion {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: #004A93;
+      font-size: 12px;
+      margin-bottom: 5px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    .popup-info-meta {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #E2E8F0;
+      font-size: 10px;
+      color: #64748B;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    /* ── Barra de Chips Activos ── */
+    .chips-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #F1F5F9;
+    }
+
+    .chip-filtro {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #004A93;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      animation: popIn .2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .chip-filtro button {
+      background: none;
+      border: none;
+      color: #004A93;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 0 2px;
+      line-height: 1;
+    }
+
+    .chip-filtro button:hover {
+      color: #EF4444;
+    }
+
+    /* ── Regla de Oro: Ficha de Síntesis Territorial ── */
+    .ficha-territorial-activa {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-top: 3.5px solid #004A93;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 16px 36px -4px rgba(0, 74, 147, 0.10);
+      color: #212844;
+      position: relative;
+    }
+
+    .ficha-territorial-activa.popup-activa {
+      animation: popupFichaTerritorial 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes popupFichaTerritorial {
+      0% {
+        opacity: 0;
+        transform: translateY(-14px) scale(0.98);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .ficha-territorial-cab {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .ficha-territorial-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ficha-tag {
+      background: rgba(0, 74, 147, 0.08);
+      color: #004A93;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 3px 9px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 74, 147, 0.2);
+    }
+
+    .ficha-nombre {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0;
+      color: #212844;
+      letter-spacing: -.02em;
+    }
+
+    .ficha-ranking-badge {
+      background: #004A93;
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 4px;
+    }
+
+    .btn-quitar-ficha {
+      background: #F8FAFC;
+      color: #475569;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .18s ease;
+    }
+
+    .btn-quitar-ficha:hover {
+      background: #004A93;
+      color: #FFFFFF;
+      border-color: #004A93;
+    }
+
+    .ficha-metricas-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .ficha-metricas-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .ficha-metricas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ficha-metrica-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      transition: all .2s ease;
+    }
+
+    .ficha-metrica-card:hover {
+      border-color: #004A93;
+      background: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 74, 147, 0.08);
+    }
+
+    .ficha-metrica-card.ficha-destacada {
+      background: rgba(0, 74, 147, 0.04);
+      border-color: rgba(0, 74, 147, 0.25);
+    }
+
+    .ficha-metrica-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #64748B;
+      margin-bottom: 4px;
+    }
+
+    .ficha-metrica-num-fila {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .ficha-metrica-val {
+      font-size: 21px;
+      font-weight: 800;
+      color: #212844;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.15;
+    }
+
+    .ficha-metrica-val.acento {
+      color: #004A93;
+    }
+
+    .ficha-metrica-unit {
+      font-size: 11px;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    .ficha-metrica-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #FFD300;
+      color: #212844;
+    }
+
+    .ficha-metrica-sub {
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+
+    /* ── Cuadrícula Territorial CADIT (Mapa ECharts + Ranking) ── */
+    .cuadricula-territorial {
+      display: grid;
+      grid-template-columns: 1.22fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .cuadricula-territorial {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mapa-echarts-contenedor {
+      width: 100%;
+      height: 480px;
+      border-radius: 8px;
+      background: #FFFFFF;
+      position: relative;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <aside class="lateral">
+
+    <div class="marca">
+
+      <div class="marca-info">
+
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+
+      </div>
+
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+
+        <span>Menú</span>
+
+      </button>
+
+    </div>
+
+    <nav id="menu" aria-label="Secciones del tablero">
+
+      <h3>Estudiantes · SNIES</h3>
+
+      <button data-v="matriculados" class="activa">Matrícula</button>
+
+      <button data-v="inscritos">Inscritos</button>
+
+      <button data-v="admitidos">Admitidos</button>
+
+      <button data-v="primer_curso">Primer curso</button>
+
+      <button data-v="graduados">Graduados</button>
+
+      <h3>Instituciones · SNIES</h3>
+
+      <button data-v="docentes">Docentes</button>
+
+      <h3>Calidad</h3>
+
+      <button data-v="acreditacion">Acreditación</button>
+
+      <h3>Otros tableros</h3>
+
+      <button data-v="sena">SENA · Formación</button>
+
+      <button data-v="icetex">ICETEX – Créditos</button>
+
+      <button data-v="latam">Educación Superior · LATAM</button>
+
+      <button data-v="minciencias">MinCiencias · Grupos</button>
+
+      <button data-v="idic">IDIC · Innovación</button>
+
+      <button data-v="rues">RUES · Empresas</button>
+
+      <h3>Gobierno de Datos</h3>
+
+      <button data-v="fuentes">Registro de Fuentes</button>
+
+    </nav>
+
+  </aside>
+
+
+
+  <div class="contenido">
+
+    <div class="barra">
+
+      <div class="buscar">
+
+        <input id="buscar" type="search" placeholder="Buscar institución por nombre o código…" autocomplete="off"
+          aria-label="Buscar institución">
+
+        <div id="resultados" hidden></div>
+
+        <select id="f-cod_ies" hidden></select> <!-- filtro de institución: lo fija el buscador -->
+
+      </div>
+
+      <div class="chip" id="chip" hidden><span id="chip-texto"></span><button id="quitar-ies" title="Quitar institución"
+          aria-label="Quitar institución">×</button></div>
+
+      <div class="barra-subfila">
+
+        <span class="corte" id="corte"></span>
+
+        <div class="acciones"><button id="pdf" disabled style="display: none;">PDF</button> <button id="xlsx" disabled
+            style="display: none;">XLSX</button></div>
+
+      </div>
+
+    </div>
+
+
+
+    <main>
+
+      <div class="encabezado">
+        <h1 id="titulo">Base Externa · SNIES</h1>
+        <p id="subtitulo"></p>
+      </div>
+
+
+
+      <section id="filtros" class="area-filtros">
+
+        <div class="filtros-prioritarios">
+
+          <div class="filtro-campo"><label for="f-ano">Año</label><select id="f-ano"></select></div>
+
+          <div class="filtro-campo"><label for="f-semestre">Semestre</label><select id="f-semestre"></select></div>
+
+          <div class="filtro-campo"><label for="f-departamento">Departamento</label><select
+              id="f-departamento"></select></div>
+
+          <div class="filtro-campo"><label for="f-municipio">Municipio</label><select id="f-municipio"></select></div>
+
+          <div class="filtro-campo"><label for="f-sector">Sector</label><select id="f-sector"></select></div>
+
+          <div class="filtro-campo"><label for="f-nivel_de_formacion">Nivel de formación</label><select
+              id="f-nivel_de_formacion"></select></div>
+
+          <div class="filtros-acciones">
+
+            <button id="limpiar" class="btn-limpiar" type="button">
+
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+
+              <span>Limpiar filtros</span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+        <div id="chips-activos" class="chips-barra" hidden></div>
+
+      </section>
+
+
+
+      <div id="estado">Cargando datos…</div>
+
+
+
+      <div id="p-snies" class="pagina">
+
+        <div class="kpis" id="kpis-snies"></div>
+
+        <h3 class="seccion">¿Cómo evoluciona el sistema de educación superior?</h3>
+
+        <div class="rejilla">
+
+          <div class="panel">
+            <h2 id="h-tendencia"></h2>
+            <p class="sub" id="s-tendencia"></p>
+            <div class="grafico"><canvas id="g-tendencia"></canvas></div>
+          </div>
+
+          <div class="panel">
+            <h2 id="h-t-deptos"></h2>
+            <p class="sub" id="s-t-deptos"></p>
+            <div class="grafico"><canvas id="g-t-deptos"></canvas></div>
+          </div>
+
+          <div class="panel panel-ancho" style="grid-column: 1 / -1;">
+            <h2 id="h-t-ies"></h2>
+            <p class="sub">Las 5 con más en el último año · clic en una línea para filtrar por institución</p>
+            <div class="grafico"><canvas id="g-t-ies"></canvas></div>
+          </div>
+
+        </div>
+
+        <h3 class="seccion">Distribución territorial en Colombia</h3>
+
+        <!-- Ficha de Síntesis Territorial CADIT 2.0 (Regla de Oro: Popup interactivo sobre el mapa) -->
+
+        <div class="ficha-territorial-activa" id="ficha-territorial-activa" hidden>
+
+          <div class="ficha-territorial-cab">
+
+            <div class="ficha-territorial-info">
+
+              <span class="ficha-tag">Territorio seleccionado</span>
+
+              <h3 id="ficha-dpto-nombre" class="ficha-nombre">—</h3>
+
+              <span class="ficha-ranking-badge" id="ficha-dpto-ranking">Puesto #— nacional</span>
+
+            </div>
+
+            <button type="button" id="btn-cerrar-ficha-dpto" class="btn-quitar-ficha"
+              title="Restablecer vista nacional">Restablecer vista nacional ×</button>
+
+          </div>
+
+          <div class="ficha-metricas-grid">
+
+            <div class="ficha-metrica-card">
+
+              <span class="ficha-metrica-label" id="ficha-lbl-vol">Volumen territorial</span>
+
+              <div class="ficha-metrica-num-fila">
+
+                <span class="ficha-metrica-val" id="ficha-val-vol">—</span>
+
+                <span class="ficha-metrica-unit" id="ficha-unit-vol">personas</span>
+
+              </div>
+
+              <span class="ficha-metrica-sub" id="ficha-sub-vol">Promedio semestral</span>
+
+            </div>
+
+            <div class="ficha-metrica-card ficha-destacada">
+
+              <span class="ficha-metrica-label">Participación nacional</span>
+
+              <div class="ficha-metrica-num-fila">
+
+                <span class="ficha-metrica-val acento" id="ficha-val-pct">—</span>
+
+                <span class="ficha-metrica-badge">Peso país</span>
+
+              </div>
+
+              <span class="ficha-metrica-sub" id="ficha-sub-pct">Respecto al total Colombia</span>
+
+            </div>
+
+            <div class="ficha-metrica-card">
+
+              <span class="ficha-metrica-label">Presencia institucional</span>
+
+              <div class="ficha-metrica-num-fila">
+
+                <span class="ficha-metrica-val" id="ficha-val-ies">—</span>
+
+                <span class="ficha-metrica-unit">IES activas</span>
+
+              </div>
+
+              <span class="ficha-metrica-sub">Con oferta o matrícula en el territorio</span>
+
+            </div>
+
+            <div class="ficha-metrica-card">
+
+              <span class="ficha-metrica-label">Programas con registro</span>
+
+              <div class="ficha-metrica-num-fila">
+
+                <span class="ficha-metrica-val" id="ficha-val-prog">—</span>
+
+                <span class="ficha-metrica-unit">activos</span>
+
+              </div>
+
+              <span class="ficha-metrica-sub">Catálogo oficial SNIES - MEN</span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="cuadricula-territorial">
+
+          <div class="panel">
+
+            <h2 id="h-mapa">¿Dónde se concentra la educación superior?</h2>
+
+            <p class="sub" id="s-mapa">Mapa de Colombia · Clic en un departamento para filtrar el territorio</p>
+
+            <div id="g-mapa-colombia" class="mapa-echarts-contenedor"></div>
+
+          </div>
+
+          <div class="panel">
+
+            <h2 id="h-deptos"></h2>
+
+            <p class="sub" id="s-deptos"></p>
+
+            <div class="grafico" style="height: 480px;"><canvas id="g-deptos"></canvas></div>
+
+          </div>
+
+        </div>
+
+        <h3 class="seccion" id="h-detalle"></h3>
+
+        <div class="panel">
+          <div class="tabla" id="d-snies"></div>
+
+          <p class="nota">Clic en una fila para filtrar por esa institución. Las cifras del año son el promedio de sus
+            semestres cargados. Estudiantes: lugar de oferta del programa. Docentes: domicilio de la IES; no tienen
+            nivel de formación, por eso aparecen con "—" cuando se elige un nivel de formación. Fuente: SNIES-MEN.</p>
+        </div>
+
+      </div>
+
+
+
+      <div id="p-acreditacion" class="pagina" hidden>
+
+        <div class="kpis" id="kpis-acreditacion"></div>
+
+        <h3 class="seccion">Tendencias</h3>
+
+        <div class="rejilla">
+
+          <div class="panel">
+            <h2 id="h-a-anual"></h2>
+            <p class="sub">Programas acreditados según el año de su resolución, pregrado y posgrado</p>
+            <div class="grafico"><canvas id="g-a-anual"></canvas></div>
+          </div>
+
+          <div class="panel">
+            <h2 id="h-a-acumulado"></h2>
+            <p class="sub" id="s-a-acumulado"></p>
+            <div class="grafico"><canvas id="g-a-acumulado"></canvas></div>
+          </div>
+
+          <div class="panel">
+            <h2 id="h-a-ies"></h2>
+            <p class="sub">Clic en una barra para filtrar por institución</p>
+            <div class="grafico"><canvas id="g-a-ies"></canvas></div>
+          </div>
+
+        </div>
+
+        <h3 class="seccion" id="h-a-detalle">Programas acreditados</h3>
+
+        <div class="panel">
+          <div class="tabla" id="d-acr"></div>
+
+          <p class="nota">Es el listado vigente de programas con acreditación de alta calidad. Las tendencias usan el
+            año de la fecha de resolución; los programas sin fecha en la fuente no aparecen en ellas. Fuente: SNIES-MEN.
+          </p>
+        </div>
+
+      </div>
+
+
+
+      <div id="p-spadies" class="pagina" hidden>
+
+        <div class="panel">
+          <h2>SPADIES</h2>
+          <p class="sub">Todavía no hay datos cargados de SPADIES. Cuando se carguen, aquí aparecerán la deserción y la
+            permanencia.</p>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+
+  <script>
+
+    Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+
+    Chart.defaults.color = "#212844";
+
+    const MEDIDAS = {
+      matriculados: "Matriculados", inscritos: "Inscritos", admitidos: "Admitidos", primer_curso: "Primer curso",
+
+      graduados: "Graduados", docentes: "Docentes"
+    };
+
+    const ESTUDIANTES = ["matriculados", "inscritos", "admitidos", "primer_curso", "graduados"];
+
+    const SIN_NIVEL = ["docentes"];  // no tienen programa ni nivel de formación
+
+    const FILTROS = ["ano", "semestre", "departamento", "municipio", "cod_ies", "sector", "nivel_de_formacion"];
+
+    const SERIES = ["#004A93", "#3D7CC9", "#E0A800", "#00397A", "#212844"];  // colores de marca; ocre en vez de amarillo sobre blanco
+
+    const corto = new Intl.NumberFormat("es-CO", { notation: "compact" });  // ejes: 1,5 M; la cifra completa va en el tooltip
+
+    const fmt = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 1 }));
+
+    const pct = n => n.toLocaleString("es-CO", { maximumFractionDigits: 1 }) + " %";
+
+    const $ = id => document.getElementById(id);
+
+    const periodo = r => `${r.ano}-${r.semestre}`;
+
+    const suma = filas => filas.reduce((s, r) => s + Number(r.valor), 0);
+
+    const promedio = total => Math.round(total / SEMESTRES);  // promedio semestral en número entero de personas
+
+    const delAnio = (f, a) => promedio(suma(f.filter(r => r.ano === a)));
+
+    let datos = {}, vista = "matriculados", graficos = {}, detalle = {}, logoPdf = null;
+    let chartMapaEcharts = null;
+
+    const DEPTO_A_SVG = {
+      "Bogotá, D.C.": "Distrito Capital de Bogotá",
+      "Norte de Santander": "Norde de Santander",
+      "Guainía": "Guainia",
+      "Quindío": "Quindio",
+      "San Andrés y Providencia": "San Andrés, Providencia y Santa Catalina",
+      "Archipiélago de San Andrés, Providencia y Santa Catalina": "San Andrés, Providencia y Santa Catalina"
+    };
+
+    const SVG_A_DEPTO = {
+      "Distrito Capital de Bogotá": "Bogotá, D.C.",
+      "Norde de Santander": "Norte de Santander",
+      "Guainia": "Guainía",
+      "Quindio": "Quindío",
+      "San Andrés, Providencia y Santa Catalina": "San Andrés y Providencia"
+    };
+
+    const normalizarSvgName = d => DEPTO_A_SVG[d] || d;
+    const deptoDesdeSvgName = s => SVG_A_DEPTO[s] || s;
+
+    let ANIOS = [], ULTIMO = null, PERIODOS = [], SEMESTRES = 1, NOMBRE_IES = new Map();
+
+    const pagina = () => (vista === "acreditacion" || vista === "spadies" ? vista : "snies");
+
+
+
+    // En localhost:8080 (Docker) o localhost:8000 (Proxy API local), consume la API en /api/; publicado lee los JSON locales.
+    const LOCAL = location.port === "8080" || location.port === "8000" || new URLSearchParams(location.search).has("api");
+
+    // Publicado, el portal guarda la sesión de UNIMINUTO (MSAL) en este navegador: sin ella se va al portal a entrar.
+    // shortcut: el bloqueo es solo en el navegador, como el del portal; los JSON se pueden pedir por su dirección.
+    const conSesion = () => { try { return Object.keys(localStorage).some(k => k.includes("b1ba85eb-a253-4467-9ee8-d4f8ed4df300")); } catch { return false; } };
+    // En localhost no hay inicio de sesión de Microsoft (solo en umdcadit.com): ahí no se pide.
+    if (!["localhost", "127.0.0.1"].includes(location.hostname) && location.protocol !== "file:" && !conSesion()) location.replace("/");
+
+    async function cargar(ruta) {
+      const url = LOCAL ? `/api/${ruta}` : `datos/${ruta}.json`;
+      try {
+        const r = await fetch(url);
+        if (!r.ok) {
+          if (LOCAL) {
+            console.warn(`[CADIT] No respondió /api/${ruta} (${r.status}). Aplicando fallback a datos/${ruta}.json`);
+            const fb = await fetch(`datos/${ruta}.json`);
+            if (fb.ok) return fb.json();
+          }
+          throw new Error(`${ruta.split("?")[0]}: ${r.status}`);
+        }
+        return r.json();
+      } catch (err) {
+        if (LOCAL) {
+          try {
+            console.warn(`[CADIT] Error al conectar /api/${ruta}: ${err.message}. Intentando fallback local.`);
+            const fb = await fetch(`datos/${ruta}.json`);
+            if (fb.ok) return fb.json();
+          } catch (_) { }
+        }
+        throw err;
+      }
+    }
+
+
+
+    function filtrosActivos() {
+
+      const f = {};
+
+      for (const k of FILTROS) { const v = $("f-" + k).value; if (v !== "") f[k] = v; }
+
+      return f;
+
+    }
+
+
+
+    function filtrar(filas) {
+
+      const f = filtrosActivos();
+
+      return filas.filter(r => Object.entries(f).every(([k, v]) => !(k in r) || String(r[k]) === v));
+
+    }
+
+
+
+    function sumarPor(filas, clave, valor) {
+
+      const m = new Map();
+
+      for (const r of filas) { const k = typeof clave === "function" ? clave(r) : r[clave]; m.set(k, (m.get(k) || 0) + Number(valor(r))); }
+
+      return [...m.entries()];
+
+    }
+
+
+
+    function top10(pares) { return pares.sort((a, b) => b[1] - a[1]).slice(0, 10); }
+
+
+
+    function opciones(id, valores, etiqueta = v => v) {
+
+      const sel = $(id), actual = sel.value;
+
+      sel.replaceChildren(new Option("Todos", ""));
+
+      for (const v of valores) sel.add(new Option(etiqueta(v), v));
+
+      if ([...sel.options].some(o => o.value === actual)) sel.value = actual;
+
+    }
+
+
+
+    function unicos(filas, k) { return [...new Set(filas.map(r => r[k]).filter(v => v != null))].sort((a, b) => String(a).localeCompare(String(b), "es")); }
+
+
+
+    function llenarFiltros() {
+
+      const todas = [...datos.conteos, ...datos.acreditacion];
+
+      opciones("f-ano", [...ANIOS].reverse().map(String));
+
+      opciones("f-semestre", ["1", "2"], s => `Semestre ${s}`);
+
+      opciones("f-departamento", unicos(todas, "departamento"));
+
+      opciones("f-cod_ies", [...NOMBRE_IES.keys()].sort((a, b) => (NOMBRE_IES.get(a) || "").localeCompare(NOMBRE_IES.get(b) || "", "es")), c => `${NOMBRE_IES.get(c) ?? c} (${c})`);
+
+      opciones("f-sector", unicos(todas, "sector"));
+
+      opciones("f-nivel_de_formacion", unicos(todas, "nivel_de_formacion"));
+
+      llenarMunicipios();
+
+    }
+
+
+
+    function llenarMunicipios() {
+
+      const d = $("f-departamento").value;
+
+      opciones("f-municipio", unicos([...datos.conteos, ...datos.acreditacion].filter(r => !d || r.departamento === d), "municipio"));
+
+    }
+
+
+
+    // Reactividad: un clic en una barra, línea o fila fija ese filtro y todo el tablero se vuelve a pintar.
+
+    function fijarFiltro(k, v) {
+
+      const sel = $("f-" + k);
+
+      if (![...sel.options].some(o => o.value === String(v))) return;
+
+      sel.value = v;
+
+      if (k === "departamento") llenarMunicipios();
+
+      pintar();
+
+    }
+
+
+
+    function animarNumero(el, valorFinal, duracion = 500, formato = fmt) {
+
+      if (valorFinal == null || isNaN(valorFinal)) {
+
+        el.textContent = "—";
+
+        return;
+
+      }
+
+      const valFin = Number(valorFinal);
+
+      const valIni = Number(el.dataset.valorActual || 0);
+
+      el.dataset.valorActual = valFin;
+
+      el.textContent = formato(valFin);
+
+      if (valIni === valFin) {
+
+        return;
+
+      }
+
+      const inicio = performance.now();
+
+      function paso(ahora) {
+
+        const progreso = Math.min((ahora - inicio) / duracion, 1);
+
+        const factor = 1 - Math.pow(1 - progreso, 3);
+
+        const actual = valIni + (valFin - valIni) * factor;
+
+        el.textContent = formato(Math.round(actual));
+
+        if (progreso < 1) requestAnimationFrame(paso);
+
+        else el.textContent = formato(valFin);
+
+      }
+
+      requestAnimationFrame(paso);
+
+    }
+
+
+
+    function barras(id, etiquetas, valores, alClic) {
+
+      const chart = graficos[id];
+
+      if (chart && chart.config.type === "bar") {
+
+        chart.data.labels = etiquetas;
+
+        chart.data.datasets[0].data = valores;
+
+        chart.options.onClick = (e, els) => els[0] && alClic?.(els[0].index);
+
+        chart.update({ duration: 500, easing: "easeOutQuart" });
+
+        return;
+
+      }
+
+      chart?.destroy();
+
+      graficos[id] = new Chart($(id), {
+
+        type: "bar",
+
+        data: { labels: etiquetas, datasets: [{ data: valores, backgroundColor: "#004A93", hoverBackgroundColor: "#3D7CC9", borderRadius: 4 }] },
+
+        options: {
+
+          indexAxis: "y",
+
+          maintainAspectRatio: false,
+
+          animation: {
+
+            duration: 500,
+
+            easing: "easeOutQuart",
+
+            delay: (ctx) => (ctx.type === 'data' && ctx.mode === 'default' ? ctx.dataIndex * 30 : 0)
+
+          },
+
+          transitions: {
+
+            active: { animation: { duration: 180 } }
+
+          },
+
+          onClick: (e, els) => els[0] && alClic?.(els[0].index),
+
+          onHover: (e, els) => { e.native.target.style.cursor = els.length && alClic ? "pointer" : "default"; },
+
+          plugins: { legend: { display: false }, tooltip: { animation: { duration: 150 }, callbacks: { label: c => fmt(c.raw) } } },
+
+          scales: {
+
+            x: { ticks: { callback: v => corto.format(v) } },
+
+            y: { ticks: { autoSkip: false, callback(v) { const t = this.getLabelForValue(v); return t.length > 24 ? t.slice(0, 23) + "…" : t; } } }
+
+          }
+
+        }
+
+      });
+
+    }
+
+
+
+    function lineas(id, etiquetas, series, alClic) {
+
+      const chart = graficos[id];
+
+      const nuevosDatasets = series.map(([nombre, valores], i) => ({
+
+        label: nombre, data: valores, borderColor: SERIES[i % SERIES.length],
+
+        backgroundColor: SERIES[i % SERIES.length], tension: .28, pointRadius: 3.5, pointHoverRadius: 6, borderWidth: 2.2
+
+      }));
+
+      if (chart && chart.config.type === "line") {
+
+        chart.data.labels = etiquetas;
+
+        chart.data.datasets = nuevosDatasets;
+
+        chart.options.onClick = (e, els, ch) => { const p = ch.getElementsAtEventForMode(e, "nearest", { intersect: false }, true)[0]; if (p && alClic) alClic(p.datasetIndex); };
+
+        chart.update({ duration: 550, easing: "easeInOutCubic" });
+
+        return;
+
+      }
+
+      chart?.destroy();
+
+      graficos[id] = new Chart($(id), {
+
+        type: "line",
+
+        data: { labels: etiquetas, datasets: nuevosDatasets },
+
+        options: {
+
+          maintainAspectRatio: false,
+
+          animation: {
+
+            duration: 550,
+
+            easing: "easeInOutCubic"
+
+          },
+
+          transitions: {
+
+            active: { animation: { duration: 180 } }
+
+          },
+
+          interaction: { mode: "index", intersect: false },
+
+          onClick: (e, els, ch) => { const p = ch.getElementsAtEventForMode(e, "nearest", { intersect: false }, true)[0]; if (p && alClic) alClic(p.datasetIndex); },
+
+          onHover: e => { e.native.target.style.cursor = alClic ? "pointer" : "default"; },
+
+          plugins: {
+
+            legend: {
+
+              position: "bottom", ...(alClic && { onClick: (e, item) => alClic(item.datasetIndex) }),
+
+              labels: { boxWidth: 12, generateLabels: c => Chart.defaults.plugins.legend.labels.generateLabels(c).map(l => ({ ...l, text: l.text.length > 30 ? l.text.slice(0, 29) + "…" : l.text })) }
+
+            },
+
+            tooltip: { animation: { duration: 150 }, callbacks: { label: c => `${c.dataset.label}: ${fmt(c.raw)}` } }
+
+          },
+
+          scales: { y: { beginAtZero: true, ticks: { callback: v => corto.format(v) } } }
+
+        }
+
+      });
+
+    }
+
+
+
+    // Una serie por cada uno de los n valores de `clave` con más en el último año, a lo largo de todos los periodos.
+
+    function seriesTop(filas, clave, n = 5) {
+
+      const top = top10(sumarPor(filas.filter(r => r.ano === ULTIMO), clave, r => r.valor)).slice(0, n).map(p => p[0]);
+
+      return top.map(k => { const m = new Map(sumarPor(filas.filter(r => r[clave] === k), periodo, r => r.valor)); return [k, PERIODOS.map(x => m.get(x) || 0)]; });
+
+    }
+
+
+
+    function spark(vals) {
+
+      if (vals.length < 2) return "";
+
+      const w = 120, h = 28, max = Math.max(...vals), min = Math.min(...vals), r = max - min || 1;
+
+      const pts = vals.map((v, i) => [i * w / (vals.length - 1), h - 3 - (v - min) / r * (h - 6)].map(n => n.toFixed(1)));
+
+      return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="#3D7CC9" stroke-width="1.5"/>`
+
+        + `<circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="2.5" fill="#fff" stroke="#004A93" stroke-width="1.5"/></svg>`;
+
+    }
+
+
+
+    // Diccionario de Metadatos Oficiales según DICCIONARIO_METRICAS_TABLEROS.md
+
+    const METADATA_SNIES = {
+
+      matriculados: {
+
+        titulo: "Matrícula Total Anual",
+
+        mide: "Promedio semestral de estudiantes matriculados en pregrado y posgrado en el año censado.",
+
+        calculo: "(Semestre 1 + Semestre 2) / 2 (Personas físicas promedio)",
+
+        fuente: "SNIES - MEN · Base Oficial"
+
+      },
+
+      inscritos: {
+
+        titulo: "Aspirantes Inscritos",
+
+        mide: "Total de solicitudes de admisión radicadas formalmente ante las instituciones en el año.",
+
+        calculo: "Sumatoria anual de personas inscritas",
+
+        fuente: "SNIES - MEN"
+
+      },
+
+      admitidos: {
+
+        titulo: "Aspirantes Admitidos",
+
+        mide: "Aspirantes que cumplieron los criterios de selección y fueron aceptados por las IES.",
+
+        calculo: "Sumatoria anual de personas admitidas",
+
+        fuente: "SNIES - MEN"
+
+      },
+
+      primer_curso: {
+
+        titulo: "Estudiantes de Primer Curso",
+
+        mide: "Estudiantes que ingresan por primera vez a un programa académico (nuevo ingreso).",
+
+        calculo: "Sumatoria anual de matriculados en primer semestre",
+
+        fuente: "SNIES - MEN"
+
+      },
+
+      graduados: {
+
+        titulo: "Graduados Anuales",
+
+        mide: "Estudiantes que completaron su plan de estudios y recibieron título formal en pregrado o posgrado.",
+
+        calculo: "Sumatoria anual de graduados",
+
+        fuente: "SNIES - MEN"
+
+      },
+
+      docentes: {
+
+        titulo: "Docentes Activos",
+
+        mide: "Cuerpo profesoral vinculado laboralmente a las instituciones en el año censado.",
+
+        calculo: "Conteo único de docentes reportados",
+
+        fuente: "SNIES - MEN"
+
+      },
+
+      programas: {
+
+        titulo: "Programas Académicos Activos",
+
+        mide: "Oferta académica autorizada por el MEN con Registro Calificado vigente.",
+
+        calculo: "Conteo de códigos SNIES activos",
+
+        fuente: "Catálogo Oficial SNIES - MEN"
+
+      }
+
+    };
+
+
+
+    const KICKERS_SNIES = {
+      matriculados: "VOLUMEN ACTIVO",
+      inscritos: "DEMANDA BRUTA",
+      admitidos: "SELECCIÓN",
+      primer_curso: "NUEVO INGRESO",
+      graduados: "TITULACIÓN",
+      docentes: "PLANTA PROFESORAL",
+      programas: "CATÁLOGO OFICIAL"
+    };
+
+    // Tarjeta KPI Humanizada CADIT 2.0 con Ficha Técnica (Pilar 1)
+    function tarjeta({ k, kicker, t, v, texto, prev, contra = ULTIMO - 1, serie = [], nota, badge = null, badgeClass = "badge-primary", progreso = null, progresoColor = "#004A93", delta = null, deltaClass = "delta-neutral", esHero = false, alClic, popupData }) {
+      const esActiva = k && k === vista;
+      const el = document.createElement("div");
+      el.className = "kpi-card" + (esActiva ? " activa" : "") + (alClic ? " clicable" : "");
+      if (alClic) {
+        el.setAttribute("role", "button");
+        el.setAttribute("tabindex", "0");
+        el.onclick = (e) => {
+          if (e.target.closest(".kpi-info-btn") || e.target.closest(".popup-info-kpi")) return;
+          alClic(e);
+        };
+        el.onkeydown = (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            if (e.target.closest(".kpi-info-btn") || e.target.closest(".popup-info-kpi")) return;
+            e.preventDefault();
+            alClic(e);
+          }
+        };
+      }
+
+      let popupHtml = "";
+      if (popupData) {
+        popupHtml = `
+      <div class="popup-info-kpi">
+        <div class="popup-info-header">${popupData.titulo || t}</div>
+        <div class="popup-info-body">
+          <p>${popupData.mide}</p>
+          ${popupData.calculo ? `<p style="color:#004A93;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+        </div>
+        <div class="popup-info-meta"><span>Fuente: ${popupData.fuente || "SNIES - MEN"}</span></div>
+      </div>
+    `;
+      }
+
+      const badgeHtml = badge ? `<span class="kpi-badge ${badgeClass}">${badge}</span>` : "";
+      const infoBtnHtml = popupData ? `<button type="button" class="kpi-info-btn" aria-label="Información técnica">ⓘ</button>${popupHtml}` : "";
+      const barHtml = progreso != null ? `
+    <div class="kpi-card-track" title="${Number(progreso).toFixed(1)}%">
+      <div class="kpi-card-track-fill" style="width:${Math.min(100, Math.max(0, progreso))}%; background:${progresoColor};"></div>
+    </div>` : "";
+      const deltaHtml = delta ? `<span class="kpi-delta ${deltaClass}">${delta}</span>` : "";
+
+      el.innerHTML = `
+    <div class="kpi-card-header">
+      <div class="kpi-card-meta">
+        ${kicker ? `<span class="kpi-card-kicker">${kicker}</span>` : ""}
+        <h4 class="kpi-card-title" title="${t}">${t}</h4>
+      </div>
+      <div class="kpi-card-aside">
+        ${badgeHtml}
+        ${infoBtnHtml}
+      </div>
+    </div>
+    <div class="kpi-card-body">
+      <b class="kpi-card-val ${esHero || esActiva ? "val-hero" : ""}"></b>
+      ${serie.length >= 2 ? `<div class="kpi-card-spark-wrap">${spark(serie)}</div>` : ""}
+    </div>
+    ${barHtml}
+    <div class="kpi-card-footer">
+      <p class="kpi-card-sub"></p>
+      ${deltaHtml}
+    </div>
+  `;
+
+      const bEl = el.querySelector(".kpi-card-val");
+      if (bEl) {
+        if (texto != null) {
+          bEl.className = "kpi-card-val val-text";
+          bEl.textContent = texto;
+        } else if (v == null) {
+          bEl.className = "kpi-card-val val-text";
+          bEl.textContent = "—";
+        } else {
+          bEl.textContent = fmt(v);
+          animarNumero(bEl, v, 450, fmt);
+        }
+      }
+
+      const s = el.querySelector(".kpi-card-sub");
+      if (s) {
+        if (nota) s.textContent = nota;
+        else if (prev) {
+          const d = (v - prev) / prev * 100;
+          s.innerHTML = `<em class="${d >= 0 ? "sube" : "baja"}"></em> vs ${contra}`;
+          s.firstChild.textContent = (d >= 0 ? "+" : "−") + pct(Math.abs(d));
+        } else s.textContent = `Corte ${ULTIMO}`;
+      }
+      return el;
+    }
+
+
+
+    function tabla(id, columnas, filas, alClic, max = 200) {
+
+      const t = document.createElement("table"), cab = t.createTHead().insertRow();
+
+      for (const [, titulo, num] of columnas) { const th = document.createElement("th"); th.textContent = titulo; if (num) th.className = "n"; cab.append(th); }
+
+      const cuerpo = t.createTBody();
+
+      for (const r of filas.slice(0, max)) {
+
+        const tr = cuerpo.insertRow();
+
+        if (alClic) { tr.className = "clic"; tr.onclick = () => alClic(r); }
+
+        for (const [k, , num] of columnas) { const td = tr.insertCell(); td.textContent = num ? fmt(r[k]) : (r[k] ?? ""); if (num) td.className = "n"; }
+
+      }
+
+      $(id).replaceChildren(t);
+
+    }
+
+
+
+    function actualizarChipsFiltros() {
+      const cont = $("chips-activos");
+      if (!cont) return;
+      const f = filtrosActivos();
+      const nombres = {
+        ano: "Año",
+        semestre: "Semestre",
+        departamento: "Departamento",
+        municipio: "Municipio",
+        cod_ies: "IES",
+        sector: "Sector",
+        nivel_de_formacion: "Nivel"
+      };
+      const entries = Object.entries(f);
+      if (!entries.length) {
+        cont.hidden = true;
+        cont.innerHTML = "";
+        return;
+      }
+      cont.hidden = false;
+      cont.replaceChildren(...entries.map(([k, v]) => {
+        const label = k === "cod_ies" ? ($("f-cod_ies").selectedOptions[0]?.text || v) : v;
+        const chip = document.createElement("span");
+        chip.className = "chip-filtro";
+        chip.innerHTML = `<span><b>${nombres[k]}:</b> ${label}</span><button type="button" aria-label="Quitar filtro ${nombres[k]}">×</button>`;
+        chip.querySelector("button").onclick = () => {
+          $("f-" + k).value = "";
+          if (k === "departamento") llenarMunicipios();
+          pintar();
+        };
+        return chip;
+      }));
+    }
+
+    function actualizarFichaTerritorial(m, filasDepto, totalNacional) {
+      const depto = $("f-departamento").value;
+      const ficha = $("ficha-territorial-activa");
+      if (!ficha) return;
+      if (!depto) {
+        ficha.hidden = true;
+        ficha.classList.remove("popup-activa");
+        return;
+      }
+      const nivel = $("f-nivel_de_formacion").value;
+      if (SIN_NIVEL.includes(m) && nivel) {
+        ficha.hidden = true;
+        return;
+      }
+
+      const anioActivo = $("f-ano")?.value ? Number($("f-ano").value) : ULTIMO;
+      const semActivo = $("f-semestre")?.value || "";
+      const etiquetaPeriodo = semActivo ? `${anioActivo}-${semActivo}` : `${anioActivo}`;
+
+      // Ranking departamental nacional en la medida actual
+      const nacionalPorDepto = sumarPor(
+        datos.conteos.filter(r => r.medida === m && r.ano === anioActivo && (!semActivo || String(r.semestre) === semActivo) && r.departamento && r.departamento !== "No aplica"),
+        "departamento",
+        r => r.valor
+      ).sort((a, b) => b[1] - a[1]);
+      const rankIdx = nacionalPorDepto.findIndex(p => p[0] === depto);
+      const rankText = rankIdx >= 0 ? `Puesto #${rankIdx + 1} nacional` : "Territorio filtrado";
+
+      const deMedida = filasDepto.filter(r => r.medida === m && r.ano === anioActivo && (!semActivo || String(r.semestre) === semActivo));
+      const volDpto = semActivo ? suma(deMedida) : promedio(suma(deMedida));
+      const sharePct = totalNacional > 0 ? (volDpto / totalNacional * 100) : 0;
+      const iesUnicas = new Set(filasDepto.filter(r => r.ano === anioActivo && (!semActivo || String(r.semestre) === semActivo)).map(r => r.cod_ies));
+      const progsActivos = filtrar(datos.programas)
+        .filter(r => r.estado_programa === "Activo")
+        .reduce((s, r) => s + Number(r.programas || 0), 0);
+
+      $("ficha-dpto-nombre").textContent = depto;
+      $("ficha-dpto-ranking").textContent = rankText;
+      $("ficha-lbl-vol").textContent = `${MEDIDAS[m]} ${etiquetaPeriodo}`;
+      $("ficha-val-vol").textContent = fmt(volDpto);
+      $("ficha-unit-vol").textContent = m === "docentes" ? "docentes" : "personas";
+      $("ficha-sub-vol").textContent = semActivo ? `Total ${etiquetaPeriodo} en ${depto}` : `Promedio semestral en ${depto}`;
+      $("ficha-val-pct").textContent = pct(sharePct);
+      $("ficha-val-ies").textContent = fmt(iesUnicas.size);
+      $("ficha-val-prog").textContent = fmt(progsActivos);
+
+      ficha.hidden = false;
+      ficha.classList.remove("popup-activa");
+      void ficha.offsetWidth;
+      ficha.classList.add("popup-activa");
+      if (ficha.getBoundingClientRect().top < 60 || ficha.getBoundingClientRect().bottom > window.innerHeight) {
+        ficha.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    function actualizarMapaColombia(m, nombre, filas, total, dep = [], lugar = "") {
+      const anioActivo = $("f-ano")?.value ? Number($("f-ano").value) : ULTIMO;
+      const semActivo = $("f-semestre")?.value || "";
+      const etiquetaPeriodo = semActivo ? `${anioActivo}-${semActivo}` : `${anioActivo}`;
+
+      if ($("h-mapa")) {
+        $("h-mapa").textContent = total && dep.length ? `¿Dónde se concentra la educación superior? ${dep[0][0]} reúne ${pct(dep[0][1] / total * 100)} en ${etiquetaPeriodo}` : "Distribución geográfica de " + nombre;
+      }
+      if ($("s-mapa")) {
+        $("s-mapa").textContent = `Mapa de Colombia · Clic en un departamento para filtrar (${MEDIDAS[m]} ${etiquetaPeriodo} por ${lugar})`;
+      }
+      if (!chartMapaEcharts) return;
+      try { chartMapaEcharts.resize(); } catch (_) { }
+
+      const deptoActivo = $("f-departamento").value;
+      const fSinDepto = { ...filtrosActivos() };
+      delete fSinDepto.departamento;
+      delete fSinDepto.municipio;
+      const nivel = $("f-nivel_de_formacion").value;
+      const filasMapa = datos.conteos.filter(r => Object.entries(fSinDepto).every(([k, v]) => !(k in r) || String(r[k]) === v) && !(nivel && SIN_NIVEL.includes(r.medida)));
+      const deMedida = filasMapa.filter(r => r.medida === m && r.ano === anioActivo && (!semActivo || String(r.semestre) === semActivo));
+      const porDepto = sumarPor(deMedida.filter(r => r.departamento && r.departamento !== "No aplica"), "departamento", r => r.valor);
+      const mValores = new Map(porDepto);
+
+      const todosDeptos = unicos(datos.conteos, "departamento").filter(d => d && d !== "No aplica");
+      const totalRef = semActivo ? suma(deMedida) : promedio(suma(deMedida));
+
+      const seriesData = todosDeptos.map(dpto => {
+        const rawVal = mValores.get(dpto) || 0;
+        const val = semActivo ? rawVal : promedio(rawVal);
+        const svgName = normalizarSvgName(dpto);
+        const estaSeleccionado = deptoActivo && deptoActivo.toLowerCase() === dpto.toLowerCase();
+        return {
+          name: svgName,
+          value: val,
+          depto: dpto,
+          selected: estaSeleccionado
+        };
+      });
+
+      const maxVal = Math.max(...seriesData.map(d => d.value), 100);
+
+      chartMapaEcharts.setOption({
+        tooltip: {
+          trigger: "item",
+          backgroundColor: "rgba(33, 40, 68, 0.96)",
+          borderColor: "#004A93",
+          borderWidth: 1,
+          extraCssText: "z-index: 9999; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.22); border-radius: 8px;",
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+          formatter: p => {
+            const d = p.data;
+            if (!d) return p.name;
+            const share = totalRef > 0 ? (d.value / totalRef * 100) : 0;
+            return `
+          <strong style="color:#FFD300;font-size:13px;">${d.depto}</strong><br/>
+          ${MEDIDAS[m]}: <b>${fmt(d.value)}</b> (${pct(share)})<br/>
+          <span style="font-size:10.5px;color:#CBD5E1;">${semActivo ? `Semestre ${semActivo}` : `Promedio semestral ${anioActivo}`}</span><br/>
+          <span style="font-size:10.5px;color:#94A3B8;">${d.selected ? 'Filtro activo · Clic para restablecer' : 'Clic para filtrar este departamento'}</span>
+        `;
+          }
+        },
+        visualMap: {
+          min: 0,
+          max: maxVal,
+          left: 12,
+          bottom: 12,
+          text: ["Alto", "Bajo"],
+          calculable: true,
+          inRange: {
+            color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004A93", "#1E1B4B"]
+          },
+          textStyle: { color: "#64748B", fontSize: 11, fontFamily: "'IBM Plex Sans'" }
+        },
+        series: [{
+          name: MEDIDAS[m],
+          type: "map",
+          map: "colombia_svg",
+          roam: true,
+          zoom: 1.05,
+          scaleLimit: { min: 0.9, max: 4.5 },
+          emphasis: {
+            itemStyle: {
+              areaColor: "#FFD300",
+              borderColor: "#212844",
+              borderWidth: 1.5
+            },
+            label: { show: false }
+          },
+          select: {
+            itemStyle: {
+              areaColor: "#FFD300",
+              borderColor: "#004A93",
+              borderWidth: 2.2
+            },
+            label: { show: false }
+          },
+          itemStyle: {
+            borderColor: "#FFFFFF",
+            borderWidth: 0.75
+          },
+          data: seriesData
+        }]
+      });
+    }
+
+    async function inicializarMapaColombia() {
+      try {
+        const res = await fetch("colombia.svg");
+        if (!res.ok) return;
+        const svgText = await res.text();
+        echarts.registerMap("colombia_svg", { svg: svgText });
+
+        const dom = $("g-mapa-colombia");
+        if (!dom) return;
+        chartMapaEcharts = echarts.init(dom);
+
+        chartMapaEcharts.on("click", params => {
+          const depto = params.data?.depto || deptoDesdeSvgName(params.name);
+          if (!depto) return;
+          const actual = $("f-departamento").value;
+          if (actual && actual.toLowerCase() === depto.toLowerCase()) {
+            fijarFiltro("departamento", "");
+          } else {
+            fijarFiltro("departamento", depto);
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          chartMapaEcharts?.resize();
+        });
+      } catch (err) {
+        console.warn("No se pudo inicializar el mapa vectorial:", err);
+      }
+    }
+
+    function pintarSnies() {
+
+      const nivel = $("f-nivel_de_formacion").value, m = vista, nombre = MEDIDAS[m].toLowerCase();
+
+      const hayFiltro = Object.keys(filtrosActivos()).length > 0;
+
+      const anioActivo = $("f-ano")?.value ? Number($("f-ano").value) : ULTIMO;
+
+      const semActivo = $("f-semestre")?.value || "";
+
+      const etiquetaPeriodo = semActivo ? `${anioActivo}-${semActivo}` : `${anioActivo}`;
+
+      const filas = filtrar(datos.conteos).filter(r => !(nivel && SIN_NIVEL.includes(r.medida)));
+
+      // Cifra del periodo: si hay semestre seleccionado es la suma directa; si no, el promedio semestral
+      const calcPeriodo = f => {
+        const delA = f.filter(r => r.ano === anioActivo && (!semActivo || String(r.semestre) === semActivo));
+        return semActivo ? suma(delA) : promedio(suma(delA));
+      };
+
+      // Totales nacionales para calcular proporciones de barras cuando hay filtro activo
+      const nacPorMedida = {};
+      for (const k of Object.keys(MEDIDAS)) {
+        nacPorMedida[k] = calcPeriodo(datos.conteos.filter(r => r.medida === k));
+      }
+      const nacProg = datos.programas.filter(r => r.estado_programa === "Activo").reduce((s, r) => s + Number(r.programas || 0), 0);
+
+      // Tarjetas CADIT 2.0:
+      const kpis = Object.entries(MEDIDAS).map(([k, t]) => {
+        const aplica = !(SIN_NIVEL.includes(k) && nivel);
+        if (!aplica) {
+          return {
+            k, kicker: KICKERS_SNIES[k], t: `${t} ${etiquetaPeriodo}`, v: null,
+            nota: "No aplica con nivel de formación", badge: "Sin nivel", badgeClass: "badge-neutral",
+            alClic: () => irA(k), popupData: METADATA_SNIES[k]
+          };
+        }
+        const deK = filas.filter(r => r.medida === k);
+        const val = calcPeriodo(deK);
+        const serieSem = PERIODOS.map(p => suma(deK.filter(r => periodo(r) === p)));
+        const sIni = serieSem[0] || 0, sFin = serieSem.at(-1) || 0;
+        const varPct = PERIODOS.length > 1 && sIni > 0 ? ((sFin - sIni) / sIni * 100) : null;
+        const delta = varPct != null ? `${varPct >= 0 ? "+" : "−"}${pct(Math.abs(varPct))} vs ${PERIODOS[0]}` : null;
+        const deltaClass = varPct == null ? "delta-neutral" : (varPct >= 0 ? "delta-up" : "delta-down");
+        const nacVal = nacPorMedida[k] || 0;
+        const progreso = hayFiltro && nacVal > 0 ? (val / nacVal * 100) : (k === m ? 100 : (nacVal > 0 ? (val / (nacPorMedida.matriculados || nacVal) * 100) : 100));
+        const badge = hayFiltro && nacVal > 0 ? `${pct(val / nacVal * 100)} país` : (k === "matriculados" ? "Oficial MEN" : "Nacional");
+        const badgeClass = k === m ? "badge-primary" : (hayFiltro ? "badge-gold" : "badge-neutral");
+
+        return {
+          k, kicker: KICKERS_SNIES[k], t: `${t} ${etiquetaPeriodo}`, v: val, serie: serieSem,
+          nota: semActivo ? `Semestre ${semActivo}` : `Promedio semestral ${anioActivo}`, badge, badgeClass,
+          progreso: Math.min(100, Math.max(4, progreso)),
+          progresoColor: k === m ? "#004A93" : "#3D7CC9",
+          delta, deltaClass, esHero: k === "matriculados",
+          alClic: () => irA(k), popupData: METADATA_SNIES[k]
+        };
+      });
+
+      const progVal = filtrar(datos.programas).filter(r => r.estado_programa === "Activo").reduce((s, r) => s + Number(r.programas), 0);
+      const progPct = nacProg > 0 ? (progVal / nacProg * 100) : 100;
+      const prog = {
+        kicker: KICKERS_SNIES.programas, t: "Programas activos", v: progVal,
+        nota: "Registro calificado vigente", badge: hayFiltro && nacProg > 0 ? `${pct(progPct)} país` : "SNIES",
+        badgeClass: hayFiltro ? "badge-gold" : "badge-neutral",
+        progreso: Math.min(100, Math.max(4, progPct)), progresoColor: "#10B981",
+        delta: `${fmt(progVal)} códigos`, deltaClass: "delta-neutral",
+        popupData: METADATA_SNIES.programas
+      };
+
+      $("kpis-snies").replaceChildren(...kpis.map(tarjeta), tarjeta(prog));
+
+      detalle.kpis_snies = [...kpis.map(x => [x.t, x.v]), [prog.t, prog.v]];
+
+      actualizarFichaTerritorial(m, filas, nacPorMedida[m] || 0);
+
+      // Tendencias: todos los periodos cargados con títulos en forma de pregunta ejecutiva.
+
+      const deMedida = filas.filter(r => r.medida === m);
+
+      const grupo = SIN_NIVEL.includes(m) ? SIN_NIVEL : ESTUDIANTES;
+
+      lineas("g-tendencia", PERIODOS, grupo.map(k => { const s = new Map(sumarPor(filas.filter(r => r.medida === k), periodo, r => r.valor)); return [MEDIDAS[k], PERIODOS.map(p => s.get(p) || 0)]; }),
+
+        i => irA(grupo[i]));
+
+      const serie = PERIODOS.map(p => suma(deMedida.filter(r => periodo(r) === p)));
+
+      const c = serie[0] ? (serie.at(-1) - serie[0]) / serie[0] * 100 : null;
+
+      $("h-tendencia").textContent = PERIODOS.length > 1 && c != null
+
+        ? `¿Cómo evoluciona ${nombre}? ${c >= 0 ? "+" : "−"}${pct(Math.abs(c))} entre ${PERIODOS[0]} y ${PERIODOS.at(-1)}`
+
+        : `¿Cuál es el volumen de ${nombre}? ${fmt(serie.at(-1))} en ${PERIODOS.at(-1)}`;
+
+      $("s-tendencia").textContent = `${grupo === ESTUDIANTES ? "Estudiantes" : "Docentes"} por año y semestre · clic en una línea para cambiar de medida`;
+
+
+
+      const ultimo = deMedida.filter(r => r.ano === anioActivo && (!semActivo || String(r.semestre) === semActivo)), total = suma(ultimo);
+
+      const lugar = SIN_NIVEL.includes(m) ? "domicilio de la institución" : "lugar de oferta del programa";
+
+      const sDep = seriesTop(deMedida, "departamento");
+
+      lineas("g-t-deptos", PERIODOS, sDep, i => fijarFiltro("departamento", sDep[i][0]));
+
+      const dep = top10(sumarPor(ultimo, "departamento", r => r.valor));
+
+      $("h-t-deptos").textContent = total && dep.length ? `¿Dónde se concentra? ${dep[0][0]} reúne ${pct(dep[0][1] / total * 100)} en ${etiquetaPeriodo}` : "Sin datos con estos filtros";
+
+      $("s-t-deptos").textContent = `Los 5 departamentos con más ${nombre} (${lugar}) · clic en una línea para filtrar`;
+
+
+
+      const sIes = seriesTop(deMedida, "cod_ies");
+
+      lineas("g-t-ies", PERIODOS, sIes.map(([cod, v]) => [`${NOMBRE_IES.get(cod) ?? cod} (${cod})`, v]), i => fijarFiltro("cod_ies", sIes[i][0]));
+
+      const top5 = sIes.reduce((s, [cod]) => s + suma(ultimo.filter(r => r.cod_ies === cod)), 0);
+
+      $("h-t-ies").textContent = total ? `¿Qué instituciones lideran? ${sIes.length === 1 ? "La principal tiene" : `Las ${sIes.length} principales suman`} ${pct(top5 / total * 100)} en ${etiquetaPeriodo}` : "Sin datos con estos filtros";
+
+
+
+      barras("g-deptos", dep.map(p => p[0]), dep.map(p => semActivo ? p[1] : promedio(p[1])), i => fijarFiltro("departamento", dep[i][0]));
+
+      $("h-deptos").textContent = total && dep.length ? `¿Cuánto pesan los territorios top? ${dep.length === 1 ? "1 departamento reúne" : `${dep.length} departamentos reúnen`} ${pct(dep.reduce((s, p) => s + p[1], 0) / total * 100)}` : "Sin datos con estos filtros";
+
+      $("s-deptos").textContent = `${MEDIDAS[m]} ${etiquetaPeriodo} (${semActivo ? `semestre ${semActivo}` : "promedio semestral"}) por ${lugar} · clic en una barra para filtrar`;
+
+      actualizarMapaColombia(m, nombre, filas, total, dep, lugar);
+
+
+
+      // Detalle del año activo, por institución.
+
+      const porIes = new Map();
+
+      for (const r of filas.filter(r => r.ano === anioActivo && (!semActivo || String(r.semestre) === semActivo))) {
+
+        const f = porIes.get(r.cod_ies) || { ies: NOMBRE_IES.get(r.cod_ies) ?? r.ies, cod_ies: r.cod_ies, sector: r.sector };
+
+        f[r.medida] = (f[r.medida] || 0) + Number(r.valor); porIes.set(r.cod_ies, f);
+
+      }
+
+      for (const f of porIes.values()) for (const k of Object.keys(MEDIDAS)) if (k in f) f[k] = semActivo ? f[k] : promedio(f[k]);
+
+      detalle.snies = [...porIes.values()].sort((a, b) => (b[m] || 0) - (a[m] || 0));
+
+      detalle.cols_snies = [["ies", "Institución"], ["cod_ies", "Código"], ["sector", "Sector"], ...Object.entries(MEDIDAS).map(([k, t]) => [k, t, true])];
+
+      tabla("d-snies", detalle.cols_snies, detalle.snies, r => fijarFiltro("cod_ies", r.cod_ies));
+
+      $("h-detalle").textContent = `¿Cómo se distribuyen por institución? (${etiquetaPeriodo} · ${fmt(detalle.snies.length)} ${detalle.snies.length === 1 ? "institución" : "instituciones"}${detalle.snies.length > 200 ? " · mostrando top 200" : ""})`;
+
+    }
+
+
+
+    function pintarAcreditacion() {
+
+      const filas = filtrar(datos.acreditacion);
+
+      const anio = r => r.fecha_de_resolucion?.slice(0, 4), conFecha = filas.filter(anio);
+
+      const extremos = conFecha.map(r => Number(anio(r)));
+
+      const desde = Math.min(...extremos), hasta = Math.max(...extremos);
+
+      const anios = conFecha.length ? Array.from({ length: hasta - desde + 1 }, (_, i) => String(desde + i)) : [];
+
+      const porAnio = new Map(sumarPor(conFecha, anio, () => 1)), serie = anios.map(a => porAnio.get(a) || 0);
+
+      const ultimoRes = anios.at(-1);
+
+
+
+      const METADATA_ACR = {
+
+        acreditaciones: {
+
+          titulo: `Acreditaciones expedidas en ${ultimoRes ?? ""}`,
+
+          mide: "Resoluciones de acreditación de alta calidad expedidas por el MEN en el año.",
+
+          calculo: "Conteo de resoluciones vigentes por año",
+
+          fuente: "CNA - MEN"
+
+        },
+
+        programas: {
+
+          titulo: "Programas con Acreditación Vigente",
+
+          mide: "Titulaciones reconocidas formalmente con Acreditación de Alta Calidad.",
+
+          calculo: "Conteo de registros vigentes en listado oficial",
+
+          fuente: "CNA - MEN"
+
+        },
+
+        instituciones: {
+
+          titulo: "Instituciones con Acreditación",
+
+          mide: "Instituciones con al menos un programa acreditado de alta calidad.",
+
+          calculo: "Conteo único de códigos IES asociados",
+
+          fuente: "CNA - MEN"
+
+        },
+
+        departamentos: {
+
+          titulo: "Departamentos de Cobertura",
+
+          mide: "Entidades territoriales donde se ofrecen programas acreditados.",
+
+          calculo: "Conteo único de departamentos DANE",
+
+          fuente: "CNA - MEN"
+
+        },
+
+        pregrado: {
+
+          titulo: "Pregrados Acreditados",
+
+          mide: "Programas de nivel técnico, tecnológico y universitario acreditados.",
+
+          calculo: "Filtro nivel_academico = 'Pregrado'",
+
+          fuente: "CNA - MEN"
+
+        },
+
+        posgrado: {
+
+          titulo: "Posgrados Acreditados",
+
+          mide: "Especializaciones, maestrías y doctorados con acreditación de alta calidad.",
+
+          calculo: "Filtro nivel_academico = 'Posgrado'",
+
+          fuente: "CNA - MEN"
+
+        }
+
+      };
+
+
+
+      // La primera tarjeta se compara contra el año de resolución anterior (con Fichas Técnicas Oficiales).
+
+      const kpis = [
+
+        {
+          kicker: "RESOLUCIONES ANUALES", t: `Acreditaciones ${ultimoRes ?? ""}`, v: serie.at(-1) ?? 0, serie, prev: anios.length > 1 ? serie.at(-2) : null, contra: anios.at(-2),
+
+          nota: anios.length > 1 ? null : "Sin años anteriores", badge: "CNA - MEN", esHero: true, popupData: METADATA_ACR.acreditaciones
+        },
+
+        { kicker: "OFERTA DE CALIDAD", t: "Programas acreditados", v: filas.length, nota: "Listado vigente", badge: "Oficial", popupData: METADATA_ACR.programas },
+
+        { kicker: "INSTITUCIONES", t: "IES con acreditación", v: new Set(filas.map(r => r.cod_ies)).size, nota: "Con al menos un programa acreditado", popupData: METADATA_ACR.instituciones },
+
+        { kicker: "COBERTURA", t: "Departamentos", v: new Set(filas.map(r => r.departamento).filter(Boolean)).size, nota: "Donde se ofrecen", popupData: METADATA_ACR.departamentos },
+
+        { kicker: "NIVEL PREGRADO", t: "Pregrado", v: filas.filter(r => r.nivel_academico === "Pregrado").length, nota: "Programas acreditados", popupData: METADATA_ACR.pregrado },
+
+        { kicker: "NIVEL POSGRADO", t: "Posgrado", v: filas.filter(r => r.nivel_academico === "Posgrado").length, nota: "Programas acreditados", popupData: METADATA_ACR.posgrado }];
+
+      $("kpis-acreditacion").replaceChildren(...kpis.map(tarjeta));
+
+      detalle.kpis_acreditacion = kpis.map(x => [x.t, x.v]);
+
+
+
+      lineas("g-a-anual", anios, ["Pregrado", "Posgrado"].map(n => { const s = new Map(sumarPor(conFecha.filter(r => r.nivel_academico === n), anio, () => 1)); return [n, anios.map(a => s.get(a) || 0)]; }));
+
+      const pico = anios.length ? anios[serie.indexOf(Math.max(...serie))] : null;
+
+      $("h-a-anual").textContent = pico ? `¿Qué año tuvo más acreditaciones? ${pico} alcanzó ${fmt(porAnio.get(pico))}` : "Sin fechas de resolución con estos filtros";
+
+      let acum = 0;
+
+      lineas("g-a-acumulado", anios, [["Programas acreditados", anios.map(a => (acum += porAnio.get(a) || 0))]]);
+
+      $("h-a-acumulado").textContent = anios.length ? `¿Cómo crece el acumulado? De ${fmt(serie[0])} en ${anios[0]} a ${fmt(acum)} en ${ultimoRes}` : "Sin fechas de resolución con estos filtros";
+
+      $("s-a-acumulado").textContent = `Acumulado por año de resolución · ${fmt(filas.length - conFecha.length)} programas sin fecha en la fuente no aparecen`;
+
+
+
+      const ies = top10(sumarPor(filas, "cod_ies", () => 1));
+
+      barras("g-a-ies", ies.map(p => `${NOMBRE_IES.get(p[0]) ?? p[0]} (${p[0]})`), ies.map(p => p[1]), i => fijarFiltro("cod_ies", ies[i][0]));
+
+      $("h-a-ies").textContent = ies.length ? `¿Qué institución lidera? ${NOMBRE_IES.get(ies[0][0]) ?? ies[0][0]} tiene ${fmt(ies[0][1])} acreditados` : "Sin programas con estos filtros";
+
+
+
+      detalle.acreditacion = filas;
+
+      detalle.cols_acreditacion = [["codigo_snies_del_programa", "Código SNIES"], ["nombre_del_programa", "Programa"], ["ies", "Institución"], ["nivel_de_formacion", "Nivel"],
+
+      ["modalidad", "Modalidad"], ["departamento", "Departamento"], ["municipio", "Municipio"], ["fecha_de_resolucion", "Fecha resolución"], ["vigencia_anos", "Vigencia (años)", true]];
+
+      tabla("d-acr", detalle.cols_acreditacion, filas, r => fijarFiltro("cod_ies", r.cod_ies));
+
+      $("h-a-detalle").textContent = `Programas acreditados · ${fmt(filas.length)}${filas.length > 200 ? " (se muestran 200; la descarga trae todos)" : ""}`;
+
+    }
+
+
+
+    function pintar() {
+
+      const p = pagina();
+
+      const anioActivo = $("f-ano")?.value ? Number($("f-ano").value) : ULTIMO;
+
+      const semActivo = $("f-semestre")?.value || "";
+
+      const corteTxt = semActivo ? `${anioActivo}-${semActivo}` : `${anioActivo} · Promedio semestral`;
+
+      $("corte").textContent = `Corte oficial: ${corteTxt}`;
+
+      const ies = $("f-cod_ies");
+
+      $("chip").hidden = !ies.value;
+
+      $("chip-texto").textContent = ies.value ? ies.selectedOptions[0].text : "";
+
+      actualizarChipsFiltros();
+
+      if (p === "snies") {
+
+        $("titulo").textContent = `SNIES · ${MEDIDAS[vista]} en Educación Superior`;
+
+        $("subtitulo").textContent = `Estadísticas oficiales del Ministerio de Educación Nacional (MEN). Periodo activo: ${corteTxt} (histórico ${PERIODOS[0]} a ${PERIODOS.at(-1)}). Haga clic en una tarjeta, línea, barra o fila para filtrar.`;
+
+        pintarSnies();
+
+      } else if (p === "acreditacion") {
+
+        $("titulo").textContent = "Programas con acreditación de alta calidad";
+
+        $("subtitulo").textContent = "Listado vigente del SNIES-MEN. La primera tarjeta y las tendencias se cuentan por el año de la resolución de acreditación.";
+
+        pintarAcreditacion();
+
+      } else {
+
+        $("titulo").textContent = "Permanencia y deserción · SPADIES";
+
+        $("subtitulo").textContent = "";
+
+      }
+
+    }
+
+
+
+    function irA(v) {
+
+      if (v === "sena") { location.href = "sena.html"; return; }
+
+      if (v === "icetex") { location.href = "icetex.html"; return; }
+
+      if (v === "latam") { location.href = "latam.html"; return; }
+
+      if (v === "minciencias") { location.href = "minciencias.html"; return; }
+
+      if (v === "idic") { location.href = "idic.html"; return; }
+
+      if (v === "rues") { location.href = "rues.html"; return; }
+
+      if (v === "fuentes") { location.href = "fuentes.html"; return; }
+
+      vista = v;
+
+      document.querySelectorAll("#menu button").forEach(b => b.classList.toggle("activa", b.dataset.v === v));
+
+      document.querySelectorAll(".pagina").forEach(x => { x.hidden = x.id !== "p-" + pagina(); });
+
+      $("filtros").hidden = pagina() === "spadies";
+
+      $("pdf").disabled = $("xlsx").disabled = pagina() === "spadies";
+
+      pintar();
+
+      if (chartMapaEcharts && pagina() === "snies") {
+        setTimeout(() => { try { chartMapaEcharts.resize(); } catch (_) { } }, 60);
+      }
+
+      window.scrollTo({ top: 0 });
+
+    }
+
+
+
+    // Buscador de institución: busca en la lista del filtro, sin tildes y por todas las palabras escritas.
+
+    let resultados = [];
+
+    const normalizar = t => t.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").trim();
+
+    function buscar(texto) {
+
+      const palabras = normalizar(texto).split(/\s+/).filter(Boolean), caja = $("resultados");
+
+      if (!palabras.length) { caja.hidden = true; resultados = []; return; }
+
+      resultados = [...$("f-cod_ies").options].filter(o => o.value && palabras.every(w => normalizar(o.text).includes(w))).slice(0, 15);
+
+      caja.replaceChildren(...(resultados.length ? resultados.map(o => {
+
+        const b = document.createElement("button");
+
+        b.textContent = o.text; b.onclick = () => elegir(o.value); return b;
+
+      }) : [Object.assign(document.createElement("p"), { textContent: "No hay instituciones con ese nombre o código." })]));
+
+      caja.hidden = false;
+
+    }
+
+
+
+    function elegir(cod) {
+
+      $("resultados").hidden = true; $("buscar").value = "";
+
+      fijarFiltro("cod_ies", cod);
+
+    }
+
+
+
+    function textoFiltros() {
+
+      const f = filtrosActivos(), nombre = { ano: "Año", semestre: "Semestre", departamento: "Departamento", municipio: "Municipio", cod_ies: "IES", sector: "Sector", nivel_de_formacion: "Nivel de formación" };
+
+      const filas = Object.entries(f).map(([k, v]) => [nombre[k], k === "cod_ies" ? $("f-cod_ies").selectedOptions[0].text : v]);
+
+      const anioActivo = $("f-ano")?.value ? Number($("f-ano").value) : ULTIMO;
+
+      const semActivo = $("f-semestre")?.value || "";
+
+      if (pagina() === "snies") filas.push(["Medida", MEDIDAS[vista]], ["Periodo de tarjetas, ranking y detalle", semActivo ? `${anioActivo}-${semActivo}` : `${anioActivo} (promedio semestral)`]);
+
+      return filas.length ? filas : [["Filtros", "Ninguno (todos los datos)"]];
+
+    }
+
+
+
+    function nombreArchivo(ext) { return `tablero_${pagina() === "snies" ? vista : pagina()}_${new Date().toISOString().slice(0, 10)}.${ext}`; }
+
+
+
+    function descargarXlsx() {
+
+      const p = pagina(), libro = XLSX.utils.book_new(), cols = detalle["cols_" + p];
+
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet([["Filtro", "Valor"], ...textoFiltros(), [], ["Generado", new Date().toLocaleString("es-CO")], ["Fuente", "SNIES-MEN · Base Externa CADIT"]]), "Filtros");
+
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet([["Indicador", "Valor"], ...detalle["kpis_" + p].map(([t, v]) => [t, v ?? "No aplica"])]), "Indicadores");
+
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet([cols.map(c => c[1]), ...detalle[p].map(r => cols.map(([k]) => r[k] ?? null))]), "Detalle");
+
+      XLSX.writeFile(libro, nombreArchivo("xlsx"));
+
+    }
+
+
+
+    function descargarPdf() {
+
+      const p = pagina(), { jsPDF } = window.jspdf, doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+      const ancho = doc.internal.pageSize.getWidth(), alto = doc.internal.pageSize.getHeight(); let y = 40;
+
+      const linea = (t, tam = 10, negrita = false) => { if (y > alto - 40) { doc.addPage(); y = 40; } doc.setFont("helvetica", negrita ? "bold" : "normal"); doc.setFontSize(tam); doc.text(String(t), 40, y); y += tam + 6; };
+
+      // Encabezado de marca: banda azul marino, logo negativo (proporción 1232x464) y la línea amarilla donde se posa el búho.
+
+      doc.setFillColor(33, 40, 68); doc.rect(0, 0, ancho, 60, "F");
+
+      doc.setFillColor(255, 211, 0); doc.rect(0, 60, ancho, 4, "F");
+
+      if (logoPdf) doc.addImage(logoPdf, "PNG", 40, 12, 96, 36);
+
+      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(16);
+
+      doc.text(`Base Externa · ${p === "snies" ? MEDIDAS[vista] : "Acreditación"}`, 156, 37);
+
+      doc.setTextColor(33, 40, 68); y = 92;
+
+      linea($("titulo").textContent, 14, true);
+
+      linea(`Generado: ${new Date().toLocaleString("es-CO")} · Fuente: SNIES-MEN`, 9);
+
+      y += 4; linea("Filtros", 12, true); for (const [k, v] of textoFiltros()) linea(`${k}: ${v}`);
+
+      y += 4; linea("Indicadores", 12, true); for (const [t, v] of detalle["kpis_" + p]) linea(`${t}: ${typeof v === "number" ? fmt(v) : (v ?? "No aplica")}`);
+
+      const ids = (p === "snies" ? ["g-tendencia", "g-t-deptos", "g-t-ies", "g-deptos"] : ["g-a-anual", "g-a-acumulado", "g-a-ies"]).filter(id => !$(id).closest(".panel").hidden);
+
+      doc.addPage(); y = 40; const w = (ancho - 100) / 2;
+
+      // Rejilla de 2 columnas con el título de cada gráfica; cada una cabe en media página sin deformarse.
+
+      ids.forEach((id, i) => {
+
+        const c = $(id), h = Math.min(w * c.height / c.width, (alto - 140) / 2), wi = h * c.width / c.height;
+
+        const x = 40 + (i % 2) * (w + 20), yi = y + Math.floor(i / 2) * (h + 40);
+
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+
+        doc.text(doc.splitTextToSize(c.closest(".panel").querySelector("h2").textContent, w)[0], x, yi);
+
+        doc.addImage(c.toDataURL("image/png"), "PNG", x, yi + 8, wi, h);
+
+      });
+
+      doc.addPage(); y = 40; linea("Detalle (primeras 40 filas; el XLSX trae todas)", 12, true);
+
+      const cols = detalle["cols_" + p], paso = (ancho - 80) / cols.length;
+
+      const fila = (vals, negrita) => { if (y > alto - 30) { doc.addPage(); y = 40; } doc.setFont("helvetica", negrita ? "bold" : "normal"); doc.setFontSize(7); vals.forEach((v, i) => doc.text(doc.splitTextToSize(String(v ?? ""), paso - 4)[0] || "", 40 + i * paso, y)); y += 12; };
+
+      fila(cols.map(c => c[1]), true);
+
+      for (const r of detalle[p].slice(0, 40)) fila(cols.map(([k, , num]) => num ? fmt(r[k]) : r[k]));
+
+      doc.save(nombreArchivo("pdf"));
+
+    }
+
+
+
+    $("menu").addEventListener("click", e => { const b = e.target.closest("button"); if (b) irA(b.dataset.v); });
+
+    $("filtros").addEventListener("change", e => { if (e.target.id === "f-departamento") llenarMunicipios(); pintar(); });
+
+    $("limpiar").addEventListener("click", () => { for (const k of FILTROS) $("f-" + k).value = ""; llenarMunicipios(); pintar(); });
+
+    $("btn-cerrar-ficha-dpto")?.addEventListener("click", () => { $("f-departamento").value = ""; $("f-municipio").value = ""; llenarMunicipios(); pintar(); });
+
+    $("buscar").addEventListener("input", e => buscar(e.target.value));
+
+    $("buscar").addEventListener("keydown", e => {
+
+      if (e.key === "Enter" && resultados[0]) elegir(resultados[0].value);
+
+      if (e.key === "Escape") $("resultados").hidden = true;
+
+      if (e.key === "ArrowDown") $("resultados").querySelector("button")?.focus();
+
+    });
+
+    $("resultados").addEventListener("keydown", e => {
+
+      if (e.key === "ArrowDown") e.target.nextElementSibling?.focus();
+
+      if (e.key === "ArrowUp") (e.target.previousElementSibling ?? $("buscar")).focus();
+
+    });
+
+    document.addEventListener("click", e => { if (!e.target.closest(".buscar")) $("resultados").hidden = true; });
+
+    $("quitar-ies").addEventListener("click", () => { $("f-cod_ies").value = ""; pintar(); });
+
+    $("xlsx").addEventListener("click", descargarXlsx);
+
+    $("pdf").addEventListener("click", descargarPdf);
+
+
+
+    (async () => {
+
+      try {
+
+        [datos.conteos, datos.programas, datos.acreditacion] = await Promise.all(["snies_conteos", "snies_programas", "snies_acreditacion"].map(cargar));
+
+        datos.conteos = datos.conteos.filter(r => Number(r.ano) >= 2014);
+
+        ANIOS = [...new Set(datos.conteos.map(r => r.ano))].sort((a, b) => a - b);
+
+        ULTIMO = ANIOS.at(-1);
+
+        PERIODOS = [...new Set(datos.conteos.map(periodo))].sort();
+
+        SEMESTRES = PERIODOS.filter(p => p.startsWith(ULTIMO + "-")).length;  // semestres cargados del último año
+
+        NOMBRE_IES = new Map([...datos.acreditacion, ...datos.conteos].map(r => [r.cod_ies, r.ies]));
+
+        logoPdf = await fetch("manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.png").then(r => r.ok ? r.blob() : null)
+
+          .then(b => b && new Promise(ok => { const f = new FileReader(); f.onload = () => ok(f.result); f.readAsDataURL(b); })).catch(() => null);
+
+        llenarFiltros();
+
+        $("estado").remove();
+
+        $("pdf").disabled = $("xlsx").disabled = false;
+
+        await inicializarMapaColombia();
+
+        pintar();
+
+      } catch (e) {
+
+        // Abierto como archivo (doble clic) no existe /api/: el tablero solo funciona servido por Nginx.
+
+        if (location.protocol === "file:") $("estado").innerHTML = 'El tablero está abierto como archivo y así no puede leer los datos. Ábralo en <a href="http://localhost:8080/">http://localhost:8080</a>.';
+
+        else $("estado").textContent = LOCAL ? "No se pudieron cargar los datos de /api/ (" + e.message + "). ¿Está encendido docker compose?"
+
+          : "No se pudieron cargar los datos del tablero (" + e.message + ").";
+
+      }
+
+    })();
+
+  </script>
+
+  <script>
+
+    // Manejador universal de navegación móvil CADIT
+
+    document.addEventListener("click", e => {
+
+      const btn = e.target.closest("#btn-menu-movil");
+
+      const lateral = document.querySelector(".lateral");
+
+      if (btn && lateral) {
+
+        const abierto = lateral.classList.toggle("menu-abierto");
+
+        btn.setAttribute("aria-expanded", String(abierto));
+
+        const h = btn.querySelector(".icono-hamburguesa");
+
+        const c = btn.querySelector(".icono-cerrar");
+
+        if (h) h.style.display = abierto ? "none" : "block";
+
+        if (c) c.style.display = abierto ? "block" : "none";
+
+        return;
+
+      }
+
+      const item = e.target.closest(".lateral nav button");
+
+      if (item && lateral && window.innerWidth <= 1024) {
+
+        lateral.classList.remove("menu-abierto");
+
+        const b = document.getElementById("btn-menu-movil");
+
+        if (b) {
+
+          b.setAttribute("aria-expanded", "false");
+
+          const h = b.querySelector(".icono-hamburguesa");
+
+          const c = b.querySelector(".icono-cerrar");
+
+          if (h) h.style.display = "block";
+
+          if (c) c.style.display = "none";
+
+        }
+
+        return;
+
+      }
+
+      if (!e.target.closest(".lateral") && lateral && lateral.classList.contains("menu-abierto") && window.innerWidth <= 1024) {
+
+        lateral.classList.remove("menu-abierto");
+
+        const b = document.getElementById("btn-menu-movil");
+
+        if (b) {
+
+          b.setAttribute("aria-expanded", "false");
+
+          const h = b.querySelector(".icono-hamburguesa");
+
+          const c = b.querySelector(".icono-cerrar");
+
+          if (h) h.style.display = "block";
+
+          if (c) c.style.display = "none";
+
+        }
+
+      }
+
+    });
+
+
+
+    // Observador de redimensionamiento fluido para gráficas CADIT
+
+    (() => {
+
+      let resizeTimer;
+
+      const sincronizarDimensiones = () => {
+
+        if (typeof graficos === "object" && graficos !== null) {
+
+          Object.values(graficos).forEach(chart => {
+
+            if (chart && typeof chart.resize === "function") {
+
+              try { chart.resize(); } catch (_) { }
+
+            }
+
+          });
+
+        }
+
+        if (chartMapaEcharts && typeof chartMapaEcharts.resize === "function") {
+
+          try { chartMapaEcharts.resize(); } catch (_) { }
+
+        }
+
+      };
+
+
+
+      window.addEventListener("resize", () => {
+
+        clearTimeout(resizeTimer);
+
+        resizeTimer = setTimeout(sincronizarDimensiones, 60);
+
+      });
+
+
+
+      if (typeof ResizeObserver !== "undefined") {
+
+        const ro = new ResizeObserver(() => {
+
+          clearTimeout(resizeTimer);
+
+          resizeTimer = setTimeout(sincronizarDimensiones, 60);
+
+        });
+
+        document.querySelectorAll(".rejilla, .panel, .grafico, .cuadricula-territorial, .mapa-echarts-contenedor").forEach(el => {
+
+          ro.observe(el);
+
+        });
+
+      }
+
+    })();
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,2228 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Educación Superior · América Latina · CADIT</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600&display=swap">
+
+  <!-- Dependencias Oficiales CADIT -->
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+  <link rel="stylesheet" href="estilo-cadit.css">
+
+  <style>
+    /* ─── Variables Oficiales CADIT ─── */
+    :root {
+      --marino: #283044;
+      --azul: #004E98;
+      --azul-hover: #003870;
+      --amarillo: #FFCC00;
+      --verde: #10B981;
+      --rojo: #EF4444;
+      --suave: #64748B;
+      --borde: #E2E8F0;
+      --niebla: #F4F5F7;
+      --blanco: #FFFFFF;
+    }
+
+    body {
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      color: var(--marino);
+      background: var(--niebla);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ─── Encabezado Institucional CADIT ─── */
+    .encabezado {
+      margin-bottom: 20px;
+    }
+
+    .encabezado h1 {
+      font: 600 clamp(22px, 2.4vw, 28px)/1.2 "IBM Plex Serif", Georgia, serif;
+      margin: 0 0 6px;
+      color: var(--marino);
+    }
+
+    .encabezado p {
+      color: var(--suave);
+      margin: 0 0 16px;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    /* ─── Navegación por Módulos Estratégicos (Tabs CADIT) ─── */
+    .tabs-modulos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+      background: var(--blanco);
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--borde);
+      box-shadow: 0 1px 3px rgba(33, 40, 68, 0.04);
+    }
+
+    .btn-modulo {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--suave);
+      cursor: pointer;
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-modulo:hover {
+      background: #F1F5F9;
+      color: var(--azul);
+    }
+
+    .btn-modulo.activa {
+      background: var(--azul);
+      color: #FFFFFF;
+      border-color: var(--azul);
+      box-shadow: 0 2px 8px rgba(0, 78, 152, 0.25);
+    }
+
+    .btn-modulo .mod-num {
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.85;
+      padding: 1px 5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    /* ─── Pilar 1: Cuadrícula y Tarjetas KPI Humanizadas con Ficha Técnica (ⓘ) ─── */
+    .kpis-5 {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1360px) {
+      .kpis-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 820px) {
+      .kpis-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 480px) {
+      .kpis-5 { grid-template-columns: 1fr; }
+    }
+
+    .kpi-card {
+      min-width: 0;
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(33, 40, 68, 0.04);
+      border-top: 3.5px solid var(--azul);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 78, 152, 0.08);
+    }
+
+    .kpi-card.kpi-hero {
+      border-top-color: var(--amarillo);
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+    }
+
+    .kpi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .kpi-card-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .kpi-card-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--suave);
+      display: block;
+      margin-bottom: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .kpi-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1E293B;
+      margin: 0;
+      line-height: 1.3;
+      white-space: normal;
+      word-break: normal;
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .kpi-info-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 2px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s ease, transform .15s ease;
+    }
+
+    .kpi-info-btn:hover {
+      color: var(--azul);
+      transform: scale(1.15);
+    }
+
+    .popup-info-kpi {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 260px;
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-top: 3px solid var(--azul);
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #334155;
+      pointer-events: none;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi {
+      display: block;
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: var(--azul);
+      margin-bottom: 5px;
+      font-size: 12px;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 3px;
+    }
+
+    .popup-info-meta {
+      margin-top: 6px;
+      padding-top: 5px;
+      border-top: 1px dashed var(--borde);
+      font-size: 10px;
+      color: var(--suave);
+      font-style: italic;
+    }
+
+    .kpi-card-val {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--marino);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      margin: 3px 0;
+    }
+
+    .kpi-card-val.val-hero {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--azul);
+    }
+
+    .kpi-card-val.val-text {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .kpi-card-track {
+      width: 100%;
+      height: 4px;
+      background: #EDF2F7;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 4px 0 2px;
+    }
+
+    .kpi-card-track-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--suave);
+      border-top: 1px solid #F1F5F9;
+      padding-top: 6px;
+      overflow: hidden;
+    }
+
+    .kpi-card-sub {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .kpi-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+    .badge-primary { background: rgba(0, 78, 152, 0.08); color: var(--azul); }
+    .badge-gold { background: rgba(255, 204, 0, 0.22); color: #854D0E; }
+    .badge-success { background: rgba(16, 185, 129, 0.12); color: #065F46; }
+    .badge-neutral { background: #F1F5F9; color: var(--suave); }
+
+    .kpi-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .delta-up { background: rgba(16, 185, 129, 0.12); color: #059669; }
+    .delta-down { background: rgba(239, 68, 68, 0.12); color: #DC2626; }
+    .delta-neutral { background: #F1F5F9; color: var(--suave); }
+
+    /* ─── Pilar 2: Títulos con Preguntas Analíticas y Subtítulos ─── */
+    .seccion-titulo {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--marino);
+      margin: 24px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--borde);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .seccion-badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: #F1F5F9;
+      color: #475569;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ─── Pilar 4: Cero Desbordamiento y Paneles ─── */
+    .rejilla-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 980px) {
+      .rejilla-2 { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Cuadrícula Territorial LATAM (Mapa 1.25fr : Ficha/Ranking 1fr) ─── */
+    .cuadricula-territorial-latam {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 1060px) {
+      .cuadricula-territorial-latam { grid-template-columns: 1fr; }
+    }
+
+    .mapa-latam-leyenda {
+      background: #F8FAFC;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+    }
+
+    .mapa-latam-leyenda .leyenda-titulo {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: var(--marino);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .mapa-latam-leyenda .leyenda-tramos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+    }
+
+    .mapa-latam-leyenda .tramo-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .mapa-latam-leyenda .tramo-caja {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .mapa-latam-contenedor {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      background: #FFFFFF;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #F1F5F9;
+    }
+
+    .mapa-zoom-controles {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 4px;
+      box-shadow: 0 4px 12px rgba(40, 48, 68, 0.08);
+      z-index: 10;
+    }
+
+    .mapa-zoom-controles button {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FFFFFF;
+      border: 1px solid var(--borde);
+      border-radius: 5px;
+      color: var(--marino);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s ease;
+      padding: 0;
+    }
+
+    .mapa-zoom-controles button:hover {
+      background: #F4F5F7;
+      border-color: var(--azul);
+      color: var(--azul);
+      transform: scale(1.05);
+    }
+
+    .mapa-zoom-controles button:active {
+      background: var(--amarillo);
+      color: var(--marino);
+      transform: scale(0.95);
+    }
+
+    .panel-lab {
+      min-width: 0;
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(33, 40, 68, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .panel-lab h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--marino);
+      margin: 0 0 3px 0;
+      line-height: 1.3;
+    }
+
+    .panel-lab p.sub {
+      font-size: 11.5px;
+      color: var(--suave);
+      margin: 0 0 12px 0;
+      line-height: 1.35;
+    }
+
+    .grafico-wrap {
+      position: relative;
+      width: 100%;
+      height: 330px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .alerta-nota-metodologica {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 11.5px;
+      color: #92400E;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    /* Ficha de País */
+    .ficha-pais-detalle {
+      background: #FFFFFF;
+      border: 1px solid var(--borde);
+      border-top: 3.5px solid var(--azul);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    /* Botones de Exportación Oficiales */
+    .acciones button {
+      background: var(--amarillo) !important;
+      color: var(--marino) !important;
+      font-weight: 700 !important;
+      border: none !important;
+      border-radius: 6px !important;
+      padding: 6px 14px !important;
+      cursor: pointer !important;
+      transition: all .15s ease !important;
+    }
+    .acciones button:hover {
+      background: #E6B800 !important;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Menú lateral CADIT Oficial -->
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>Tableros Oficiales</h3>
+      <button data-href="index.html">SNIES · Base Externa</button>
+      <button data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-href="sena.html">SENA · Formación</button>
+      <button data-href="latam.html" class="activa">Educación Superior · LATAM</button>
+      <button data-href="minciencias.html">MinCiencias · Grupos</button>
+      <button data-href="idic.html">IDIC · Innovación</button>
+      <button data-href="rues.html">RUES · Empresas</button>
+    </nav>
+  </aside>
+
+  <!-- Contenedor principal -->
+  <div class="contenido">
+    <!-- Barra superior -->
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar país, campo de conocimiento o institución…" autocomplete="off" aria-label="Buscar filtros">
+        <div id="resultados" hidden></div>
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Consolidado Regional · Corte Oficial 2024</span>
+        <div class="acciones">
+          <button id="pdf" type="button" style="display: none;">PDF</button>
+          <button id="xlsx" type="button" style="display: none;">XLSX</button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Encabezado Oficial Homologado CADIT -->
+      <div class="encabezado">
+        <h1 id="titulo">Educación Superior · LATAM</h1>
+        <p id="subtitulo">Sistema de Decisión Estratégica · Benchmarking regional sobre <b>1,7 millones de registros</b> oficiales (INEP Brasil, SIES Chile, ANUIES México, SUNEDU Perú, UdelaR Uruguay) con homologación CINE / UNESCO.</p>
+      </div>
+
+      <!-- Pestañas de Navegación Analítica (4 Módulos) -->
+      <div class="tabs-modulos" role="tablist">
+        <button class="btn-modulo activa" data-tab="mod-1" role="tab">
+          <span class="mod-num">1</span>
+          <span>Macro-Benchmarking Regional (2024)</span>
+        </button>
+        <button class="btn-modulo" data-tab="mod-2" role="tab">
+          <span class="mod-num">2</span>
+          <span>Trayectoria y Transformación Digital</span>
+        </button>
+        <button class="btn-modulo" data-tab="mod-3" role="tab">
+          <span class="mod-num">3</span>
+          <span>Mercado y Oferta Académica</span>
+        </button>
+        <button class="btn-modulo" data-tab="mod-4" role="tab">
+          <span class="mod-num">4</span>
+          <span>Perfiles por País y Auditoría</span>
+        </button>
+      </div>
+
+      <!-- Fila de 5 KPIs Oficiales 2024 (Pilar 1) -->
+      <div class="kpis-5" id="kpis-2024">
+        <!-- Renderizado dinámico vía tarjeta() -->
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- MÓDULO 1: Macro-Benchmarking Regional y Territorio (Corte 2024)   -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <div id="sec-mod-1" class="seccion-modulo">
+        <div class="seccion-titulo">
+          <span>Módulo 1 · Comparabilidad Territorial y Escala Regional (2024)</span>
+          <span class="seccion-badge">Corte Comparable 2024 · 17 Países Mapeados</span>
+        </div>
+
+        <!-- Fila Territorial: Mapa Interactivo ECharts (1.25fr) : Ficha Dinámica y Comparación (1fr) -->
+        <div class="cuadricula-territorial-latam">
+          <!-- Columna Izquierda: Mapa Interactivo de América Latina -->
+          <div class="panel-lab" style="padding:16px;">
+            <div style="margin-bottom:8px;">
+              <h2>¿Cómo se distribuye territorialmente la educación superior en América Latina?</h2>
+              <p class="sub">17 países mapeados · Pasa el cursor o haz clic en un país para aislar sus cifras y consultar sus fuentes oficiales</p>
+            </div>
+
+            <!-- Leyenda Institucional CADIT (5 Tramos) -->
+            <div class="mapa-latam-leyenda">
+              <span class="leyenda-titulo">CONCENTRACIÓN DE MATRÍCULA REGIONAL (2024)</span>
+              <div class="leyenda-tramos">
+                <div class="tramo-item"><span class="tramo-caja" style="background:#004E98;"></span> > 50 % · Líder regional (Brasil · 10,2 M)</div>
+                <div class="tramo-item"><span class="tramo-caja" style="background:#3B82F6;"></span> 20 % – 50 % · Escala media (México · 5,4 M)</div>
+                <div class="tramo-item"><span class="tramo-caja" style="background:#93C5FD;"></span> 5 % – 20 % · Escala compacta (Chile · 1,4 M)</div>
+                <div class="tramo-item"><span class="tramo-caja" style="background:#CBD5E1;"></span> Censo Especial (Uruguay / Perú)</div>
+                <div class="tramo-item"><span class="tramo-caja" style="background:#E2E8F0;"></span> En integración / Sin reporte</div>
+              </div>
+            </div>
+
+            <!-- Contenedor del Mapa con Zoom Flotante -->
+            <div class="mapa-latam-contenedor">
+              <div id="g-mapa-latam" style="width:100%; height:100%;"></div>
+
+              <!-- Controles Flotantes de Zoom -->
+              <div class="mapa-zoom-controles">
+                <button type="button" id="btn-zoom-in" title="Acercar mapa">+</button>
+                <button type="button" id="btn-zoom-out" title="Alejar mapa">−</button>
+                <button type="button" id="btn-zoom-reset" title="Restablecer vista centrada">↺</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Ficha Territorial Activa + Gráfico de Escala -->
+          <div style="display:flex; flex-direction:column; gap:16px; min-width:0;">
+            <!-- Ficha Territorial Dinámica -->
+            <div class="panel-lab" id="ficha-territorial-card" style="padding:16px;">
+              <!-- Se actualiza interactivamente con clics en el mapa -->
+            </div>
+
+            <!-- Gráfico de Barras: Comparación de Escala entre Países -->
+            <div class="panel-lab" style="flex:1;">
+              <div>
+                <h2>¿Qué escala tiene cada sistema en 2024? Brasil concentra 10,2 M y Chile 10.829 alumnos/IES</h2>
+                <p class="sub">Matrícula total y ratio de alumnos por institución · Clic en una barra para filtrar en el mapa</p>
+              </div>
+              <div class="grafico-wrap" style="height:210px;"><canvas id="g-comparacion-paises"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matriz Temática: Heatmap Campo x País (Ancho Completo) -->
+        <div class="panel-lab" style="margin-bottom:22px;">
+          <div>
+            <h2>¿Qué áreas dominan en cada país? Matriz de especialización temática (2024)</h2>
+            <p class="sub">Intensidad relativa por país en los 10 campos CINE · Pasa el cursor sobre cada celda para ver el volumen y porcentaje</p>
+          </div>
+          <div class="grafico-wrap" style="height:320px;">
+            <div id="g-heatmap-campo-pais" style="width:100%; height:100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- MÓDULO 2: Trayectoria y Transformación Digital                    -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <div id="sec-mod-2" class="seccion-modulo" style="display:none;">
+        <div class="seccion-titulo">
+          <span>Módulo 2 · Crecimiento Multianual y Modalidades Formativas</span>
+          <span class="seccion-badge">Series 2007–2026 · Presencial vs. EAD</span>
+        </div>
+
+        <div class="rejilla-2">
+          <!-- Gráfica 3: Evolución Chile 2007-2026 -->
+          <div class="panel-lab">
+            <div>
+              <h2>¿Cómo ha crecido el sistema chileno? Aumenta +18,1 % entre 2019 y 2026</h2>
+              <p class="sub">Serie ininterrumpida 2007–2026: pasa de 1,27 M a 1,50 M en la trayectoria histórica más consolidada del archivo</p>
+            </div>
+            <div class="grafico-wrap"><canvas id="g-chile-evolucion"></canvas></div>
+          </div>
+
+          <!-- Gráfica 4: Modalidad Presencial vs Distancia 100% Apilada -->
+          <div class="panel-lab">
+            <div>
+              <h2>¿Qué modalidad formativa predomina? Presencial pesa 73 % y Brasil concentra el 50 % en distancia</h2>
+              <p class="sub">Barras 100 % apiladas por país · En el acumulado regional la educación a distancia representa el 27 % (14,8 M)</p>
+            </div>
+            <div class="grafico-wrap"><canvas id="g-modalidad-apilada"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel-lab" style="margin-bottom: 22px;">
+          <div>
+            <h2>¿Cómo se dividen los ciclos de formación? Pregrado representa ~96 % y Posgrado ~4 %</h2>
+            <p class="sub">Relación año a año por nivel equivalente (2022–2026) · Pregrado suma 52,5 M y Posgrado 2,4 M acumulados</p>
+          </div>
+          <div class="grafico-wrap" style="height: 280px;"><canvas id="g-pregrado-posgrado"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- MÓDULO 3: Mercado y Oferta Académica                              -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <div id="sec-mod-3" class="seccion-modulo" style="display:none;">
+        <div class="seccion-titulo">
+          <span>Módulo 3 · Concentración de Operadores y Dinamismo de Entrada</span>
+          <span class="seccion-badge">Curva de Pareto · Top 10 Campos · Ratios Flujo</span>
+        </div>
+
+        <div class="rejilla-2">
+          <!-- Gráfica 5: Concentración Institucional Pareto Top 8 -->
+          <div class="panel-lab">
+            <div>
+              <h2>¿Qué tan concentrada está la matrícula? Las 8 primeras IES absorben el 20 % del mercado</h2>
+              <p class="sub">Curva de Pareto · 3,35 M de estudiantes concentrados en 8 megagrupos universitarios líderes</p>
+            </div>
+            <div class="grafico-wrap"><canvas id="g-pareto-ies"></canvas></div>
+          </div>
+
+          <!-- Gráfica 6: Top 10 Campos Amplios Normalizados -->
+          <div class="panel-lab">
+            <div>
+              <h2>¿Cuáles son las áreas con mayor demanda regional? Negocios, Salud e Ingeniería lideran</h2>
+              <p class="sub">Clasificación internacional CINE / UNESCO normalizada · Millones de estudiantes acumulados</p>
+            </div>
+            <div class="grafico-wrap"><canvas id="g-campos-top10"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel-lab" style="margin-bottom: 22px;">
+          <div>
+            <h2>¿Qué disciplinas tienen mayor dinamismo de entrada? TIC lidera con 57,8 % de recambio</h2>
+            <p class="sub">Ratio Nuevos / Matrícula en 2024 · Refleja la aceleración relativa del flujo de ingreso anual</p>
+          </div>
+          <div class="grafico-wrap" style="height: 280px;"><canvas id="g-ratio-campo"></canvas></div>
+          <div class="alerta-nota-metodologica">
+            ⚠️ <b>Nota de cautela metodológica:</b> El ratio <i>Nuevos / Matrícula</i> es un indicador proxy de recambio y flujo anual; no debe interpretarse como una tasa oficial de absorción o cohorte cerrada, pero refleja con precisión el dinamismo relativo de entrada en cada área (destacan TIC con 57,8% y Servicios con 52,7%).
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- MÓDULO 4: Perfiles Nacionales y Auditoría                         -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <div id="sec-mod-4" class="seccion-modulo" style="display:none;">
+        <div class="seccion-titulo">
+          <span>Módulo 4 · Perfiles Específicos por País y Auditoría de Fuentes</span>
+          <span class="seccion-badge">Desglose Subnacional · Scorecard</span>
+        </div>
+
+        <!-- Selector de País para Perfil Específico -->
+        <div style="background:#FFFFFF; border:1px solid var(--borde); border-radius:10px; padding:14px 18px; margin-bottom:18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <label for="sel-perfil-pais" style="font-weight:700; font-size:12.5px; color:var(--marino);">Seleccionar País para Ficha Profunda:</label>
+          <select id="sel-perfil-pais" style="padding:6px 12px; font-family:inherit; font-size:12.5px; border:1px solid var(--borde); border-radius:6px; font-weight:600; color:var(--azul);">
+            <option value="Brasil">Brasil (Censo INEP · 10,2 M en 2024)</option>
+            <option value="México">México (ANUIES · 5,4 M en 2024)</option>
+            <option value="Chile">Chile (SIES · 1,4 M en 2024)</option>
+            <option value="Uruguay">Uruguay (UdelaR · 34.055 nuevos ingresos en 410 carreras)</option>
+            <option value="Perú">Perú (SUNEDU · 3.451 carreras en 96 IES)</option>
+          </select>
+        </div>
+
+        <!-- Ficha de País Activa -->
+        <div class="ficha-pais-detalle" id="ficha-pais-detalle">
+          <!-- Contenido dinámico del perfil nacional -->
+        </div>
+
+        <!-- Panel de Regiones de Brasil (Especial) -->
+        <div class="panel-lab" id="panel-brasil-regiones" style="margin-bottom: 22px;">
+          <div>
+            <h2>¿Dónde se concentra la educación superior en Brasil? São Paulo lidera con 4,8 M</h2>
+            <p class="sub">Ranking de entidades federativas sin dependencia cartográfica · SP, MG (1,9 M) y RJ (1,9 M) encabezan la matrícula acumulada</p>
+          </div>
+          <div class="grafico-wrap"><canvas id="g-regiones-brasil"></canvas></div>
+        </div>
+
+        <!-- Tabla de Auditoría Multivariable -->
+        <div class="panel-lab">
+          <div>
+            <h2>Auditoría de Fuentes Oficiales de Información</h2>
+            <p class="sub">Resumen de variables censadas, entidad emisora y nivel de completitud de datos abiertos</p>
+          </div>
+          <div class="tabla" id="d-tabla-auditoria"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ─── Configuración Global de Chart.js bajo Estándar CADIT ───
+    Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+    Chart.defaults.color = "#283044";
+
+    const $ = id => document.getElementById(id);
+    const fmt = n => (n == null || isNaN(n)) ? "—" : Math.round(Number(n)).toLocaleString("es-CO");
+    const pct = n => (n == null || isNaN(n)) ? "0 %" : Number(n).toFixed(1).replace(".", ",") + " %";
+
+    let DATA = null;
+    let graficos = {};
+
+    function destruirGrafico(id) {
+      if (graficos[id]) { graficos[id].destroy(); delete graficos[id]; }
+    }
+
+    // ─── Animación Numérica Oficial CADIT ───
+    function animarNumero(el, valorFinal, duracion = 500, formato = fmt) {
+      if (valorFinal == null || isNaN(valorFinal)) {
+        el.textContent = "—";
+        return;
+      }
+      const valFin = Number(valorFinal);
+      const valIni = Number(el.dataset.valorActual || 0);
+      el.dataset.valorActual = valFin;
+      if (valIni === valFin) {
+        el.textContent = formato(valFin);
+        return;
+      }
+      const inicio = performance.now();
+      function actualizar(ahora) {
+        const paso = Math.min((ahora - inicio) / duracion, 1);
+        const actual = Math.round(valIni + (valFin - valIni) * paso);
+        el.textContent = formato(actual);
+        if (paso < 1) requestAnimationFrame(actualizar);
+      }
+      requestAnimationFrame(actualizar);
+    }
+
+    // ─── Generador Oficial de Tarjetas KPI CADIT (Pilar 1) ───
+    function tarjeta({
+      kicker,
+      t,
+      v,
+      texto = null,
+      nota = null,
+      esHero = false,
+      badge = null,
+      badgeClass = "badge-neutral",
+      progreso = null,
+      progresoColor = "#004E98",
+      delta = null,
+      deltaClass = "delta-neutral",
+      popupData = null,
+      alClic = null
+    }) {
+      const el = document.createElement("div");
+      el.className = "kpi-card" + (esHero ? " kpi-hero" : "");
+      if (alClic) {
+        el.style.cursor = "pointer";
+        el.onclick = e => {
+          if (e.target.closest(".kpi-info-btn") || e.target.closest(".popup-info-kpi")) return;
+          alClic(e);
+        };
+      }
+
+      let popupHtml = "";
+      if (popupData) {
+        popupHtml = `
+          <div class="popup-info-kpi">
+            <div class="popup-info-header">${popupData.titulo || t}</div>
+            <p style="margin:0 0 5px 0;">${popupData.mide}</p>
+            ${popupData.calculo ? `<p style="margin:4px 0 0 0;font-size:10.5px;color:#004E98;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+            <div class="popup-info-meta">Fuente: ${popupData.fuente || "Base de Datos CADIT"}</div>
+          </div>
+        `;
+      }
+
+      const badgeHtml = badge ? `<span class="kpi-badge ${badgeClass}">${badge}</span>` : "";
+      const infoBtnHtml = popupData ? `<button type="button" class="kpi-info-btn" aria-label="Información">ⓘ</button>${popupHtml}` : "";
+      const barHtml = progreso != null ? `
+        <div class="kpi-card-track" title="${Number(progreso).toFixed(1)}%">
+          <div class="kpi-card-track-fill" style="width: ${Math.min(100, Math.max(0, progreso))}%; background: ${progresoColor};"></div>
+        </div>` : "";
+      const deltaHtml = delta ? `<span class="kpi-delta ${deltaClass}">${delta}</span>` : "";
+
+      el.innerHTML = `
+        <div class="kpi-card-header">
+          <div class="kpi-card-meta">
+            ${kicker ? `<span class="kpi-card-kicker">${kicker}</span>` : ""}
+            <h4 class="kpi-card-title" title="${t}">${t}</h4>
+          </div>
+          <div class="kpi-card-aside">
+            ${badgeHtml}
+            ${infoBtnHtml}
+          </div>
+        </div>
+        <div class="kpi-card-body">
+          <b class="kpi-card-val ${esHero ? "val-hero" : ""}"></b>
+        </div>
+        ${barHtml}
+        <div class="kpi-card-footer">
+          <p class="kpi-card-sub">${nota || "Datos consolidados"}</p>
+          ${deltaHtml}
+        </div>
+      `;
+
+      const bEl = el.querySelector(".kpi-card-val");
+      if (texto != null) {
+        bEl.className = "kpi-card-val val-text";
+        bEl.textContent = texto;
+      } else {
+        animarNumero(bEl, v, 500, fmt);
+      }
+      return el;
+    }
+
+    // ─── Render de 5 KPIs 2024 con Ficha Técnica (Pilar 1) ───
+    function renderizarKpis(k) {
+      const cont = $("kpis-2024");
+      if (!cont || !k) return;
+
+      const items = [
+        {
+          kicker: "VOLUMEN CONSOLIDADO 2024",
+          t: "Matrícula Total",
+          v: k.matricula_total,
+          esHero: true,
+          badge: "Corte 2024",
+          badgeClass: "badge-gold",
+          nota: "Stock activo en el año comparable",
+          progreso: 100,
+          progresoColor: "#004E98",
+          delta: "+17,0M total",
+          deltaClass: "delta-up",
+          popupData: {
+            titulo: "Matrícula Total Oficial (Corte 2024)",
+            mide: "Total consolidado de estudiantes matriculados en pregrado y posgrado en los países con censo activo.",
+            calculo: "Sumatoria continua de estudiantes activos en el corte 2024",
+            fuente: "INEP (Brasil), ANUIES (México), SIES (Chile)"
+          }
+        },
+        {
+          kicker: "FLUJO DE ACCESO",
+          t: "Nuevos Inscritos",
+          v: k.nuevos_inscritos,
+          badge: pct((k.nuevos_inscritos / k.matricula_total) * 100),
+          badgeClass: "badge-success",
+          nota: "Ingreso al primer curso académico",
+          progreso: (k.nuevos_inscritos / k.matricula_total) * 100,
+          progresoColor: "#10B981",
+          delta: "+6,89M nuevos",
+          deltaClass: "delta-up",
+          popupData: {
+            titulo: "Estudiantes de Primer Ingreso (2024)",
+            mide: "Estudiantes que ingresaron por primera vez a un programa académico en 2024.",
+            calculo: "Sumatoria de estudiantes nuevos censados",
+            fuente: "Bases Oficiales Homologadas CADIT"
+          }
+        },
+        {
+          kicker: "TRANSFORMACIÓN DIGITAL",
+          t: "Matrícula a Distancia",
+          v: null,
+          texto: pct(k.pct_distancia),
+          badge: "EAD / Virtual",
+          badgeClass: "badge-primary",
+          nota: "39,8 % de penetración en 2024",
+          progreso: k.pct_distancia,
+          progresoColor: "#004E98",
+          delta: "6,7M remotos",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Tasa de Penetración a Distancia / Virtual",
+            mide: "Porcentaje de estudiantes matriculados en programas con modalidad no presencial.",
+            calculo: "(Matrícula A Distancia / Matrícula Total) × 100",
+            fuente: "INEP (Censo BR) · SIES (CL) · ANUIES (MX)"
+          }
+        },
+        {
+          kicker: "ECOSISTEMA INSTITUCIONAL",
+          t: "Instituciones Activas",
+          v: k.total_ies,
+          badge: "6.589 IES",
+          badgeClass: "badge-neutral",
+          nota: "Universidades y centros técnicos",
+          progreso: 100,
+          progresoColor: "#283044",
+          delta: "Ecosistema 2024",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Instituciones de Educación Superior Activas",
+            mide: "Total de universidades, institutos profesionales y centros técnicos con matrícula o carreras registradas en 2024.",
+            calculo: "Conteo único de instituciones reconocidas",
+            fuente: "Directorios Ministeriales Nacionales"
+          }
+        },
+        {
+          kicker: "DIVERSIDAD DE OFERTA",
+          t: "Programas Académicos",
+          v: k.total_programas,
+          badge: "21.326 Carreras",
+          badgeClass: "badge-gold",
+          nota: "Titulaciones activas censadas",
+          progreso: 100,
+          progresoColor: "#FFCC00",
+          delta: "Catálogo activo",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Catálogo de Programas Activos (2024)",
+            mide: "Oferta académica única con matrícula o nuevos inscritos censados en el período 2024.",
+            calculo: "Conteo único de programas académicos",
+            fuente: "Catálogos Homologados CADIT"
+          }
+        }
+      ];
+
+      cont.replaceChildren(...items.map(it => tarjeta(it)));
+    }
+
+    // ─── Gráficas de los 4 Módulos (Pilar 3) ───
+
+    // ─── Componente Cartográfico Territorial: Mapa Interactivo de América Latina (ECharts + GeoJSON) ───
+    let chartMapaLatam = null;
+    let latamGeoRegistrado = false;
+    let paisSeleccionadoMapa = null;
+
+    const TODOS_LOS_PAISES_LATAM = [
+      "Argentina", "Bolivia", "Brasil", "Chile", "Colombia", "Costa Rica",
+      "Ecuador", "Guatemala", "Honduras", "México", "Nicaragua", "Panamá",
+      "Perú", "Paraguay", "El Salvador", "Uruguay", "Venezuela"
+    ];
+
+    async function inicializarMapaLatam(paisesData) {
+      const dom = $("g-mapa-latam");
+      if (!dom || typeof echarts === "undefined") return;
+
+      if (!latamGeoRegistrado) {
+        try {
+          const res = await fetch("latam.geojson");
+          if (!res.ok) throw new Error("No se pudo cargar latam.geojson");
+          const geoJson = await res.json();
+          echarts.registerMap("latam", geoJson);
+          latamGeoRegistrado = true;
+        } catch (err) {
+          console.error("Error al registrar mapa de América Latina:", err);
+          return;
+        }
+      }
+
+      chartMapaLatam = echarts.init(dom);
+      pintarMapaLatam(paisesData, paisSeleccionadoMapa);
+
+      chartMapaLatam.on("click", params => {
+        if (params.name) {
+          paisSeleccionadoMapa = (paisSeleccionadoMapa === params.name) ? null : params.name;
+          pintarMapaLatam(paisesData, paisSeleccionadoMapa);
+          actualizarFichaTerritorial(paisSeleccionadoMapa);
+          renderizarComparacionPaises(paisesData);
+        }
+      });
+
+      // Controles de zoom flotantes
+      let zoomNivel = 1.08;
+      $("btn-zoom-in")?.addEventListener("click", () => {
+        zoomNivel = Math.min(zoomNivel + 0.25, 3.5);
+        chartMapaLatam?.setOption({ series: [{ zoom: zoomNivel }] });
+      });
+      $("btn-zoom-out")?.addEventListener("click", () => {
+        zoomNivel = Math.max(zoomNivel - 0.25, 0.7);
+        chartMapaLatam?.setOption({ series: [{ zoom: zoomNivel }] });
+      });
+      $("btn-zoom-reset")?.addEventListener("click", () => {
+        zoomNivel = 1.08;
+        paisSeleccionadoMapa = null;
+        pintarMapaLatam(paisesData, null);
+        actualizarFichaTerritorial(null);
+        renderizarComparacionPaises(paisesData);
+        chartMapaLatam?.setOption({ series: [{ zoom: 1.08, center: [-64, -18] }] });
+      });
+
+      window.addEventListener("resize", () => {
+        chartMapaLatam?.resize();
+      });
+    }
+
+    function pintarMapaLatam(paisesData, paisActivo) {
+      if (!chartMapaLatam) return;
+
+      const mapaPaises = {};
+      (paisesData || []).forEach(p => {
+        mapaPaises[p.pais] = p;
+      });
+
+      const seriesData = TODOS_LOS_PAISES_LATAM.map(nom => {
+        const info = mapaPaises[nom];
+        const esSeleccionado = (paisActivo != null && paisActivo.toLowerCase() === nom.toLowerCase());
+
+        let areaColor = "#E2E8F0"; // Sin reporte
+        let borderColor = "#CBD5E1";
+        let borderWidth = 1;
+        let labelColor = "#64748B";
+
+        if (info) {
+          if (nom === "Brasil") {
+            areaColor = "#1E1B4B"; // Líder regional (Azul medianoche profundo)
+            labelColor = "#FFFFFF";
+          } else if (nom === "México") {
+            areaColor = "#004E98"; // Segundo polo regional (Azul institucional CADIT)
+            labelColor = "#FFFFFF";
+          } else if (nom === "Chile") {
+            areaColor = "#15803D"; // Escala compacta avanzada (Verde bosque)
+            labelColor = "#FFFFFF";
+          } else if (nom === "Uruguay" || nom === "Perú") {
+            areaColor = "#86EFAC"; // Censo Especial / Escala emergente (Verde claro)
+            labelColor = "#1E293B";
+          }
+        }
+
+        if (esSeleccionado) {
+          areaColor = "#FFCC00"; // Amarillo CADIT
+          borderColor = "#283044";
+          borderWidth = 2.5;
+          labelColor = "#283044";
+        }
+
+        return {
+          name: nom,
+          value: info ? (info.matricula_2024 || (info.nuevos_2024 ? 1 : 0)) : 0,
+          itemStyle: {
+            areaColor: areaColor,
+            borderColor: borderColor,
+            borderWidth: borderWidth
+          },
+          label: {
+            show: true,
+            color: labelColor,
+            fontWeight: esSeleccionado || (info && info.matricula_2024 > 0) ? "bold" : "normal",
+            fontSize: nom === "Brasil" ? 11 : 9
+          },
+          emphasis: {
+            itemStyle: {
+              areaColor: "#FFCC00",
+              borderColor: "#283044",
+              borderWidth: 2,
+              shadowBlur: 8,
+              shadowColor: "rgba(40, 48, 68, 0.3)"
+            },
+            label: {
+              show: true,
+              color: "#283044",
+              fontWeight: "bold"
+            }
+          },
+          info: info,
+          sinDatos: !info
+        };
+      });
+
+      const option = {
+        tooltip: {
+          trigger: "item",
+          backgroundColor: "rgba(40, 48, 68, 0.96)",
+          borderColor: "#283044",
+          borderWidth: 1,
+          padding: [10, 14],
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+          formatter: p => {
+            const d = p.data;
+            if (!d || d.sinDatos) {
+              return `
+                <div style="font-weight:700; color:#FFCC00; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:3px; margin-bottom:5px;">
+                  ${p.name}
+                </div>
+                <div style="font-size:12px; color:#E2E8F0;">Estado: <i>En proceso de integración CADIT</i></div>
+                <div style="font-size:10.5px; color:#94A3B8; margin-top:4px;">Sin reporte censal homologado en el corte 2024.</div>
+              `;
+            }
+
+            const info = d.info;
+            const matStr = info.matricula_2024 > 0 ? fmt(info.matricula_2024) + " estudiantes" : "No reportada (Datos abiertos)";
+            const nuevosStr = info.nuevos_2024 > 0 ? fmt(info.nuevos_2024) + " nuevos" : (p.name === "Perú" ? "No reportado" : "0");
+            const cuotaStr = info.pct_matricula_2024 > 0 ? info.pct_matricula_2024.toFixed(1) + " % regional" : "Censo de oferta / flujo";
+            const fuenteStr = info.fuente || "Oficial";
+
+            return `
+              <div style="font-weight:700; color:#FFCC00; font-size:13.5px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:4px; margin-bottom:6px;">
+                ${p.name} · ${fuenteStr}
+              </div>
+              <div style="font-size:12px; margin-bottom:3px;">Matrícula 2024: <b>${matStr}</b></div>
+              <div style="font-size:11.5px; color:#93C5FD; margin-bottom:3px;">Cuota en LATAM: <b>${cuotaStr}</b></div>
+              <div style="font-size:11.5px; color:#A7F3D0; margin-bottom:3px;">Primer Ingreso: <b>${nuevosStr}</b></div>
+              <div style="font-size:11px; color:#CBD5E1; margin-top:4px;">
+                <b>${fmt(info.ies_2024)}</b> IES · <b>${fmt(info.programas_2024)}</b> carreras
+              </div>
+              <div style="font-size:10px; color:#FDE68A; margin-top:6px; border-top:1px dashed rgba(255,255,255,0.2); padding-top:4px;">
+                👉 Haz clic para seleccionar y ver ficha técnica
+              </div>
+            `;
+          }
+        },
+        series: [
+          {
+            name: "Educación Superior LATAM",
+            type: "map",
+            map: "latam",
+            roam: true,
+            aspectScale: 0.95,
+            zoom: 1.08,
+            center: [-64, -18],
+            label: {
+              show: true,
+              fontFamily: "'IBM Plex Sans', sans-serif"
+            },
+            itemStyle: {
+              borderColor: "#FFFFFF",
+              borderWidth: 1.2
+            },
+            data: seriesData
+          }
+        ]
+      };
+
+      chartMapaLatam.setOption(option);
+    }
+
+    // Ficha de Síntesis Territorial Dinámica
+    function actualizarFichaTerritorial(nombrePais) {
+      const card = $("ficha-territorial-card");
+      if (!card || !DATA) return;
+
+      if (!nombrePais) {
+        // Vista Regional Consolidada
+        const k = DATA.kpis_2024;
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--azul); background:rgba(0,78,152,0.08); padding:2px 8px; border-radius:4px;">
+                PANORAMA TERRITORIAL REGIONAL
+              </span>
+              <h3 style="font-size:17px; font-weight:800; color:var(--marino); margin:4px 0 0 0;">
+                América Latina · Corte Oficial 2024
+              </h3>
+              <p style="font-size:11px; color:var(--suave); margin:2px 0 0 0;">5 sistemas nacionales censados · 17 países cartografiados</p>
+            </div>
+            <span style="font-size:10.5px; font-weight:700; background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; padding:2px 8px; border-radius:12px;">
+              17,0M Estudiantes
+            </span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:10px;">
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+              <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Matrícula Total</span>
+              <b style="display:block; font-size:15px; color:#004E98; margin-top:1px;">${fmt(k.matricula_total)}</b>
+              <span style="font-size:9.5px; color:#64748B;">Brasil (60%), México (32%), Chile (8%)</span>
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+              <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Flujo de Nuevos</span>
+              <b style="display:block; font-size:15px; color:#10B981; margin-top:1px;">${fmt(k.nuevos_inscritos)}</b>
+              <span style="font-size:9.5px; color:#10B981; font-weight:600;">40,5 % recambio regional</span>
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+              <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Instituciones (IES)</span>
+              <b style="display:block; font-size:15px; color:#283044; margin-top:1px;">${fmt(k.total_ies)} IES</b>
+              <span style="font-size:9.5px; color:#64748B;">Promedio: 2.581 alumnos/IES</span>
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+              <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Programas Activos</span>
+              <b style="display:block; font-size:15px; color:#D97706; margin-top:1px;">${fmt(k.total_programas)}</b>
+              <span style="font-size:9.5px; color:#64748B;">10 campos de conocimiento CINE</span>
+            </div>
+          </div>
+
+          <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:6px; padding:7px 11px; font-size:11px; color:#1E40AF; line-height:1.35;">
+            💡 <b>Interacción activa:</b> Haz clic en cualquier país del mapa o barra para aislar sus cifras.
+          </div>
+        `;
+        return;
+      }
+
+      const pInfo = DATA.paises_2024.find(p => p.pais.toLowerCase() === nombrePais.toLowerCase());
+      const sc = DATA.scorecard_calidad ? DATA.scorecard_calidad[nombrePais] : null;
+
+      if (!pInfo) {
+        // País sin datos en este corte
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+            <div>
+              <span style="font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#92400E; background:#FEF3C7; padding:2px 8px; border-radius:4px;">
+                EN PROCESO DE HOMOLOGACIÓN CADIT
+              </span>
+              <h3 style="font-size:17px; font-weight:800; color:var(--marino); margin:4px 0 0 0;">
+                ${nombrePais}
+              </h3>
+              <p style="font-size:11px; color:var(--suave); margin:2px 0 0 0;">Territorio delimitado en cartografía oficial</p>
+            </div>
+            <button id="btn-cerrar-ficha-mapa" style="background:#F1F5F9; border:1px solid var(--borde); border-radius:5px; font-size:10.5px; font-weight:700; color:var(--marino); padding:3px 8px; cursor:pointer;">
+              Vista General ×
+            </button>
+          </div>
+
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:12px; margin-bottom:10px; font-size:11.5px; color:#475569; line-height:1.45;">
+            Este país cuenta con delimitación geográfica oficial, pero sus bases abiertas de educación superior no forman parte del corte piloto 2024 (integrado por Brasil, México, Chile, Perú y Uruguay). Se integrará en la fase 2.0.
+          </div>
+
+          <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:7px 11px; font-size:10.5px; color:#92400E;">
+            ℹ️ Selecciona <b>Brasil, México, Chile, Uruguay o Perú</b> para consultar sus microdatos censados.
+          </div>
+        `;
+        $("btn-cerrar-ficha-mapa")?.addEventListener("click", () => {
+          paisSeleccionadoMapa = null;
+          pintarMapaLatam(DATA.paises_2024, null);
+          actualizarFichaTerritorial(null);
+          renderizarComparacionPaises(DATA.paises_2024);
+        });
+        return;
+      }
+
+      // País con datos en CADIT
+      const cuota = pInfo.pct_matricula_2024 > 0 ? pInfo.pct_matricula_2024.toFixed(1) + " % de LATAM" : "Censo de oferta / nuevos";
+      const fuente = sc ? sc.fuente : "Fuente Oficial";
+
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <span style="font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--azul); background:rgba(0,78,152,0.08); padding:2px 8px; border-radius:4px;">
+              PAÍS SELECCIONADO EN EL MAPA
+            </span>
+            <h3 style="font-size:17px; font-weight:800; color:var(--marino); margin:4px 0 0 0;">
+              ${pInfo.pais}
+            </h3>
+            <p style="font-size:11px; color:var(--suave); margin:2px 0 0 0;">${fuente} · ${cuota}</p>
+          </div>
+          <button id="btn-cerrar-ficha-mapa" style="background:#FFCC00; border:none; border-radius:5px; font-size:10.5px; font-weight:700; color:var(--marino); padding:3px 9px; cursor:pointer;">
+            Restablecer ×
+          </button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:10px;">
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+            <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Matrícula 2024</span>
+            <b style="display:block; font-size:15px; color:#004E98; margin-top:1px;">
+              ${pInfo.matricula_2024 > 0 ? fmt(pInfo.matricula_2024) : "No reportada"}
+            </b>
+            <span style="font-size:9.5px; color:#64748B;">${cuota}</span>
+          </div>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+            <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Nuevos Ingresos</span>
+            <b style="display:block; font-size:15px; color:#10B981; margin-top:1px;">
+              ${pInfo.nuevos_2024 > 0 ? fmt(pInfo.nuevos_2024) : (nombrePais === "Perú" ? "No reportado" : "0")}
+            </b>
+            <span style="font-size:9.5px; color:#10B981; font-weight:600;">Primer curso 2024</span>
+          </div>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+            <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Instituciones (IES)</span>
+            <b style="display:block; font-size:15px; color:#283044; margin-top:1px;">${fmt(pInfo.ies_2024)} IES</b>
+            <span style="font-size:9.5px; color:#64748B;">${pInfo.alumnos_por_ies > 0 ? fmt(pInfo.alumnos_por_ies) + " est./IES" : "Censo de IES"}</span>
+          </div>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:7px; padding:8px 10px;">
+            <span style="font-size:9.5px; color:#64748B; font-weight:600; text-transform:uppercase;">Programas Activos</span>
+            <b style="display:block; font-size:15px; color:#D97706; margin-top:1px;">${fmt(pInfo.programas_2024)}</b>
+            <span style="font-size:9.5px; color:#64748B;">Carreras censadas</span>
+          </div>
+        </div>
+
+        ${sc ? `
+          <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:7px 11px; font-size:10.5px; color:#92400E; line-height:1.35; margin-bottom:8px;">
+            ℹ️ <b>Diagnóstico:</b> ${sc.observaciones}
+          </div>
+        ` : ""}
+
+        <button id="btn-ir-perfil-modulo4" style="width:100%; background:#283044; color:#FFFFFF; border:none; border-radius:6px; font-size:11px; font-weight:700; padding:6px; cursor:pointer; transition:all .15s ease;">
+          Ver auditoría completa de ${pInfo.pais} en Módulo 4 →
+        </button>
+      `;
+
+      $("btn-cerrar-ficha-mapa")?.addEventListener("click", () => {
+        paisSeleccionadoMapa = null;
+        pintarMapaLatam(DATA.paises_2024, null);
+        actualizarFichaTerritorial(null);
+        renderizarComparacionPaises(DATA.paises_2024);
+      });
+
+      $("btn-ir-perfil-modulo4")?.addEventListener("click", () => {
+        const btnMod4 = document.querySelector(".btn-modulo[data-tab='mod-4']");
+        if (btnMod4) {
+          btnMod4.click();
+          const sel = $("sel-perfil-pais");
+          if (sel) {
+            sel.value = pInfo.pais;
+            actualizarPerfilPais(pInfo.pais);
+          }
+        }
+      });
+    }
+
+    // Módulo 1: Comparación entre Países 2024 (Con sincronización bidireccional de clics)
+    function renderizarComparacionPaises(paises) {
+      destruirGrafico("g-comparacion-paises");
+      const ctx = $("g-comparacion-paises")?.getContext("2d");
+      if (!ctx || !paises) return;
+
+      const pValidos = paises.filter(p => p.matricula_2024 > 0);
+      const labels = pValidos.map(p => `${p.pais} (${fmt(p.alumnos_por_ies)} est./IES)`);
+      const valores = pValidos.map(p => p.matricula_2024);
+
+      graficos["g-comparacion-paises"] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            data: valores,
+            backgroundColor: pValidos.map(p => {
+              if (paisSeleccionadoMapa && paisSeleccionadoMapa.toLowerCase() === p.pais.toLowerCase()) {
+                return "#FFCC00";
+              }
+              if (p.pais === "Brasil") return "#004E98";
+              if (p.pais === "México") return "#3B82F6";
+              return "#93C5FD";
+            }),
+            borderColor: pValidos.map(p => {
+              return (paisSeleccionadoMapa && paisSeleccionadoMapa.toLowerCase() === p.pais.toLowerCase()) ? "#283044" : "transparent";
+            }),
+            borderWidth: pValidos.map(p => {
+              return (paisSeleccionadoMapa && paisSeleccionadoMapa.toLowerCase() === p.pais.toLowerCase()) ? 2 : 0;
+            }),
+            borderRadius: 4,
+            maxBarThickness: 34
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (evt, activeEls) => {
+            if (activeEls.length > 0) {
+              const idx = activeEls[0].index;
+              const pSel = pValidos[idx];
+              if (pSel) {
+                paisSeleccionadoMapa = (paisSeleccionadoMapa === pSel.pais) ? null : pSel.pais;
+                pintarMapaLatam(DATA.paises_2024, paisSeleccionadoMapa);
+                actualizarFichaTerritorial(paisSeleccionadoMapa);
+                renderizarComparacionPaises(DATA.paises_2024);
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: {
+                label: item => ` Matrícula 2024: ${fmt(item.raw)} (${pct((item.raw / 17006049)*100)})`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10.5, weight: "600" } } },
+            y: { grid: { color: "#F1F5F9" }, ticks: { callback: v => (v/1000000).toFixed(1) + " M", font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    // Módulo 1: Heatmap Campo x País (ECharts)
+    function renderizarHeatmap(hm) {
+      const dom = $("g-heatmap-campo-pais");
+      if (!dom || !hm || typeof echarts === "undefined") return;
+
+      const chart = echarts.init(dom);
+      const seriesData = hm.matriz.map(item => [item.pais_idx, item.campo_idx, item.valor, item.pct_en_pais]);
+      const maxVal = Math.max(...hm.matriz.map(x => x.valor), 100000);
+
+      chart.setOption({
+        tooltip: {
+          position: "top",
+          backgroundColor: "rgba(40, 48, 68, 0.96)",
+          borderColor: "#283044",
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+          formatter: p => {
+            const paisNom = hm.paises[p.data[0]];
+            const campoNom = hm.campos[p.data[1]];
+            const val = p.data[2];
+            const pPct = p.data[3];
+            return `
+              <div style="font-weight:700;color:#FFCC00;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:3px;margin-bottom:4px;">
+                ${campoNom} · ${paisNom}
+              </div>
+              <div style="font-size:12px;">Matrícula: <b>${fmt(val)}</b></div>
+              <div style="font-size:11.5px;color:#93C5FD;margin-top:2px;">Cuota en ${paisNom}: <b>${pPct.toFixed(1)} %</b></div>
+            `;
+          }
+        },
+        grid: { top: 10, bottom: 45, left: 180, right: 20 },
+        xAxis: {
+          type: "category",
+          data: hm.paises,
+          splitArea: { show: true },
+          axisLabel: { fontStyle: "bold", color: "#1E293B", fontSize: 11.5 }
+        },
+        yAxis: {
+          type: "category",
+          data: hm.campos,
+          splitArea: { show: true },
+          axisLabel: {
+            fontSize: 10,
+            color: "#475569",
+            formatter: val => val.length > 25 ? val.slice(0, 24) + "…" : val
+          }
+        },
+        visualMap: {
+          min: 0,
+          max: maxVal,
+          calculable: false,
+          orient: "horizontal",
+          left: "center",
+          bottom: 0,
+          inRange: { color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004E98", "#1E1B4B"] },
+          itemWidth: 10,
+          itemHeight: 70
+        },
+        series: [{
+          name: "Matrícula",
+          type: "heatmap",
+          data: seriesData,
+          label: {
+            show: true,
+            fontSize: 9.5,
+            color: "#1E293B",
+            formatter: p => (p.data[2] / 1000000).toFixed(1) + "M"
+          },
+          emphasis: {
+            itemStyle: { shadowBlur: 10, shadowColor: "rgba(0, 0, 0, 0.4)" }
+          }
+        }]
+      });
+
+      window.addEventListener("resize", () => chart.resize());
+    }
+
+    // Módulo 2: Evolución Chile 2007–2026
+    function renderizarChileEvolucion(c) {
+      destruirGrafico("g-chile-evolucion");
+      const ctx = $("g-chile-evolucion")?.getContext("2d");
+      if (!ctx || !c) return;
+
+      graficos["g-chile-evolucion"] = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: c.anios.map(String),
+          datasets: [
+            {
+              label: "Matrícula Total",
+              data: c.matricula,
+              borderColor: "#004E98",
+              backgroundColor: "rgba(0, 78, 152, 0.08)",
+              fill: true,
+              borderWidth: 2.4,
+              tension: 0.25,
+              pointRadius: 2.5,
+              pointHoverRadius: 5
+            },
+            {
+              label: "Nuevos Ingresos",
+              data: c.nuevos,
+              borderColor: "#10B981",
+              backgroundColor: "transparent",
+              borderWidth: 2,
+              borderDash: [4, 4],
+              tension: 0.25,
+              pointRadius: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 12, font: { size: 11, weight: "600" } } },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: { label: item => ` ${item.dataset.label}: ${fmt(item.raw)} estudiantes` }
+            }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { font: { size: 10.5 } } },
+            y: { grid: { color: "#F1F5F9" }, ticks: { font: { size: 10.5 }, callback: v => (v/1000000).toFixed(1) + " M" } }
+          }
+        }
+      });
+    }
+
+    // Módulo 2: Modalidad 100% Apilada
+    function renderizarModalidadApilada(mod) {
+      destruirGrafico("g-modalidad-apilada");
+      const ctx = $("g-modalidad-apilada")?.getContext("2d");
+      if (!ctx || !mod) return;
+
+      const labels = mod.paises.map(p => p.pais);
+      const dataPres = mod.paises.map(p => p.pct_presencial);
+      const dataDist = mod.paises.map(p => p.pct_distancia);
+
+      graficos["g-modalidad-apilada"] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            { label: "Presencial", data: dataPres, backgroundColor: "#004E98", borderRadius: 4 },
+            { label: "A Distancia / Virtual (EAD)", data: dataDist, backgroundColor: "#10B981", borderRadius: 4 }
+          ]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { stacked: true, max: 100, grid: { color: "#F1F5F9" }, ticks: { callback: v => v + " %" } },
+            y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11, weight: "600" } } }
+          },
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 12, font: { size: 11, weight: "600" } } },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: { label: item => ` ${item.dataset.label}: ${item.raw.toFixed(1)} %` }
+            }
+          }
+        }
+      });
+    }
+
+    // Módulo 2: Pregrado vs Posgrado
+    function renderizarPrePos(prepos) {
+      destruirGrafico("g-pregrado-posgrado");
+      const ctx = $("g-pregrado-posgrado")?.getContext("2d");
+      if (!ctx || !prepos) return;
+
+      const labels = prepos.serie_anual.map(s => String(s.anio));
+      const preData = prepos.serie_anual.map(s => s.pregrado);
+      const posData = prepos.serie_anual.map(s => s.posgrado);
+
+      graficos["g-pregrado-posgrado"] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            { label: "Pregrado (Univ. y Técnico)", data: preData, backgroundColor: "#004E98", borderRadius: 4 },
+            { label: "Posgrados (Maestría / Doctorado)", data: posData, backgroundColor: "#10B981", borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 12, font: { size: 11, weight: "600" } } },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: { label: item => ` ${item.dataset.label}: ${fmt(item.raw)}` }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { weight: "600" } } },
+            y: { grid: { color: "#F1F5F9" }, ticks: { callback: v => (v/1000000).toFixed(1) + " M" } }
+          }
+        }
+      });
+    }
+
+    // Módulo 3: Pareto Top 8 IES
+    function renderizarPareto(top8) {
+      destruirGrafico("g-pareto-ies");
+      const ctx = $("g-pareto-ies")?.getContext("2d");
+      if (!ctx || !top8) return;
+
+      const slice8 = top8.slice(0, 8);
+      const labels = slice8.map(i => `${i.rank}. ${i.institucion.slice(0, 18)}…`);
+      const valores = slice8.map(i => i.matricula);
+      const pcts = slice8.map(i => i.pct_acumulado);
+
+      graficos["g-pareto-ies"] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              type: "line",
+              label: "% Acumulado Regional",
+              data: pcts,
+              borderColor: "#FFCC00",
+              borderWidth: 2.5,
+              pointBackgroundColor: "#FFCC00",
+              yAxisID: "yPct",
+              tension: 0.2
+            },
+            {
+              type: "bar",
+              label: "Matrícula 2024",
+              data: valores,
+              backgroundColor: "#004E98",
+              borderRadius: 4,
+              yAxisID: "yMat"
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 12, font: { size: 11, weight: "600" } } },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: {
+                label: item => item.dataset.type === "line" ? ` Acumulado: ${item.raw} %` : ` Matrícula: ${fmt(item.raw)}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+            yMat: { position: "left", grid: { color: "#F1F5F9" }, ticks: { callback: v => (v/1000).toFixed(0) + " k" } },
+            yPct: { position: "right", min: 0, max: 25, grid: { display: false }, ticks: { callback: v => v + " %" } }
+          }
+        }
+      });
+    }
+
+    // Módulo 3: Top 10 Campos Amplios Normalizados
+    function renderizarCamposTop10(campos) {
+      destruirGrafico("g-campos-top10");
+      const ctx = $("g-campos-top10")?.getContext("2d");
+      if (!ctx || !campos) return;
+
+      const labels = campos.map(c => c.campo);
+      const valores = campos.map(c => c.matricula);
+
+      graficos["g-campos-top10"] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            data: valores,
+            backgroundColor: valores.map((_, i) => i === 0 ? "#004E98" : (i <= 2 ? "#3B82F6" : "#94A3B8")),
+            borderRadius: 4,
+            maxBarThickness: 20
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: { label: item => ` Matrícula acumulada: ${fmt(item.raw)}` }
+            }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { callback: v => (v/1000000).toFixed(1) + " M" } },
+            y: { grid: { display: false }, ticks: { font: { size: 10.5, weight: "500" } } }
+          }
+        }
+      });
+    }
+
+    // Módulo 3: Ratio Nuevos/Matrícula por Campo
+    function renderizarRatioCampo(ratios) {
+      destruirGrafico("g-ratio-campo");
+      const ctx = $("g-ratio-campo")?.getContext("2d");
+      if (!ctx || !ratios) return;
+
+      const labels = ratios.map(r => r.campo);
+      const valores = ratios.map(r => r.ratio_flujo_pct);
+
+      graficos["g-ratio-campo"] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            data: valores,
+            backgroundColor: valores.map(v => v >= 50 ? "#10B981" : (v >= 35 ? "#004E98" : "#94A3B8")),
+            borderRadius: 4,
+            maxBarThickness: 22
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: { label: item => ` Ratio Nuevos / Stock: ${item.raw.toFixed(1)} %` }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10, weight: "500" }, maxRotation: 35 } },
+            y: { grid: { color: "#F1F5F9" }, max: 70, ticks: { callback: v => v + " %" } }
+          }
+        }
+      });
+    }
+
+    // Módulo 4: Regiones de Brasil
+    function renderizarRegionesBrasil(regs) {
+      destruirGrafico("g-regiones-brasil");
+      const ctx = $("g-regiones-brasil")?.getContext("2d");
+      if (!ctx || !regs) return;
+
+      const top10 = regs.slice(0, 10);
+      const labels = top10.map(r => `${r.region} (${r.pct_brasil} %)`);
+      const valores = top10.map(r => r.matricula);
+
+      graficos["g-regiones-brasil"] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            data: valores,
+            backgroundColor: valores.map((_, i) => i === 0 ? "#004E98" : (i <= 2 ? "#3B82F6" : "#94A3B8")),
+            borderRadius: 4,
+            maxBarThickness: 20
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.95)",
+              callbacks: { label: item => ` Matrícula acumulada: ${fmt(item.raw)} (${item.raw > 0 ? ((item.raw/20203655)*100).toFixed(1) : 0} % de Brasil)` }
+            }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { callback: v => (v/1000000).toFixed(1) + " M" } },
+            y: { grid: { display: false }, ticks: { font: { size: 11, weight: "600" } } }
+          }
+        }
+      });
+    }
+
+    // Módulo 4: Ficha de Perfil Nacional
+    function actualizarPerfilPais(nombrePais) {
+      const cont = $("ficha-pais-detalle");
+      if (!cont || !DATA) return;
+
+      const pInfo = DATA.paises_2024.find(p => p.pais.toLowerCase() === nombrePais.toLowerCase());
+      const sc = DATA.scorecard_calidad[nombrePais];
+      if (!pInfo || !sc) return;
+
+      const esBrasil = nombrePais === "Brasil";
+      $("panel-brasil-regiones").style.display = esBrasil ? "flex" : "none";
+
+      cont.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#004E98; background:rgba(0,78,152,0.08); padding:2px 8px; border-radius:4px;">
+              ${sc.etiqueta}
+            </span>
+            <h3 style="font-size:20px; font-weight:800; color:var(--marino); margin:4px 0 0 0;">${pInfo.pais}</h3>
+          </div>
+          <span style="font-size:11.5px; font-weight:600; color:var(--suave);"><b>Fuente Oficial:</b> ${sc.fuente} (${sc.periodos})</span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:12px;">
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+            <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">Matrícula 2024</span>
+            <b style="display:block; font-size:17px; color:#004E98; margin-top:2px;">${pInfo.matricula_2024 > 0 ? fmt(pInfo.matricula_2024) : "No reportada"}</b>
+          </div>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+            <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">Nuevos Ingresos</span>
+            <b style="display:block; font-size:17px; color:#10B981; margin-top:2px;">${pInfo.nuevos_2024 > 0 ? fmt(pInfo.nuevos_2024) : (nombrePais === "Perú" ? "No reportado" : "0")}</b>
+          </div>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+            <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">IES Monitoreadas</span>
+            <b style="display:block; font-size:17px; color:#283044; margin-top:2px;">${fmt(pInfo.ies_2024)} IES</b>
+          </div>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+            <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">Programas Activos</span>
+            <b style="display:block; font-size:17px; color:#D97706; margin-top:2px;">${fmt(pInfo.programas_2024)}</b>
+          </div>
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+            <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">Alumnos / IES</span>
+            <b style="display:block; font-size:17px; color:#475569; margin-top:2px;">${pInfo.alumnos_por_ies > 0 ? fmt(pInfo.alumnos_por_ies) : "—"}</b>
+          </div>
+        </div>
+
+        <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:6px; padding:9px 13px; font-size:11.5px; color:#92400E; line-height:1.4;">
+          ℹ️ <b>Diagnóstico Metodológico:</b> ${sc.observaciones}
+        </div>
+      `;
+    }
+
+    // Módulo 4: Tabla de Auditoría
+    function renderizarTablaAuditoria() {
+      const cont = $("d-tabla-auditoria");
+      if (!cont || !DATA) return;
+
+      const t = document.createElement("table");
+      const thead = t.createTHead().insertRow();
+      ["País", "Fuente Gubernamental", "Cobertura", "Matrícula 2024", "Nuevos 2024", "IES", "Carreras", "Períodos Censados"].forEach((c, idx) => {
+        const th = document.createElement("th");
+        th.textContent = c;
+        if (idx >= 3 && idx <= 6) th.className = "n";
+        thead.appendChild(th);
+      });
+
+      const tbody = t.createTBody();
+      DATA.paises_2024.forEach(p => {
+        const tr = tbody.insertRow();
+        const sc = DATA.scorecard_calidad[p.pais];
+
+        const cPais = tr.insertCell(); cPais.innerHTML = `<strong>${p.pais}</strong> <span style="font-size:10.5px;color:#64748B;">(${p.iso})</span>`;
+        const cFte = tr.insertCell(); cFte.textContent = sc ? sc.fuente : "—";
+        const cCob = tr.insertCell(); cCob.innerHTML = `<span class="kpi-badge ${sc?.nivel === 1 ? 'badge-gold' : (sc?.nivel === 2 ? 'badge-primary' : 'badge-neutral')}">${sc?.cobertura_pct || 0}% (${sc?.etiqueta.split("·")[0].trim() || ""})</span>`;
+        const cMat = tr.insertCell(); cMat.className = "n"; cMat.innerHTML = p.matricula_2024 > 0 ? `<b>${fmt(p.matricula_2024)}</b>` : "<span style='color:#94A3B8;'>No reportada</span>";
+        const cNue = tr.insertCell(); cNue.className = "n"; cNue.innerHTML = p.nuevos_2024 > 0 ? fmt(p.nuevos_2024) : "<span style='color:#94A3B8;'>—</span>";
+        const cIes = tr.insertCell(); cIes.className = "n"; cIes.textContent = fmt(p.ies_2024);
+        const cPrg = tr.insertCell(); cPrg.className = "n"; cPrg.textContent = fmt(p.programas_2024);
+        const cPer = tr.insertCell(); cPer.textContent = sc ? sc.periodos : "2024";
+      });
+
+      cont.replaceChildren(t);
+    }
+
+    // ─── Exportación Oficial PDF y XLSX CADIT ───
+    function exportarXlsx() {
+      if (!DATA) return;
+      const libro = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.json_to_sheet(DATA.paises_2024), "Comparación Países 2024");
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.json_to_sheet(DATA.chile_serie.anios.map((a, i) => ({
+        "Año": a, "Matrícula Chile": DATA.chile_serie.matricula[i], "Nuevos Ingresos": DATA.chile_serie.nuevos[i]
+      }))), "Evolución Chile 2007-2026");
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.json_to_sheet(DATA.campos_top10), "Top 10 Campos CINE");
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.json_to_sheet(DATA.concentracion_top_ies.slice(0, 8)), "Top 8 IES Pareto");
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.json_to_sheet(DATA.regiones_brasil), "Regiones Brasil");
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.json_to_sheet(DATA.ratios_flujo_campo), "Ratios Flujo Campo");
+      XLSX.writeFile(libro, "CADIT_Educacion_Superior_LATAM_Analitico.xlsx");
+    }
+
+    function exportarPdf() {
+      if (typeof window.jspdf === "undefined") {
+        window.print();
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+      const ancho = doc.internal.pageSize.getWidth();
+
+      // Banda de marca oficial CADIT
+      doc.setFillColor(40, 48, 68);
+      doc.rect(0, 0, ancho, 54, "F");
+      doc.setFillColor(255, 204, 0);
+      doc.rect(0, 54, ancho, 4, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(15);
+      doc.text("CADIT · Tablero Oficial de Educación Superior en América Latina", 36, 34);
+
+      doc.setTextColor(40, 48, 68);
+      doc.setFontSize(12);
+      doc.text("Resumen Ejecutivo de Indicadores Clave (Corte Oficial 2024)", 36, 85);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.text(`Generado: ${new Date().toLocaleString("es-CO")} · Fuente: INEP, ANUIES, SIES, SUNEDU, UdelaR`, 36, 102);
+
+      let y = 130;
+      doc.setFont("helvetica", "bold");
+      doc.text("Indicador", 36, y);
+      doc.text("Cifra Consolidada 2024", 260, y);
+      doc.line(36, y + 4, ancho - 36, y + 4);
+      y += 18;
+
+      doc.setFont("helvetica", "normal");
+      const k = DATA.kpis_2024;
+      const filas = [
+        ["Matrícula Total Consolidada", fmt(k.matricula_total) + " estudiantes"],
+        ["Estudiantes de Primer Ingreso (Flujo)", fmt(k.nuevos_inscritos) + " nuevos"],
+        ["Penetración Educación a Distancia", pct(k.pct_distancia)],
+        ["Instituciones de Educación Superior Activas", fmt(k.total_ies) + " IES"],
+        ["Programas Académicos Activos", fmt(k.total_programas) + " carreras"]
+      ];
+
+      filas.forEach(([t, v]) => {
+        doc.text(t, 36, y);
+        doc.text(v, 260, y);
+        y += 18;
+      });
+
+      doc.save("CADIT_LATAM_Reporte_Ejecutivo.pdf");
+    }
+
+    // ─── Navegación por Pestañas / Módulos ───
+    function configurarModulos() {
+      document.querySelectorAll(".btn-modulo").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".btn-modulo").forEach(b => b.classList.remove("activa"));
+          btn.classList.add("activa");
+
+          const targetId = btn.dataset.tab;
+          document.querySelectorAll(".seccion-modulo").forEach(sec => {
+            sec.style.display = sec.id === `sec-${targetId}` ? "block" : "none";
+          });
+
+          // Redibujar gráficas del módulo activo garantizando dimensiones correctas
+          setTimeout(() => {
+            Object.values(graficos).forEach(g => {
+              if (g && typeof g.resize === "function") g.resize();
+            });
+            if (chartMapaLatam && typeof chartMapaLatam.resize === "function") {
+              chartMapaLatam.resize();
+            }
+            const hmDom = $("g-heatmap-campo-pais");
+            if (hmDom && typeof echarts !== "undefined") {
+              const hmInst = echarts.getInstanceByDom(hmDom);
+              if (hmInst) hmInst.resize();
+            }
+            window.dispatchEvent(new Event("resize"));
+          }, 40);
+        });
+      });
+
+      $("sel-perfil-pais")?.addEventListener("change", e => {
+        actualizarPerfilPais(e.target.value);
+      });
+    }
+
+    // ─── Inicialización General ───
+    async function inicializar() {
+      try {
+        const res = await fetch("datos/latam_datos.json");
+        if (!res.ok) throw new Error("No se pudo cargar datos/latam_datos.json");
+        DATA = await res.json();
+
+        // 1. Renderizar Fila de 5 KPIs 2024 (Pilar 1)
+        renderizarKpis(DATA.kpis_2024);
+
+        // 2. Módulo 1 (Mapa Territorial, Ficha Dinámica, Comparación y Heatmap)
+        await inicializarMapaLatam(DATA.paises_2024);
+        actualizarFichaTerritorial(null);
+        renderizarComparacionPaises(DATA.paises_2024);
+        renderizarHeatmap(DATA.heatmap);
+
+        // 3. Módulo 2
+        renderizarChileEvolucion(DATA.chile_serie);
+        renderizarModalidadApilada(DATA.modalidad_consolidado);
+        renderizarPrePos(DATA.pregrado_posgrado);
+
+        // 4. Módulo 3
+        renderizarPareto(DATA.concentracion_top_ies);
+        renderizarCamposTop10(DATA.campos_top10);
+        renderizarRatioCampo(DATA.ratios_flujo_campo);
+
+        // 5. Módulo 4
+        renderizarRegionesBrasil(DATA.regiones_brasil);
+        renderizarTablaAuditoria();
+        actualizarPerfilPais("Brasil");
+
+        // Eventos
+        configurarModulos();
+        $("xlsx").onclick = exportarXlsx;
+        $("pdf").onclick = exportarPdf;
+
+      } catch (e) {
+        console.error("Error al inicializar el tablero analítico LATAM:", e);
+      }
+    }
+
+    // Navegación lateral
+    document.querySelectorAll("nav#menu button[data-href]").forEach(btn => {
+      btn.addEventListener("click", () => { location.href = btn.dataset.href; });
+    });
+
+    // Menú móvil
+    const btnMenu = $("btn-menu-movil");
+    if (btnMenu) {
+      btnMenu.addEventListener("click", () => {
+        const lateral = document.querySelector(".lateral");
+        const abierto = lateral.classList.toggle("abierto");
+        btnMenu.setAttribute("aria-expanded", String(abierto));
+        btnMenu.querySelector(".icono-hamburguesa").style.display = abierto ? "none" : "";
+        btnMenu.querySelector(".icono-cerrar").style.display = abierto ? "" : "none";
+      });
+    }
+
+    
+    // ─── Buscador Universal CADIT (Países, Campos CINE, Módulos) ───
+    let resultadosBusqueda = [];
+    const normalizar = t => String(t ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").trim();
+
+    function activarModulo(tabId) {
+      const btn = document.querySelector(`.btn-modulo[data-tab="${tabId}"]`);
+      if (btn) btn.click();
+      window.scrollTo({ top: 120, behavior: "smooth" });
+    }
+
+    function navegarPais(pais) {
+      activarModulo("mod-4");
+      const sel = $("filtro-pais-auditoria");
+      if (sel) {
+        sel.value = pais;
+        actualizarPerfilPais(pais);
+      }
+    }
+
+    function buscarCatalogo(texto) {
+      const q = normalizar(texto);
+      const caja = $("resultados");
+      if (!caja) return;
+      if (!q) {
+        caja.hidden = true;
+        resultadosBusqueda = [];
+        return;
+      }
+
+      const opciones = [
+        // Países Oficiales
+        { tipo: "País · Datos Oficiales", texto: "Brasil · INEP (Corte 2024)", accion: () => navegarPais("Brasil") },
+        { tipo: "País · Datos Oficiales", texto: "Chile · SIES (Corte 2024)", accion: () => navegarPais("Chile") },
+        { tipo: "País · Datos Oficiales", texto: "México · ANUIES (Corte 2024)", accion: () => navegarPais("México") },
+        { tipo: "País · Datos Oficiales", texto: "Perú · SUNEDU (Corte 2024)", accion: () => navegarPais("Perú") },
+        { tipo: "País · Datos Oficiales", texto: "Uruguay · UdelaR (Corte 2024)", accion: () => navegarPais("Uruguay") },
+        // Módulos
+        { tipo: "Módulo Analítico", texto: "1. Macro-Benchmarking Regional (2024)", accion: () => activarModulo("mod-1") },
+        { tipo: "Módulo Analítico", texto: "2. Trayectoria y Transformación Digital", accion: () => activarModulo("mod-2") },
+        { tipo: "Módulo Analítico", texto: "3. Mercado y Oferta Académica", accion: () => activarModulo("mod-3") },
+        { tipo: "Módulo Analítico", texto: "4. Perfiles por País y Auditoría", accion: () => activarModulo("mod-4") },
+        // Campos CINE / UNESCO
+        { tipo: "Campo CINE / UNESCO", texto: "Administración de empresas y derecho", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Ingeniería, industria y construcción", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Salud y bienestar", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Educación", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Ciencias sociales, periodismo e información", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Tecnologías de la información y la comunicación (TIC)", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Artes y humanidades", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Ciencias naturales, matemáticas y estadística", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Servicios", accion: () => activarModulo("mod-3") },
+        { tipo: "Campo CINE / UNESCO", texto: "Agricultura, silvicultura, pesca y veterinaria", accion: () => activarModulo("mod-3") }
+      ];
+
+      resultadosBusqueda = opciones.filter(it => normalizar(it.texto).includes(q)).slice(0, 8);
+
+      if (!resultadosBusqueda.length) {
+        caja.innerHTML = '<p>No se encontraron resultados para la búsqueda.</p>';
+      } else {
+        caja.replaceChildren(...resultadosBusqueda.map(it => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.innerHTML = `<b>${it.texto}</b><small>${it.tipo}</small>`;
+          b.onclick = () => {
+            it.accion();
+            caja.hidden = true;
+            $("buscar").value = "";
+          };
+          return b;
+        }));
+      }
+      caja.hidden = false;
+    }
+
+    $("buscar")?.addEventListener("input", e => buscarCatalogo(e.target.value));
+    $("buscar")?.addEventListener("keydown", e => {
+      if (e.key === "Enter" && resultadosBusqueda[0]) {
+        e.preventDefault();
+        resultadosBusqueda[0].accion();
+        const caja = $("resultados");
+        if (caja) caja.hidden = true;
+        $("buscar").value = "";
+      }
+      if (e.key === "Escape") {
+        const caja = $("resultados");
+        if (caja) caja.hidden = true;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        $("resultados")?.querySelector("button")?.focus();
+      }
+    });
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".buscar")) {
+        const res = $("resultados");
+        if (res) res.hidden = true;
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", inicializar);
+  </script>
+</body>
+
+</html>

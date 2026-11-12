@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plantilla de Tablero · CADIT</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <!-- Tipografía institucional de marca -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Serif:wght@600&display=swap">
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <!-- Soporte para Mapas ECharts y diagramas avanzados CADIT -->
+  <script src="vendor/echarts.min.js"></script>
+  <link rel="stylesheet" href="estilo-cadit.css"> <!-- Hoja de estilo maestra compartida CADIT 2.0 -->
+  <style>
+    /* ─── Contenedor de KPIs Ejecutivos (Plantilla Maestra CADIT 2.0) ─── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1400px) {
+      .kpis {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+      scroll-margin-top: 80px;
+    }
+
+    .kpi-info-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 2px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s ease, transform .15s ease;
+    }
+
+    .kpi-info-btn:hover {
+      color: #004E98;
+      transform: scale(1.15);
+    }
+
+    .popup-info-kpi {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 250px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      z-index: 50;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #334155;
+      pointer-events: none;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi {
+      display: block;
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: #004E98;
+      margin-bottom: 6px;
+      font-size: 12px;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 4px;
+    }
+
+    .popup-info-meta {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #E2E8F0;
+      font-size: 10px;
+      color: #64748B;
+      font-style: italic;
+    }
+
+    /* Ficha de Síntesis Territorial */
+    .ficha-territorial-activa {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-top: 3.5px solid #004E98;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 16px 36px -4px rgba(0, 78, 152, 0.12);
+      color: #0F172A;
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Menú lateral CADIT (Desktop y Móvil) -->
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>Nombre del Tablero</h3>
+      <button data-v="resumen" class="activa">Resumen General</button>
+      <button data-v="analisis">Análisis Específico</button>
+      <h3>Otros tableros</h3>
+      <button data-href="index.html">SNIES · Base Externa</button>
+      <button data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-href="sena.html">SENA · Formación</button>
+      <button data-href="latam.html">Educación Superior · LATAM</button>
+      <button data-href="minciencias.html">MinCiencias · Grupos</button>
+      <button data-href="idic.html">IDIC · Innovación</button>
+      <button data-href="rues.html">RUES · Empresas</button>
+    </nav>
+  </aside>
+
+  <!-- Contenedor principal -->
+  <div class="contenido">
+    <!-- Barra superior -->
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar institución, programa o palabra clave…" autocomplete="off"
+          aria-label="Buscar">
+        <div id="resultados" hidden></div>
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Datos actualizados</span>
+        <div class="acciones">
+          <button id="pdf" type="button" style="display: none;">PDF</button>
+          <button id="xlsx" type="button" style="display: none;">XLSX</button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Encabezado con título analítico -->
+      <div class="encabezado">
+        <h1 id="titulo">Título Analítico del Tablero</h1>
+        <p id="subtitulo">Subtítulo explicativo del corte de información, alcance y recomendaciones de uso.</p>
+      </div>
+
+      <!-- Sistema de Filtros CADIT 2.0 -->
+      <div class="area-filtros">
+        <div class="filtros-prioritarios">
+          <div class="filtro-campo">
+            <label for="f-anio">Año de corte</label>
+            <select id="f-anio">
+              <option value="">Todos los años</option>
+              <option value="2024" selected>2024</option>
+              <option value="2023">2023</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-categoria">Categoría</label>
+            <select id="f-categoria">
+              <option value="">Todas las categorías</option>
+            </select>
+          </div>
+          <div class="filtros-acciones">
+            <button id="limpiar" class="btn-limpiar" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Limpiar filtros</span>
+            </button>
+          </div>
+        </div>
+        <div id="chips-activos" class="chips-barra" hidden></div>
+      </div>
+
+      <div id="estado" hidden>Cargando datos…</div>
+
+      <!-- Vista principal -->
+      <div id="p-resumen" class="pagina">
+        <!-- Bloque de Indicadores Ejecutivos (KPIs Wow con Ficha Técnica) -->
+        <div class="kpis" id="kpis-resumen"></div>
+
+        <!-- Sección 1: Tendencia Multianual -->
+        <h3 class="seccion">Evolución histórica</h3>
+        <div class="rejilla">
+          <div class="panel panel-ancho">
+            <h2 id="h-tendencia">¿Cómo ha evolucionado la variable principal?</h2>
+            <p class="sub" id="s-tendencia">Comportamiento multianual · Clic en la serie para profundizar</p>
+            <div class="grafico"><canvas id="g-tendencia"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Sección 2: Composición y Diversidad Visual -->
+        <h3 class="seccion">Composición y distribución</h3>
+        <div class="rejilla">
+          <!-- Gráfico de Dona Ejecutiva con centro destacado -->
+          <div class="panel">
+            <h2 id="h-composicion">¿Qué componente predomina?</h2>
+            <p class="sub" id="s-composicion">Distribución porcentual · Clic en un segmento para filtrar</p>
+            <div class="grafico"><canvas id="g-dona"></canvas></div>
+          </div>
+
+          <!-- Gráfico de Barras Horizontales limpias -->
+          <div class="panel">
+            <h2 id="h-ranking">¿Cuáles son las categorías líderes?</h2>
+            <p class="sub" id="s-ranking">Top clasificado · Unidad: conteo absoluto</p>
+            <div class="grafico"><canvas id="g-barras"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Sección 3: Distribución Territorial (Mapa ECharts Continuo CADIT) -->
+        <h3 class="seccion">Distribución territorial</h3>
+
+        <!-- Ficha de Síntesis Territorial (Aparece al seleccionar un departamento) -->
+        <div class="ficha-territorial-activa" id="ficha-territorial-activa" hidden>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+            <div>
+              <span
+                style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#004E98; background:rgba(0,78,152,0.08); padding:2px 8px; border-radius:4px;">Territorio
+                Seleccionado</span>
+              <h3 id="ficha-dpto-nombre" style="font-size:18px; font-weight:700; color:#283044; margin:4px 0 0 0;">—
+              </h3>
+            </div>
+            <button type="button" id="btn-cerrar-ficha"
+              style="background:#F1F5F9; border:1px solid #E2E8F0; border-radius:6px; padding:4px 10px; font-size:11.5px; font-weight:600; color:#475569; cursor:pointer;">
+              Restablecer vista nacional ×
+            </button>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px;">
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+              <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">Volumen
+                Regional</span>
+              <b id="ficha-dpto-val" style="display:block; font-size:17px; color:#004E98; margin-top:2px;">—</b>
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+              <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">Participación
+                País</span>
+              <b id="ficha-dpto-pct" style="display:block; font-size:17px; color:#1E293B; margin-top:2px;">—</b>
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px;">
+              <span style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase;">Ranking
+                Nacional</span>
+              <b id="ficha-dpto-rank" style="display:block; font-size:17px; color:#854D0E; margin-top:2px;">—</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="cuadricula-territorial"
+          style="display:grid;grid-template-columns:1.2fr 1fr;gap:20px;margin-bottom:24px;">
+          <!-- Mapa ECharts Continuo -->
+          <div class="panel">
+            <h2 id="h-mapa">¿Dónde se concentra la cobertura geográfica?</h2>
+            <p class="sub" id="s-mapa">Mapa de Colombia · Clic en un departamento para filtrar</p>
+            <div id="g-mapa-colombia" style="width:100%;height:460px;background:#FFFFFF;border-radius:8px;"></div>
+          </div>
+
+          <!-- Ranking Departamental Complementario -->
+          <div class="panel">
+            <h2 id="h-ranking-depto">Top Departamentos</h2>
+            <p class="sub" id="s-ranking-depto">Concentración regional comparativa · Clic para filtrar</p>
+            <div class="grafico" style="height:460px;"><canvas id="g-ranking-depto"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Sección 4: Detalle Tabular -->
+        <h3 class="seccion" id="h-seccion-detalle">Detalle de información</h3>
+        <div class="panel">
+          <h2 id="h-detalle">Registros analizados</h2>
+          <p class="sub">Tabla interactiva · Clic en un encabezado para ordenar o en una fila para filtrar</p>
+          <div class="tabla" id="d-tabla"></div>
+          <p class="nota" id="nota-detalle">Fuente: Base Externa CADIT · Vicerrectoría Académica · UNIMINUTO.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Configuración global de Chart.js con estándar CADIT
+    Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+    Chart.defaults.color = "#212844";
+
+    const SERIES_CADIT = ["#004E98", "#10B981", "#FFCC00", "#283044", "#3D7CC9", "#E0A800"];
+    const fmt = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 }));
+    const fmt1 = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 1 }));
+    const pct = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 1 }) + " %");
+    const $ = id => document.getElementById(id);
+
+    let graficos = {};
+    let detalle = { filas: [], cols: [], kpis: [] };
+    let logoPdf = null;
+    let ESTADO = { anio: "2024", categoria: "" };
+
+    // ─── 1. Plugin y Función de Dona Ejecutiva (Centro Destacado) ───
+    const pluginCentroDona = {
+      id: "centroDona",
+      afterDraw(chart) {
+        if (chart.config.type !== "doughnut") return;
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const centerY = (chartArea.top + chartArea.bottom) / 2;
+        const dataArr = chart.data.datasets[0].data || [];
+        const total = chart._refTotal || dataArr.reduce((a, b) => a + Number(b || 0), 0);
+        const val0 = Number(dataArr[0] || 0);
+        const pct0 = total > 0 ? (val0 / total * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+        const label0 = chart.data.labels[0] || "";
+
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.font = "800 23px 'IBM Plex Sans', sans-serif";
+        ctx.fillStyle = "#004E98";
+        ctx.fillText(pct0, centerX, centerY - 9);
+
+        ctx.font = "600 11.5px 'IBM Plex Sans', sans-serif";
+        ctx.fillStyle = "#64748B";
+        ctx.fillText(label0.length > 15 ? label0.slice(0, 14) + "…" : label0, centerX, centerY + 14);
+
+        ctx.restore();
+      }
+    };
+
+    function dona(id, etiquetas, valores, alClic, colores, refTotal = null) {
+      const chart = graficos[id];
+      const total = refTotal || valores.reduce((a, b) => a + Number(b || 0), 0);
+      const bg = Array.isArray(colores) ? colores : ["#004E98", "#10B981", "#94A3B8"];
+      const hoverBg = bg.map(c => c === "#004E98" ? "#003870" : (c === "#10B981" ? "#059669" : "#64748B"));
+
+      if (chart && chart.config.type === "doughnut") {
+        chart.data.labels = etiquetas;
+        chart.data.datasets[0].data = valores;
+        chart.data.datasets[0].backgroundColor = bg;
+        chart.data.datasets[0].hoverBackgroundColor = hoverBg;
+        chart._refTotal = total;
+        chart.options.onClick = (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); };
+        chart.update({ duration: 550, easing: "easeInOutCubic" });
+        return;
+      }
+
+      chart?.destroy();
+      const elCanvas = $(id);
+      if (!elCanvas) return;
+
+      graficos[id] = new Chart(elCanvas, {
+        type: "doughnut",
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            data: valores,
+            backgroundColor: bg,
+            hoverBackgroundColor: hoverBg,
+            borderWidth: 2,
+            borderColor: "#FFFFFF",
+            hoverOffset: 5
+          }]
+        },
+        plugins: [pluginCentroDona],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "68%",
+          animation: { duration: 650, easing: "easeOutQuart" },
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: true,
+                pointStyle: "circle",
+                font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: "600" },
+                color: "#1E293B",
+                padding: 14,
+                generateLabels: ch => {
+                  const data = ch.data;
+                  if (!data.labels.length || !data.datasets.length) return [];
+                  const ds = data.datasets[0];
+                  return data.labels.map((lbl, idx) => {
+                    const val = Number(ds.data[idx] || 0);
+                    const p = total > 0 ? (val / total * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+                    return { text: `${lbl}: ${p}`, fillStyle: ds.backgroundColor[idx], strokeStyle: ds.backgroundColor[idx], lineWidth: 0, hidden: false, index: idx };
+                  });
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: "rgba(40, 48, 68, 0.96)",
+              titleFont: { family: "'IBM Plex Sans', sans-serif", size: 12, weight: "700" },
+              bodyFont: { family: "'IBM Plex Sans', sans-serif", size: 11.5 },
+              padding: 10,
+              cornerRadius: 6,
+              callbacks: {
+                label: ctx => {
+                  const val = Number(ctx.raw || 0);
+                  const p = total > 0 ? (val / total * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+                  return ` ${ctx.label}: ${fmt(val)} (${p})`;
+                }
+              }
+            }
+          },
+          onClick: (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); }
+        }
+      });
+      graficos[id]._refTotal = total;
+    }
+
+    // ─── 2. Barras Horizontales Estándar CADIT ───
+    function barras(id, etiquetas, valores, alClic, colores, totalRef = null) {
+      const chart = graficos[id];
+      const bg = Array.isArray(colores) ? colores : "#004E98";
+
+      if (chart && chart.config.type === "bar") {
+        chart.data.labels = etiquetas;
+        chart.data.datasets[0].data = valores;
+        chart.data.datasets[0].backgroundColor = bg;
+        chart.options.onClick = (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); };
+        chart.update({ duration: 550, easing: "easeInOutCubic" });
+        return;
+      }
+
+      chart?.destroy();
+      const elCanvas = $(id);
+      if (!elCanvas) return;
+
+      graficos[id] = new Chart(elCanvas, {
+        type: "bar",
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            data: valores,
+            backgroundColor: bg,
+            borderRadius: 4,
+            barThickness: 18,
+            maxBarThickness: 24
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${fmt(ctx.raw)}${totalRef ? ` (${(ctx.raw / totalRef * 100).toFixed(1)} %)` : ""}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { font: { family: "'IBM Plex Sans'" } } },
+            y: { grid: { display: false }, ticks: { font: { family: "'IBM Plex Sans'", weight: "600" } } }
+          },
+          onClick: (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); }
+        }
+      });
+    }
+
+    // ─── 3. Líneas Multianuales CADIT ───
+    function lineas(id, etiquetas, series, alClic) {
+      const chart = graficos[id];
+      const datasets = series.map(([label, data], idx) => ({
+        label,
+        data,
+        borderColor: SERIES_CADIT[idx % SERIES_CADIT.length],
+        backgroundColor: SERIES_CADIT[idx % SERIES_CADIT.length],
+        tension: 0.25,
+        borderWidth: 2.2,
+        pointRadius: 3.5,
+        pointHoverRadius: 6
+      }));
+
+      if (chart && chart.config.type === "line") {
+        chart.data.labels = etiquetas;
+        chart.data.datasets = datasets;
+        chart.update({ duration: 550, easing: "easeInOutCubic" });
+        return;
+      }
+
+      chart?.destroy();
+      const elCanvas = $(id);
+      if (!elCanvas) return;
+
+      graficos[id] = new Chart(elCanvas, {
+        type: "line",
+        data: { labels: etiquetas, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: { display: series.length > 1, position: "bottom" }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" } },
+            y: { grid: { color: "#F1F5F9" } }
+          },
+          onClick: (e, els) => { if (els && els.length > 0) alClic?.(els[0].index); }
+        }
+      });
+    }
+
+    // ─── 4. Generador Universal de Tarjetas KPI con Ficha Técnica Emergente ───
+    function tarjeta({
+      kicker,
+      t,
+      v,
+      texto = null,
+      nota = null,
+      esHero = false,
+      badge = null,
+      badgeClass = "badge-neutral",
+      progreso = null,
+      progresoColor = "#004E98",
+      delta = null,
+      deltaClass = "delta-neutral",
+      popupData = null,
+      alClic = null
+    }) {
+      const el = document.createElement("div");
+      el.className = "kpi-card" + (alClic ? " kpi-interactive" : "");
+      if (alClic) {
+        el.style.cursor = "pointer";
+        el.onclick = (e) => {
+          if (e.target.closest(".kpi-info-btn") || e.target.closest(".popup-info-kpi")) return;
+          alClic(e);
+        };
+      }
+
+      let popupHtml = "";
+      if (popupData) {
+        popupHtml = `
+          <div class="popup-info-kpi">
+            <div class="popup-info-header">${popupData.titulo || t}</div>
+            <p style="margin:0 0 5px 0;">${popupData.mide}</p>
+            ${popupData.calculo ? `<p style="margin:4px 0 0 0;font-size:10.5px;color:#004E98;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+            <div class="popup-info-meta">Fuente: ${popupData.fuente || "Base de Datos CADIT"}</div>
+          </div>
+        `;
+      }
+
+      const badgeHtml = badge ? `<span class="kpi-badge ${badgeClass}">${badge}</span>` : "";
+      const infoBtnHtml = popupData ? `<button type="button" class="kpi-info-btn" aria-label="Información">ⓘ</button>${popupHtml}` : "";
+
+      const barHtml = progreso != null ? `
+        <div class="kpi-card-track" title="${Number(progreso).toFixed(1)}%">
+          <div class="kpi-card-track-fill" style="width: ${Math.min(100, Math.max(0, progreso))}%; background: ${progresoColor};"></div>
+        </div>` : "";
+
+      const deltaHtml = delta ? `<span class="kpi-delta ${deltaClass}">${delta}</span>` : "";
+
+      el.innerHTML = `
+        <div class="kpi-card-header">
+          <div class="kpi-card-meta">
+            ${kicker ? `<span class="kpi-card-kicker">${kicker}</span>` : ""}
+            <h4 class="kpi-card-title" title="${t}">${t}</h4>
+          </div>
+          <div class="kpi-card-aside">
+            ${badgeHtml}
+            ${infoBtnHtml}
+          </div>
+        </div>
+        <div class="kpi-card-body">
+          <b class="kpi-card-val ${esHero ? "val-hero" : ""}"></b>
+        </div>
+        ${barHtml}
+        <div class="kpi-card-footer">
+          <p class="kpi-card-sub">${nota || "Datos consolidados"}</p>
+          ${deltaHtml}
+        </div>
+      `;
+
+      const bEl = el.querySelector(".kpi-card-val");
+      if (texto != null) {
+        bEl.className = "kpi-card-val val-text";
+        bEl.textContent = texto;
+      } else {
+        animarNumero(bEl, v, 500, fmt);
+      }
+
+      return el;
+    }
+
+    function kpis(items) {
+      return items.map(it => tarjeta(it));
+    }
+
+    function pintarMapaColombia(chart, datosDeptos, dptoActivo = null, tituloSerie = "Registros") {
+      if (!chart) return;
+      try { chart.resize(); } catch (_) { }
+
+      const seriesData = datosDeptos.map(d => {
+        const svgName = MAPA_ID_A_SVG_NAME[d.id] || d.nombre;
+        const estaSeleccionado = dptoActivo && (
+          dptoActivo.toLowerCase() === d.nombre.toLowerCase() ||
+          dptoActivo.toLowerCase() === svgName.toLowerCase() ||
+          dptoActivo === d.id
+        );
+        return {
+          name: svgName,
+          value: d.valor,
+          dpto: d.nombre,
+          subtexto: d.subtexto || "",
+          selected: estaSeleccionado
+        };
+      });
+
+      const maxVal = Math.max(...seriesData.map(d => d.value), 10);
+
+      chart.setOption({
+        tooltip: {
+          trigger: "item",
+          backgroundColor: "rgba(40, 48, 68, 0.96)",
+          borderColor: "#283044",
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+          formatter: p => {
+            const d = p.data;
+            if (!d) return p.name;
+            return `
+              <strong style="color:#FFCC00;font-size:13px;">${d.dpto}</strong><br/>
+              ${tituloSerie}: <b>${fmt(d.value)}</b><br/>
+              ${d.subtexto ? `<span style="font-size:11px;color:#CBD5E1;">${d.subtexto}</span><br/>` : ""}
+              <span style="font-size:10.5px;color:#94A3B8;">${d.selected ? "Filtro activo · Clic para restablecer" : "Clic para filtrar"}</span>
+            `;
+          }
+        },
+        visualMap: {
+          min: 0,
+          max: maxVal,
+          left: 12,
+          bottom: 12,
+          text: ["Alto", "Bajo"],
+          calculable: true,
+          inRange: {
+            color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004E98", "#1E1B4B"]
+          },
+          textStyle: { color: "#64748B", fontSize: 11, fontFamily: "'IBM Plex Sans'" }
+        },
+        series: [{
+          name: tituloSerie,
+          type: "map",
+          map: "colombia_svg",
+          roam: true,
+          zoom: 1.08,
+          scaleLimit: { min: 0.9, max: 4.5 },
+          emphasis: {
+            itemStyle: {
+              areaColor: "#FFCC00",
+              borderColor: "#283044",
+              borderWidth: 1.5
+            },
+            label: { show: false }
+          },
+          select: {
+            itemStyle: {
+              areaColor: "#FFCC00",
+              borderColor: "#283044",
+              borderWidth: 2
+            },
+            label: { show: false }
+          },
+          itemStyle: {
+            borderColor: "#FFFFFF",
+            borderWidth: 0.75
+          },
+          data: seriesData
+        }]
+      });
+    }
+
+    // ─── 6. Inicialización de Demostración ───
+    function inicializarTablero() {
+      // KPIs de demostración (5 Categorías Oficiales CADIT)
+      $("kpis-resumen").replaceChildren(...kpis([
+        {
+          kicker: "VOLUMEN TOTAL",
+          t: "Métrica Principal",
+          v: 48250,
+          esHero: true,
+          badge: "Oficial",
+          badgeClass: "badge-gold",
+          progreso: 100,
+          progresoColor: "#004E98",
+          nota: "Corte consolidado del periodo",
+          delta: "+12,4 % vs año ant.",
+          deltaClass: "delta-up",
+          popupData: {
+            titulo: "Métrica Primaria del Sistema",
+            mide: "Total acumulado de registros validados y activos.",
+            calculo: "Sumatoria continua de registros certificados",
+            fuente: "CADIT · Datos Oficiales"
+          }
+        },
+        {
+          kicker: "DESEMPEÑO Y COBERTURA",
+          t: "Porcentaje de Cobertura",
+          v: 84.6,
+          texto: "84,6 %",
+          badge: "Meta",
+          badgeClass: "badge-success",
+          progreso: 84.6,
+          progresoColor: "#15803D",
+          nota: "Participación sobre el universo",
+          delta: "+2,1 pts vs meta",
+          deltaClass: "delta-up",
+          popupData: {
+            titulo: "Cobertura Relativa",
+            mide: "Porcentaje representativo sobre el universo total observado.",
+            calculo: "(Casos atendidos / Universo) × 100",
+            fuente: "CADIT · Medición Institucional"
+          }
+        },
+        {
+          kicker: "ENFOQUE DE GÉNERO",
+          t: "Mujeres Beneficiarias",
+          v: 27213,
+          badge: "56,4 %",
+          badgeClass: "badge-primary",
+          progreso: 56.4,
+          progresoColor: "#004E98",
+          nota: "Participación femenina activa",
+          delta: "56,4 % mujeres",
+          deltaClass: "delta-up",
+          popupData: {
+            titulo: "Distribución por Género",
+            mide: "Proporción de mujeres beneficiarias en el sistema.",
+            calculo: "(Total Mujeres / Total Población) × 100",
+            fuente: "CADIT · Caracterización"
+          }
+        },
+        {
+          kicker: "SERIE MULTIANUAL",
+          t: "Población Acumulada",
+          v: 128400,
+          badge: "5 años",
+          badgeClass: "badge-neutral",
+          progreso: 72,
+          progresoColor: "#283044",
+          nota: "Serie histórica multianual",
+          delta: "128.400 personas",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Población Consolidada",
+            mide: "Total de personas únicas registradas en la serie histórica.",
+            calculo: "Conteo único de beneficiarios acumulados",
+            fuente: "CADIT · Histórico"
+          }
+        },
+        {
+          kicker: "CONCENTRACIÓN REGIONAL",
+          t: "Territorio Líder",
+          texto: "Bogotá, D.C.",
+          badge: "Líder nacional",
+          badgeClass: "badge-gold",
+          progreso: 34.2,
+          progresoColor: "#FFCC00",
+          nota: "Mayor colocación territorial",
+          delta: "34,2 % del país",
+          deltaClass: "delta-neutral",
+          popupData: {
+            titulo: "Concentración Territorial",
+            mide: "Participación porcentual del departamento con mayor cobertura.",
+            calculo: "(Registros en territorio líder / Total país) × 100",
+            fuente: "CADIT · Territorial"
+          }
+        }
+      ]));
+
+      // Gráficos de ejemplo
+      lineas(
+        "g-tendencia",
+        ["2020", "2021", "2022", "2023", "2024"],
+        [["Serie A (Principal)", [28000, 32000, 39000, 44000, 48250]], ["Serie B (Comparativa)", [12000, 14000, 16000, 18000, 20500]]]
+      );
+
+      dona(
+        "g-dona",
+        ["Categoría A", "Categoría B", "Otras"],
+        [84.6, 10.9, 4.5],
+        i => console.log("Clic dona:", i),
+        ["#004E98", "#10B981", "#94A3B8"]
+      );
+
+      barras(
+        "g-barras",
+        ["Segmento 1", "Segmento 2", "Segmento 3", "Segmento 4"],
+        [24500, 15200, 8400, 3100],
+        i => console.log("Clic barra:", i)
+      );
+
+      // Mapa geográfico de Colombia continuo (ECharts)
+      inicializarMapaColombia("g-mapa-colombia", data => {
+        console.log("Clic departamento:", data);
+      }).then(ch => {
+        if (!ch) return;
+        const demoDeptos = [
+          { id: "CO-DC", nombre: "Bogotá, D.C.", valor: 18500, subtexto: "38,3 % del total" },
+          { id: "CO-ANT", nombre: "Antioquia", valor: 12400, subtexto: "25,7 % del total" },
+          { id: "CO-VAL", nombre: "Valle del Cauca", valor: 8200, subtexto: "17,0 % del total" },
+          { id: "CO-ATL", nombre: "Atlántico", valor: 5100, subtexto: "10,6 % del total" },
+          { id: "CO-SAN", nombre: "Santander", valor: 4050, subtexto: "8,4 % del total" }
+        ];
+        pintarMapaColombia(ch, demoDeptos, null, "Registros");
+        barras(
+          "g-ranking-depto",
+          demoDeptos.map(d => d.nombre),
+          demoDeptos.map(d => d.valor),
+          i => console.log("Clic barra depto:", i)
+        );
+      });
+    }
+
+    // Navegación lateral
+    document.querySelectorAll("nav#menu button[data-href]").forEach(btn => {
+      btn.addEventListener("click", () => { location.href = btn.dataset.href; });
+    });
+
+    // Menú móvil
+    const btnMenu = $("btn-menu-movil");
+    if (btnMenu) {
+      btnMenu.addEventListener("click", () => {
+        const lateral = document.querySelector(".lateral");
+        const abierto = lateral.classList.toggle("abierto");
+        btnMenu.setAttribute("aria-expanded", String(abierto));
+        btnMenu.querySelector(".icono-hamburguesa").style.display = abierto ? "none" : "";
+        btnMenu.querySelector(".icono-cerrar").style.display = abierto ? "" : "none";
+      });
+    }
+
+    // Inicializar al cargar
+    document.addEventListener("DOMContentLoaded", inicializarTablero);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,1848 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tablero MinCiencias · Grupos de Investigación · CADIT</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Serif:wght@600&display=swap">
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/echarts.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script>
+    if (!window.echarts) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"><\/script>');
+    }
+  </script>
+  <link rel="stylesheet" href="estilo-cadit.css">
+  <style>
+    :root {
+      --marino: #283044;
+      --amarillo: #FFCC00;
+      --azul: #004E98;
+      --niebla: #F4F5F7;
+      --texto: #374151;
+      --azul-claro: #2A70B8;
+      --azul-sombra: #1B3556;
+      --ocre: #E6B800;
+      --suave: #6B7280;
+      --borde: #E5E7EB;
+      --blanco: #FFFFFF;
+    }
+
+    .lateral {
+      background: radial-gradient(ellipse at top, #35405c, #283044 70%) !important;
+    }
+
+    .lateral .marca {
+      border-bottom: 4px solid #FFCC00 !important;
+    }
+
+    .lateral .contexto {
+      color: #FFCC00 !important;
+    }
+
+    .lateral button.activa {
+      border-left-color: #FFCC00 !important;
+    }
+
+    .acciones button {
+      background: #FFCC00 !important;
+      color: #283044 !important;
+    }
+
+    .acciones button:hover {
+      background: #E6B800 !important;
+    }
+
+    /* ─── Contenedor de KPIs Ejecutivos (3x2 en desktop para evitar truncamiento) ─── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    .kpi-card {
+      min-width: 0;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 142px;
+      box-sizing: border-box;
+      position: relative;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 3px 8px rgba(15, 23, 42, 0.02);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card:hover {
+      border-color: #004E98;
+      box-shadow: 0 6px 20px rgba(0, 78, 152, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .kpi-card.kpi-hero {
+      border-top: 3.5px solid #FFCC00;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+    }
+
+    .kpi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .kpi-card-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #64748B;
+    }
+
+    .kpi-card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1E293B;
+      white-space: normal;
+      word-break: normal;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .kpi-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    .badge-primary { background: rgba(0, 78, 152, 0.08); color: #004E98; }
+    .badge-success { background: rgba(22, 163, 74, 0.1); color: #15803D; }
+    .badge-gold { background: rgba(230, 184, 0, 0.18); color: #8A6D00; }
+    .badge-neutral { background: #F1F5F9; color: #475569; }
+
+    .kpi-info-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 2px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s ease, transform .15s ease;
+    }
+
+    .kpi-info-btn:hover {
+      color: #004E98;
+      transform: scale(1.15);
+    }
+
+    .popup-info-kpi {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 260px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      z-index: 50;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #334155;
+      pointer-events: none;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi {
+      display: block;
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: #0F172A;
+      font-size: 12px;
+      margin-bottom: 5px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .popup-info-meta {
+      margin-top: 6px;
+      padding-top: 5px;
+      border-top: 1px dashed #E2E8F0;
+      font-size: 10.5px;
+      color: #64748B;
+    }
+
+    .kpi-card-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0F172A;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'tnum';
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      overflow: visible;
+      margin: 4px 0 2px;
+    }
+
+    .kpi-card-val.val-hero {
+      font-size: 30px;
+      font-weight: 800;
+      color: #004E98;
+    }
+
+    .kpi-card-track {
+      width: 100%;
+      height: 4px;
+      background: #F1F5F9;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 6px 0 4px;
+    }
+
+    .kpi-card-track-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .kpi-card-sub {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #64748B;
+      white-space: normal;
+      margin: 0;
+      line-height: 1.35;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .kpi-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .kpi-delta.delta-up { background: rgba(22, 163, 74, 0.1); color: #15803D; }
+    .kpi-delta.delta-down { background: rgba(220, 38, 38, 0.1); color: #B91C1C; }
+    .kpi-delta.delta-neutral { background: #F1F5F9; color: #64748B; }
+
+    /* ─── Sistema de Filtros CADIT ─── */
+    .area-filtros {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .filtros-prioritarios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+    }
+
+    .filtro-campo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 170px;
+    }
+
+    .filtro-campo label {
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #475569;
+    }
+
+    .filtro-campo select {
+      padding: 8px 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      font: inherit;
+      font-size: 13px;
+      color: #1E293B;
+      background: #FFFFFF;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      cursor: pointer;
+    }
+
+    .filtro-campo select:focus {
+      outline: none;
+      border-color: #004E98;
+      box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.1);
+    }
+
+    .filtros-acciones {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-avanzados {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      color: #334155;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color .15s ease, border-color .15s ease;
+    }
+
+    .btn-avanzados:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+
+    .btn-limpiar {
+      background: transparent;
+      border: none;
+      color: #64748B;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .15s ease;
+    }
+
+    .btn-limpiar:hover {
+      color: #B91C1C;
+    }
+
+    .panel-filtros-avanzados {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #F1F5F9;
+    }
+
+    .chips-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #E5E7EB;
+    }
+
+    .chips-barra:empty {
+      display: none;
+    }
+
+    .chip-filtro {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .chip-filtro button {
+      background: none;
+      border: none;
+      color: #1E40AF;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── Cuadrículas y Gráficos CADIT ─── */
+    .cuadricula-2 {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 1080px) {
+      .cuadricula-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cuadricula-territorial {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 1080px) {
+      .cuadricula-territorial {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-cab {
+      margin-bottom: 14px;
+    }
+
+    .panel-cab h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0 0 4px;
+    }
+
+    .panel-cab p.sub {
+      font-size: 12.5px;
+      color: #64748B;
+      margin: 0;
+    }
+
+    .grafico-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 320px;
+    }
+
+    /* ─── Tabla Interactiva de Detalle ─── */
+    .tabla-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    table.tabla-cadit {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12.5px;
+    }
+
+    table.tabla-cadit th {
+      background: #F8FAFC;
+      color: #334155;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-bottom: 1px solid #E2E8F0;
+      white-space: nowrap;
+    }
+
+    table.tabla-cadit td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #F1F5F9;
+      color: #334155;
+    }
+
+    table.tabla-cadit tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .tag-cat {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .tag-a1 { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+    .tag-a { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .tag-b { background: #E0F2FE; color: #075985; border: 1px solid #BAE6FD; }
+    .tag-c { background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+    .tag-rec { background: #F3E8FF; color: #6B21A8; border: 1px solid #E9D5FF; }
+
+    .tag-uniminuto {
+      background: #FEF9C3;
+      color: #854D0E;
+      font-weight: 700;
+      font-size: 10.5px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      border: 1px solid #FDE047;
+      margin-left: 5px;
+    }
+
+    .paginador {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0 4px;
+      font-size: 12px;
+      color: #64748B;
+    }
+
+    .paginador-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .paginador-btns button {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .paginador-btns button:hover:not(:disabled) {
+      background: #F1F5F9;
+      border-color: #004E98;
+    }
+
+    .paginador-btns button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Barra lateral institucional CADIT -->
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>Ciencia y Tecnología</h3>
+      <button data-v="minciencias" class="activa">MinCiencias · Grupos</button>
+      <button data-v="idic" data-href="idic.html">IDIC · Innovación</button>
+      <button data-v="rues" data-href="rues.html">RUES · Empresas</button>
+      <h3>Educación Superior</h3>
+      <button data-v="snies" data-href="index.html">SNIES – Base Externa</button>
+      <button data-v="icetex" data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-v="sena" data-href="sena.html">SENA · Formación</button>
+      <button data-v="latam" data-href="latam.html">Educación Superior · LATAM</button>
+    </nav>
+  </aside>
+
+  <!-- Contenedor principal -->
+  <div class="contenido">
+    <!-- Barra superior institucional -->
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar grupo, institución aval, área o departamento…" autocomplete="off" aria-label="Buscar filtros">
+        <div id="resultados" hidden></div>
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Convocatoria 894 de 2021 (Corte Oficial)</span>
+        <div class="acciones">
+          <button id="pdf" type="button" style="display: none;">PDF</button>
+          <button id="xlsx" type="button" style="display: none;">XLSX</button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Encabezado Oficial Homologado CADIT -->
+      <div class="encabezado">
+        <h1 id="titulo">Grupos de Investigación · MinCiencias</h1>
+        <p id="subtitulo">Sistema de Decisión Estratégica · Capacidad científica, trayectoria y categorización de excelencia sobre <b>30.051 registros oficiales</b> de MinCiencias (Colciencias) en 6 convocatorias nacionales continuas.</p>
+      </div>
+
+      <!-- Sistema de Filtros Reactivos -->
+      <section id="area-filtros" class="area-filtros">
+        <div class="filtros-prioritarios">
+          <div class="filtro-campo">
+            <label for="f-anio">Convocatoria / Año</label>
+            <select id="f-anio"></select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-area">Gran Área de Conocimiento</label>
+            <select id="f-area">
+              <option value="">Todas las Grandes Áreas</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-departamento">Departamento de Origen</label>
+            <select id="f-departamento">
+              <option value="">Todos los Departamentos</option>
+            </select>
+          </div>
+          <div class="filtros-acciones">
+            <button type="button" id="btn-toggle-avanzados" class="btn-avanzados" aria-expanded="false">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6"/></svg>
+              <span>Filtros avanzados</span>
+            </button>
+            <button type="button" id="btn-limpiar" class="btn-limpiar" title="Limpiar todos los filtros">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Limpiar filtros</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-filtros-avanzados" id="panel-filtros-avanzados" hidden>
+          <div class="filtro-campo">
+            <label for="f-clasificacion">Clasificación MinCiencias</label>
+            <select id="f-clasificacion">
+              <option value="">Todas las clasificaciones</option>
+              <option value="A1">Categoría A1 (Máxima Excelencia)</option>
+              <option value="A">Categoría A</option>
+              <option value="B">Categoría B</option>
+              <option value="C">Categoría C</option>
+              <option value="Reconocido">Reconocido (Avalado sin categoría)</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-institucion">Institución Aval</label>
+            <select id="f-institucion">
+              <option value="">Todas las instituciones</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="chips-barra" id="chips-barra"></div>
+      </section>
+
+      <!-- Fila de 6 KPIs Ejecutivos (3x2 Desktop sin truncamiento) -->
+      <section class="kpis" id="kpis"></section>
+
+      <!-- Módulo 1: Evolución Histórica y Pirámide de Categorización -->
+      <div class="cuadricula-2">
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Evolución histórica · ¿Cómo ha variado el volumen y la categorización científica?</h2>
+            <p class="sub">Tendencia multianual de grupos clasificados por convocatoria de MinCiencias (2013–2021)</p>
+          </div>
+          <div class="grafico-wrap"><canvas id="g-evolucion"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Pirámide de categorización · ¿Cuál es el nivel de excelencia científica?</h2>
+            <p class="sub">Distribución porcentual por categorías oficiales de reconocimiento MinCiencias</p>
+          </div>
+          <div class="grafico-wrap"><canvas id="g-piramide"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Módulo 2: Distribución por Grandes Áreas de Conocimiento OECD -->
+      <div class="panel" style="margin-bottom: 26px;">
+        <div class="panel-cab">
+          <h2>Campos de conocimiento · ¿Cuáles son las grandes áreas con mayor capacidad investigativa?</h2>
+          <p class="sub">Comparativa entre la masa total de grupos y los grupos en niveles de excelencia (A1 y A) bajo estándar OECD</p>
+        </div>
+        <div class="grafico-wrap" style="min-height: 280px;"><canvas id="g-areas"></canvas></div>
+      </div>
+
+      <!-- Módulo 3: Concentración Territorial y Mapa ECharts de Colombia -->
+      <div class="cuadricula-territorial">
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Concentración territorial · Top 10 departamentos con mayor número de grupos</h2>
+            <p class="sub">Ranking departamental por volumen de grupos activos · Haz clic en una barra para filtrar</p>
+          </div>
+          <div class="grafico-wrap"><canvas id="g-deptos"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Localizador geográfico · Presencia científica en Colombia</h2>
+            <p class="sub">Densidad territorial nacional evaluada · Clic en un departamento para enfocar el análisis</p>
+          </div>
+          <div id="g-mapa-colombia" style="width:100%;height:380px;background:#FFFFFF;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <!-- Módulo 4: Ecosistema Institucional y Posicionamiento de IES -->
+      <div class="panel" style="margin-bottom: 26px;">
+        <div class="panel-cab">
+          <h2>Ecosistema institucional · ¿Cuáles son las instituciones que lideran la investigación?</h2>
+          <p class="sub">Top 15 IES y centros de investigación por volumen de grupos avalados · Resalte institucional UNIMINUTO</p>
+        </div>
+        <div class="grafico-wrap" style="min-height: 320px;"><canvas id="g-instituciones"></canvas></div>
+      </div>
+
+      <!-- Módulo 5: Tabla de Detalle y Catálogo de Grupos -->
+      <div class="panel">
+        <div class="panel-cab" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h2>Catálogo de grupos evaluados · Detalle analítico</h2>
+            <p class="sub" id="tabla-sub">Registros coincidentes con los filtros seleccionados</p>
+          </div>
+          <div style="font-size:12px; color:#64748B;">
+            Total filtrados: <b id="tabla-total" style="color:#004E98;">0</b> grupos
+          </div>
+        </div>
+
+        <div class="tabla-container">
+          <table class="tabla-cadit">
+            <thead>
+              <tr>
+                <th>Convocatoria</th>
+                <th>Código Grupo</th>
+                <th>Nombre del Grupo</th>
+                <th>Categoría</th>
+                <th>Gran Área OECD</th>
+                <th>Departamento</th>
+                <th>Institución Aval</th>
+                <th>Antigüedad</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-body"></tbody>
+          </table>
+        </div>
+
+        <div class="paginador">
+          <span id="paginador-info">Página 1 de 1</span>
+          <div class="paginador-btns">
+            <button type="button" id="btn-ant" disabled>&larr; Anterior</button>
+            <button type="button" id="btn-sig" disabled>Siguiente &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ─── Configuración Global Chart.js bajo Estándar CADIT ───
+    Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+    Chart.defaults.color = "#374151";
+
+    const $ = id => document.getElementById(id);
+    const fmt = n => (n == null || isNaN(n)) ? "—" : Math.round(Number(n)).toLocaleString("es-CO");
+    const pct = n => (n == null || isNaN(n)) ? "0 %" : Number(n).toFixed(1).replace(".", ",") + " %";
+
+    const MAPA_CODIGOS_DEPTO = {
+      "ANTIOQUIA": "CO-ANT",
+      "ATLÁNTICO": "CO-ATL",
+      "BOGOTÁ, D.C.": "CO-DC",
+      "BOLÍVAR": "CO-BOL",
+      "BOYACÁ": "CO-BOY",
+      "CALDAS": "CO-CAL",
+      "CAQUETÁ": "CO-CAQ",
+      "CAUCA": "CO-CAU",
+      "CESAR": "CO-CES",
+      "CÓRDOBA": "CO-COR",
+      "CUNDINAMARCA": "CO-CUN",
+      "CHOCÓ": "CO-CHO",
+      "HUILA": "CO-HUI",
+      "LA GUAJIRA": "CO-LAG",
+      "MAGDALENA": "CO-MAG",
+      "META": "CO-MET",
+      "NARIÑO": "CO-NAR",
+      "NORTE DE SANTANDER": "CO-NSA",
+      "QUINDÍO": "CO-QUI",
+      "RISARALDA": "CO-RIS",
+      "SANTANDER": "CO-SAN",
+      "SUCRE": "CO-SUC",
+      "TOLIMA": "CO-TOL",
+      "VALLE DEL CAUCA": "CO-VAC",
+      "ARAUCA": "CO-ARA",
+      "CASANARE": "CO-CAS",
+      "PUTUMAYO": "CO-PUT",
+      "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA": "CO-SAP",
+      "AMAZONAS": "CO-AMA",
+      "GUAINÍA": "CO-GUA",
+      "GUAVIARE": "CO-GUV",
+      "VAUPÉS": "CO-VAU",
+      "VICHADA": "CO-VID"
+    };
+
+    const MAPA_ID_A_SVG_NAME = {
+      "CO-AMA": "Amazonas",
+      "CO-ANT": "Antioquia",
+      "CO-ARA": "Arauca",
+      "CO-ATL": "Atlántico",
+      "CO-BOL": "Bolívar",
+      "CO-BOY": "Boyacá",
+      "CO-CAL": "Caldas",
+      "CO-CAQ": "Caquetá",
+      "CO-CAS": "Casanare",
+      "CO-CAU": "Cauca",
+      "CO-CES": "Cesar",
+      "CO-CHO": "Chocó",
+      "CO-COR": "Córdoba",
+      "CO-CUN": "Cundinamarca",
+      "CO-GUA": "Guainia",
+      "CO-GUV": "Guaviare",
+      "CO-HUI": "Huila",
+      "CO-MAG": "Magdalena",
+      "CO-MET": "Meta",
+      "CO-NAR": "Nariño",
+      "CO-NSA": "Norde de Santander",
+      "CO-PUT": "Putumayo",
+      "CO-QUI": "Quindio",
+      "CO-RIS": "Risaralda",
+      "CO-SAN": "Santander",
+      "CO-SUC": "Sucre",
+      "CO-TOL": "Tolima",
+      "CO-VAU": "Vaupés",
+      "CO-VID": "Vichada",
+      "CO-DC": "Distrito Capital de Bogotá",
+      "CO-LAG": "La Guajira",
+      "CO-SAP": "San Andrés, Providencia y Santa Catalina"
+    };
+
+    const SVG_NAME_A_DEPTO = {};
+    Object.entries(MAPA_CODIGOS_DEPTO).forEach(([depto, cod]) => {
+      const svgNom = MAPA_ID_A_SVG_NAME[cod];
+      if (svgNom) SVG_NAME_A_DEPTO[svgNom.toLowerCase()] = depto;
+    });
+    SVG_NAME_A_DEPTO["distrito capital de bogotá"] = "BOGOTÁ, D.C.";
+    SVG_NAME_A_DEPTO["distrito capital de bogota"] = "BOGOTÁ, D.C.";
+    SVG_NAME_A_DEPTO["bogotá, d.c."] = "BOGOTÁ, D.C.";
+    SVG_NAME_A_DEPTO["bogota, d.c."] = "BOGOTÁ, D.C.";
+    SVG_NAME_A_DEPTO["norde de santander"] = "NORTE DE SANTANDER";
+    SVG_NAME_A_DEPTO["norte de santander"] = "NORTE DE SANTANDER";
+    SVG_NAME_A_DEPTO["guainia"] = "GUAINÍA";
+    SVG_NAME_A_DEPTO["quindio"] = "QUINDÍO";
+    SVG_NAME_A_DEPTO["san andrés, providencia y santa catalina"] = "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA";
+    SVG_NAME_A_DEPTO["san andres, providencia y santa catalina"] = "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA";
+
+    let RAW_DATA = null;
+    let chartMapaEcharts = null;
+    let mapaSvgRegistrado = false;
+    let graficos = {};
+
+    function destruirGrafico(id) {
+      if (graficos[id]) { graficos[id].destroy(); delete graficos[id]; }
+    }
+
+    // Estado Reactivo de Filtros
+    const st = {
+      anio: "2021",
+      area: "",
+      departamento: "",
+      clasificacion: "",
+      institucion: "",
+      pagina: 1,
+      porPagina: 20
+    };
+
+    // ─── Componente de Tarjetas KPI Oficial CADIT ───
+    function tarjeta({ kicker, t, v, nota = null, esHero = false, badge = null, badgeClass = "badge-neutral", progreso = null, progresoColor = "#004E98", delta = null, deltaClass = "delta-neutral", popupData = null, alClic = null }) {
+      const el = document.createElement("div");
+      el.className = "kpi-card" + (esHero ? " kpi-hero" : "");
+      if (alClic) {
+        el.style.cursor = "pointer";
+        el.onclick = e => {
+          if (e.target.closest(".kpi-info-btn") || e.target.closest(".popup-info-kpi")) return;
+          alClic(e);
+        };
+      }
+
+      let popupHtml = "";
+      if (popupData) {
+        popupHtml = `
+          <div class="popup-info-kpi">
+            <div class="popup-info-header">${popupData.titulo || t}</div>
+            <p style="margin:0 0 5px 0;">${popupData.mide}</p>
+            ${popupData.calculo ? `<p style="margin:4px 0 0 0;font-size:10.5px;color:#004E98;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+            <div class="popup-info-meta">Fuente: ${popupData.fuente || "MinCiencias · Scienti"}</div>
+          </div>
+        `;
+      }
+
+      const badgeHtml = badge ? `<span class="kpi-badge ${badgeClass}">${badge}</span>` : "";
+      const infoBtnHtml = popupData ? `<button type="button" class="kpi-info-btn" aria-label="Información">ⓘ</button>${popupHtml}` : "";
+      const barHtml = progreso != null ? `
+        <div class="kpi-card-track" title="${Number(progreso).toFixed(1)}%">
+          <div class="kpi-card-track-fill" style="width: ${Math.min(100, Math.max(0, progreso))}%; background: ${progresoColor};"></div>
+        </div>` : "";
+      const deltaHtml = delta ? `<span class="kpi-delta ${deltaClass}">${delta}</span>` : "";
+
+      el.innerHTML = `
+        <div class="kpi-card-header">
+          <div class="kpi-card-meta">
+            ${kicker ? `<span class="kpi-card-kicker">${kicker}</span>` : ""}
+            <h4 class="kpi-card-title">${t}</h4>
+          </div>
+          <div class="kpi-card-aside">
+            ${badgeHtml}
+            ${infoBtnHtml}
+          </div>
+        </div>
+        <div class="kpi-card-body">
+          <b class="kpi-card-val ${esHero ? "val-hero" : ""}">${typeof v === "number" ? fmt(v) : v}</b>
+        </div>
+        ${barHtml}
+        <div class="kpi-card-footer">
+          <p class="kpi-card-sub">${nota || "Datos oficiales"}</p>
+          ${deltaHtml}
+        </div>
+      `;
+      return el;
+    }
+
+    // ─── Filtrado de Grupos en Tiempo Real ───
+    function obtenerGruposFiltrados() {
+      if (!RAW_DATA || !RAW_DATA.catalogo_grupos) return [];
+      return RAW_DATA.catalogo_grupos.filter(g => {
+        if (st.anio && String(g.anio) !== String(st.anio)) return false;
+        if (st.area && g.area !== st.area) return false;
+        if (st.departamento && g.depto.toUpperCase() !== st.departamento.toUpperCase()) return false;
+        if (st.clasificacion && g.cat !== st.clasificacion) return false;
+        if (st.institucion && g.inst.toUpperCase() !== st.institucion.toUpperCase()) return false;
+        return true;
+      });
+    }
+
+    // ─── Renderizado de KPIs Ejecutivos ───
+    function renderizarKpis() {
+      const grupos = obtenerGruposFiltrados();
+      const total = grupos.length;
+      const excelencia = grupos.filter(g => g.cat === "A1" || g.cat === "A").length;
+      const pctExcelencia = total > 0 ? (excelencia / total * 100) : 0;
+      const a1Count = grupos.filter(g => g.cat === "A1").length;
+      const pctA1 = total > 0 ? (a1Count / total * 100) : 0;
+
+      const deptosUnicos = new Set(grupos.map(g => g.depto).filter(d => d && d !== "SIN INFORMACIÓN"));
+      const numDeptos = deptosUnicos.size;
+      const pctDeptos = (numDeptos / 33 * 100);
+
+      const edades = grupos.map(g => g.edad).filter(e => e != null && !isNaN(e) && e > 0);
+      const edadPromedio = edades.length ? (edades.reduce((a, b) => a + b, 0) / edades.length).toFixed(1) : 0;
+
+      const uniminutoGrupos = grupos.filter(g => g.uniminuto).length;
+
+      // Delta histórico año vs anterior si año activo
+      let deltaTexto = "Corte activo";
+      let deltaCls = "delta-neutral";
+      if (st.anio) {
+        const hist = RAW_DATA.serie_historica;
+        const idx = hist.findIndex(h => String(h.anio) === String(st.anio));
+        if (idx > 0) {
+          const prev = hist[idx - 1].total;
+          const curr = hist[idx].total;
+          const pctVar = ((curr - prev) / prev * 100);
+          deltaTexto = (pctVar >= 0 ? "+" : "") + pctVar.toFixed(1) + "% vs convo anterior";
+          deltaCls = pctVar >= 0 ? "delta-up" : "delta-down";
+        }
+      }
+
+      const anioTxt = st.anio ? `Convocatoria ${st.anio}` : "Todas las Convocatorias";
+
+      const c1 = tarjeta({
+        kicker: "VOLUMEN CIENTÍFICO",
+        t: "Grupos Reconocidos",
+        v: total,
+        esHero: true,
+        badge: anioTxt,
+        badgeClass: "badge-gold",
+        progreso: 100,
+        progresoColor: "#004E98",
+        nota: st.departamento ? `Presencia en ${st.departamento}` : (st.area ? `Área: ${st.area}` : "Capacidad científica nacional"),
+        delta: deltaTexto,
+        deltaClass: deltaCls,
+        popupData: {
+          titulo: "Grupos Reconocidos Oficialmente",
+          mide: "Total de colectivos de investigación científica categorizados o avalados con reconocimiento vigente en la convocatoria.",
+          calculo: "Conteo directo de registros de grupos reconocidos",
+          fuente: "MinCiencias · Scienti / GrupLAC"
+        }
+      });
+
+      const c2 = tarjeta({
+        kicker: "EXCELENCIA CIENTÍFICA",
+        t: "Categoría A1 y A",
+        v: excelencia,
+        badge: total ? `${pct(pctExcelencia)}` : "0 %",
+        badgeClass: "badge-success",
+        progreso: pctExcelencia,
+        progresoColor: "#15803D",
+        nota: `${fmt(excelencia)} de ${fmt(total)} grupos en nivel superior`,
+        delta: pct(pctExcelencia) + " excelencia",
+        deltaClass: "delta-up",
+        alClic: () => fijarFiltro("clasificacion", "A1"),
+        popupData: {
+          titulo: "Grupos en Niveles de Excelencia (A1 + A)",
+          mide: "Proporción de grupos de investigación ubicados en los dos niveles superiores del modelo de medición MinCiencias.",
+          calculo: "(Grupos A1 + Grupos A / Total grupos) × 100",
+          fuente: "MinCiencias · Modelo de Reconocimiento y Medición"
+        }
+      });
+
+      const c3 = tarjeta({
+        kicker: "MÁXIMA CATEGORÍA",
+        t: "Grupos A1 (Líderes)",
+        v: a1Count,
+        badge: total ? `${pct(pctA1)}` : "0 %",
+        badgeClass: "badge-primary",
+        progreso: pctA1,
+        progresoColor: "#004E98",
+        nota: "Máximos estándares en producción y doctores",
+        delta: pct(pctA1) + " del total",
+        deltaClass: "delta-neutral",
+        alClic: () => fijarFiltro("clasificacion", "A1"),
+        popupData: {
+          titulo: "Grupos Categoría A1",
+          mide: "Grupos con la máxima ponderación en nuevo conocimiento, formación doctoral y desarrollo tecnológico.",
+          calculo: "Conteo de grupos en categoría A1",
+          fuente: "MinCiencias · Scienti"
+        }
+      });
+
+      const c4 = tarjeta({
+        kicker: "COBERTURA TERRITORIAL",
+        t: "Presencia Departamental",
+        v: numDeptos,
+        badge: numDeptos >= 32 ? "97% Territorio" : `${numDeptos} / 33 deptos`,
+        badgeClass: "badge-success",
+        progreso: pctDeptos,
+        progresoColor: "#15803D",
+        nota: `Presencia en ${numDeptos} de 33 departamentos`,
+        delta: `${numDeptos} departamentos`,
+        deltaClass: "delta-neutral",
+        popupData: {
+          titulo: "Cobertura Territorial Nacional",
+          mide: "Departamentos del país con al menos un grupo de investigación activo en el periodo.",
+          calculo: "(Departamentos con grupos / 33 departamentos) × 100",
+          fuente: "MinCiencias · DANE"
+        }
+      });
+
+      const c5 = tarjeta({
+        kicker: "TRAYECTORIA Y MADUREZ",
+        t: "Antigüedad Promedio",
+        v: `${edadPromedio} años`,
+        badge: "Madurez científica",
+        badgeClass: "badge-neutral",
+        progreso: Math.min(100, Number(edadPromedio) * 4),
+        progresoColor: "#283044",
+        nota: "Años promedio desde la fecha de fundación",
+        delta: `${edadPromedio} años prom.`,
+        deltaClass: "delta-neutral",
+        popupData: {
+          titulo: "Antigüedad Promedio de los Grupos",
+          mide: "Tiempo promedio de trayectoria y maduración institucional desde la creación del grupo.",
+          calculo: "AVG(edad_anos)",
+          fuente: "MinCiencias · Registro GrupLAC"
+        }
+      });
+
+      const c6 = tarjeta({
+        kicker: "ECOSISTEMA UNIMINUTO",
+        t: "Grupos UNIMINUTO",
+        v: uniminutoGrupos,
+        badge: "Posición #11 Nacional",
+        badgeClass: "badge-gold",
+        progreso: total > 0 ? (uniminutoGrupos / total * 100 * 5) : 0,
+        progresoColor: "#FFCC00",
+        nota: "Avalados por Corporación Minuto de Dios",
+        delta: "89 grupos en 2021",
+        deltaClass: "delta-up",
+        alClic: () => fijarFiltro("institucion", "CORPORACION UNIVERSITARIA MINUTO DE DIOS UNIMINUTO"),
+        popupData: {
+          titulo: "Capacidad Investigativa UNIMINUTO",
+          mide: "Grupos de investigación con aval oficial y categorización MinCiencias de UNIMINUTO a nivel nacional.",
+          calculo: "Conteo de grupos con aval Minuto de Dios",
+          fuente: "MinCiencias / UNIMINUTO"
+        }
+      });
+
+      $("kpis").replaceChildren(c1, c2, c3, c4, c5, c6);
+    }
+
+    // ─── Renderizado de Gráficos Analíticos ───
+    function renderizarGraficos() {
+      const grupos = obtenerGruposFiltrados();
+
+      // 1. Gráfico de Evolución Histórica (Tendencia por Convocatoria)
+      const hist = RAW_DATA.serie_historica || [];
+      const labelsConvo = hist.map(h => `${h.anio}`);
+      const dataA1 = hist.map(h => h.a1);
+      const dataA = hist.map(h => h.a);
+      const dataB = hist.map(h => h.b);
+      const dataC = hist.map(h => h.c);
+      const dataRec = hist.map(h => h.reconocido);
+
+      destruirGrafico("g-evolucion");
+      const ctxEvol = $("g-evolucion").getContext("2d");
+      graficos["g-evolucion"] = new Chart(ctxEvol, {
+        type: "bar",
+        data: {
+          labels: labelsConvo,
+          datasets: [
+            { label: "A1 (Máxima)", data: dataA1, backgroundColor: "#D97706", borderRadius: 2 },
+            { label: "A", data: dataA, backgroundColor: "#15803D", borderRadius: 2 },
+            { label: "B", data: dataB, backgroundColor: "#0284C7", borderRadius: 2 },
+            { label: "C", data: dataC, backgroundColor: "#64748B", borderRadius: 2 },
+            { label: "Reconocido", data: dataRec, backgroundColor: "#A855F7", borderRadius: 2 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 12, font: { size: 11.5, weight: 600 } } },
+            tooltip: { mode: "index", intersect: false }
+          },
+          scales: {
+            x: { stacked: true, grid: { display: false } },
+            y: { stacked: true, grid: { color: "#F1F5F9" }, ticks: { callback: v => fmt(v) } }
+          }
+        }
+      });
+
+      // 2. Gráfico de Pirámide de Categorización (Convocatoria seleccionada o actual)
+      const catCounts = { "A1": 0, "A": 0, "B": 0, "C": 0, "Reconocido": 0 };
+      grupos.forEach(g => {
+        if (catCounts[g.cat] !== undefined) catCounts[g.cat]++;
+        else if (g.cat.startsWith("D")) catCounts["Reconocido"]++;
+      });
+
+      destruirGrafico("g-piramide");
+      const ctxPir = $("g-piramide").getContext("2d");
+      graficos["g-piramide"] = new Chart(ctxPir, {
+        type: "doughnut",
+        data: {
+          labels: ["Categoría A1", "Categoría A", "Categoría B", "Categoría C", "Reconocido"],
+          datasets: [{
+            data: [catCounts["A1"], catCounts["A"], catCounts["B"], catCounts["C"], catCounts["Reconocido"]],
+            backgroundColor: ["#D97706", "#15803D", "#0284C7", "#64748B", "#A855F7"],
+            borderWidth: 2,
+            borderColor: "#FFFFFF"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "62%",
+          plugins: {
+            legend: { position: "right", labels: { boxWidth: 12, font: { size: 11.5 } } },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const val = ctx.raw || 0;
+                  const sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                  const p = sum > 0 ? (val / sum * 100).toFixed(1) : 0;
+                  return ` ${ctx.label}: ${fmt(val)} grupos (${p} %)`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // 3. Gráfico de Grandes Áreas OECD
+      const areasMap = {};
+      grupos.forEach(g => {
+        const a = g.area || "Otras";
+        if (!areasMap[a]) areasMap[a] = { total: 0, excelencia: 0 };
+        areasMap[a].total++;
+        if (g.cat === "A1" || g.cat === "A") areasMap[a].excelencia++;
+      });
+
+      const areasSorted = Object.entries(areasMap)
+        .sort((a, b) => b[1].total - a[1].total)
+        .slice(0, 7);
+
+      destruirGrafico("g-areas");
+      const ctxAreas = $("g-areas").getContext("2d");
+      graficos["g-areas"] = new Chart(ctxAreas, {
+        type: "bar",
+        data: {
+          labels: areasSorted.map(a => a[0]),
+          datasets: [
+            { label: "Total Grupos", data: areasSorted.map(a => a[1].total), backgroundColor: "#004E98", borderRadius: 4 },
+            { label: "Excelencia (A1 y A)", data: areasSorted.map(a => a[1].excelencia), backgroundColor: "#FFCC00", borderRadius: 4 }
+          ]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 12, font: { size: 11.5 } } }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { callback: v => fmt(v) } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // 4. Ranking Top 10 Departamentos
+      const deptosMap = {};
+      grupos.forEach(g => {
+        if (!g.depto || g.depto === "SIN INFORMACIÓN") return;
+        deptosMap[g.depto] = (deptosMap[g.depto] || 0) + 1;
+      });
+
+      const deptosSorted = Object.entries(deptosMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      destruirGrafico("g-deptos");
+      const ctxDeptos = $("g-deptos").getContext("2d");
+      graficos["g-deptos"] = new Chart(ctxDeptos, {
+        type: "bar",
+        data: {
+          labels: deptosSorted.map(d => d[0]),
+          datasets: [{
+            label: "Grupos",
+            data: deptosSorted.map(d => d[1]),
+            backgroundColor: deptosSorted.map(d => d[0].toUpperCase() === (st.departamento || "").toUpperCase() ? "#FFCC00" : "#283044"),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          onClick: (e, items) => {
+            if (items.length) {
+              const dpto = deptosSorted[items[0].index][0];
+              fijarFiltro("departamento", st.departamento === dpto ? "" : dpto);
+            }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { callback: v => fmt(v) } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // 5. Actualizar Mapa ECharts con datos detallados
+      const deptosInfo = {};
+      grupos.forEach(g => {
+        if (!g.depto || g.depto === "SIN INFORMACIÓN") return;
+        if (!deptosInfo[g.depto]) deptosInfo[g.depto] = { total: 0, excelencia: 0 };
+        deptosInfo[g.depto].total++;
+        if (g.cat === "A1" || g.cat === "A") deptosInfo[g.depto].excelencia++;
+      });
+      pintarMapaColombia(deptosInfo);
+
+      // 6. Ranking Top 15 Instituciones Avales
+      const instMap = {};
+      grupos.forEach(g => {
+        if (!g.inst || g.inst === "NO REGISTRA") return;
+        if (!instMap[g.inst]) instMap[g.inst] = { total: 0, excelencia: 0, uniminuto: g.uniminuto };
+        instMap[g.inst].total++;
+        if (g.cat === "A1" || g.cat === "A") instMap[g.inst].excelencia++;
+      });
+
+      const instSorted = Object.entries(instMap)
+        .sort((a, b) => b[1].total - a[1].total)
+        .slice(0, 15);
+
+      destruirGrafico("g-instituciones");
+      const ctxInst = $("g-instituciones").getContext("2d");
+      graficos["g-instituciones"] = new Chart(ctxInst, {
+        type: "bar",
+        data: {
+          labels: instSorted.map(i => i[0].length > 40 ? i[0].slice(0, 38) + "…" : i[0]),
+          datasets: [
+            {
+              label: "Total Grupos Avalados",
+              data: instSorted.map(i => i[1].total),
+              backgroundColor: instSorted.map(i => i[1].uniminuto ? "#FFCC00" : "#004E98"),
+              borderRadius: 4
+            },
+            {
+              label: "Grupos en Excelencia (A1 y A)",
+              data: instSorted.map(i => i[1].excelencia),
+              backgroundColor: instSorted.map(i => i[1].uniminuto ? "#E6B800" : "#2A70B8"),
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "top", labels: { boxWidth: 12, font: { size: 11.5 } } }
+          },
+          onClick: (e, items) => {
+            if (items.length) {
+              const inst = instSorted[items[0].index][0];
+              fijarFiltro("institucion", st.institucion === inst ? "" : inst);
+            }
+          },
+          scales: {
+            x: { grid: { color: "#F1F5F9" }, ticks: { callback: v => fmt(v) } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // 7. Renderizar Tabla Detalle
+      renderizarTabla(grupos);
+    }
+
+    // ─── Renderizado de Tabla con Paginación ───
+    function renderizarTabla(grupos) {
+      const total = grupos.length;
+      $("tabla-total").textContent = fmt(total);
+
+      const inicio = (st.pagina - 1) * st.porPagina;
+      const fin = inicio + st.porPagina;
+      const pag = grupos.slice(inicio, fin);
+      const totalPaginas = Math.max(1, Math.ceil(total / st.porPagina));
+
+      $("paginador-info").textContent = `Página ${st.pagina} de ${totalPaginas}`;
+      $("btn-ant").disabled = st.pagina <= 1;
+      $("btn-sig").disabled = st.pagina >= totalPaginas;
+
+      const tb = $("tabla-body");
+      if (!pag.length) {
+        tb.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:#64748B;">No se encontraron grupos de investigación con los filtros actuales.</td></tr>`;
+        return;
+      }
+
+      tb.innerHTML = pag.map(g => {
+        let catCls = "tag-rec";
+        if (g.cat === "A1") catCls = "tag-a1";
+        else if (g.cat === "A") catCls = "tag-a";
+        else if (g.cat === "B") catCls = "tag-b";
+        else if (g.cat === "C") catCls = "tag-c";
+
+        const uniminutoTag = g.uniminuto ? `<span class="tag-uniminuto">UNIMINUTO</span>` : "";
+
+        return `
+          <tr>
+            <td><b>${g.anio}</b></td>
+            <td><code>${g.cod}</code></td>
+            <td><b>${g.nombre}</b></td>
+            <td><span class="tag-cat ${catCls}">${g.cat}</span></td>
+            <td>${g.area}</td>
+            <td>${g.depto}</td>
+            <td>${g.inst}${uniminutoTag}</td>
+            <td>${g.edad ? `${g.edad} años` : "—"}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // ─── Mapa ECharts de Colombia (Interactividad Total + Nombres) ───
+    async function inicializarMapaColombiaEcharts() {
+      if (mapaSvgRegistrado) return;
+      try {
+        const svgRes = await fetch("colombia.svg");
+        if (!svgRes.ok) return;
+        const svgText = await svgRes.text();
+        echarts.registerMap("colombia_svg", { svg: svgText });
+        mapaSvgRegistrado = true;
+
+        const dom = $("g-mapa-colombia");
+        if (!dom) return;
+        chartMapaEcharts = echarts.init(dom);
+
+        chartMapaEcharts.on("click", params => {
+          let dpto = null;
+          if (params.data && params.data.dpto) {
+            dpto = params.data.dpto;
+          } else if (params.name) {
+            dpto = SVG_NAME_A_DEPTO[params.name.toLowerCase()] || params.name;
+          }
+          if (dpto) {
+            const actual = (st.departamento || "").toUpperCase();
+            fijarFiltro("departamento", actual === dpto.toUpperCase() ? "" : dpto);
+          }
+        });
+      } catch (e) {
+        console.warn("No se pudo cargar el mapa SVG de Colombia:", e);
+      }
+    }
+
+    function pintarMapaColombia(deptosInfo) {
+      if (!chartMapaEcharts || !mapaSvgRegistrado) return;
+
+      const dptoActivo = (st.departamento || "").toUpperCase();
+      let maxVal = 10;
+
+      const seriesData = Object.entries(MAPA_CODIGOS_DEPTO).map(([dpto, cod]) => {
+        const svgName = MAPA_ID_A_SVG_NAME[cod] || dpto;
+        const info = deptosInfo[dpto] || { total: 0, excelencia: 0 };
+        const val = typeof info === "number" ? info : (info.total || 0);
+        const exc = typeof info === "object" ? (info.excelencia || 0) : 0;
+        if (val > maxVal) maxVal = val;
+        const estaSeleccionado = dptoActivo && dptoActivo === dpto.toUpperCase();
+
+        return {
+          name: svgName,
+          value: val,
+          dpto: dpto,
+          excelencia: exc,
+          selected: estaSeleccionado
+        };
+      });
+
+      const option = {
+        tooltip: {
+          trigger: "item",
+          backgroundColor: "rgba(40, 48, 68, 0.96)",
+          borderColor: "#283044",
+          borderWidth: 1,
+          padding: [10, 14],
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+          formatter: params => {
+            const d = params.data;
+            if (!d) return `<b>${params.name}</b>`;
+            return `
+              <strong style="color:#FFCC00;font-size:13.5px;display:block;margin-bottom:4px;">${d.dpto}</strong>
+              Grupos Reconocidos: <b>${fmt(d.value)}</b><br/>
+              Grupos en Excelencia (A1 y A): <b>${fmt(d.excelencia)}</b><br/>
+              <span style="font-size:10.5px;color:#94A3B8;display:block;margin-top:5px;">
+                ${d.selected ? 'Filtro activo · Clic para quitar' : 'Clic para filtrar este departamento'}
+              </span>
+            `;
+          }
+        },
+        visualMap: {
+          left: 10,
+          bottom: 10,
+          min: 0,
+          max: maxVal,
+          orient: "vertical",
+          text: ["Alto", "Bajo"],
+          calculable: true,
+          inRange: {
+            color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004E98", "#1E1B4B"]
+          },
+          textStyle: { color: "#64748B", fontSize: 11, fontFamily: "'IBM Plex Sans'" }
+        },
+        series: [{
+          name: "Grupos MinCiencias",
+          type: "map",
+          map: "colombia_svg",
+          roam: true,
+          zoom: 1.15,
+          scaleLimit: { min: 0.9, max: 4.5 },
+          emphasis: {
+            label: { show: false },
+            itemStyle: { areaColor: "#FFCC00", borderColor: "#8A6D00", borderWidth: 1.5 }
+          },
+          select: {
+            itemStyle: { areaColor: "#FFCC00", borderColor: "#8A6D00", borderWidth: 2 }
+          },
+          data: seriesData
+        }]
+      };
+
+      chartMapaEcharts.setOption(option, true);
+    }
+
+    // ─── Gestión de Filtros y Chips ───
+    function fijarFiltro(clave, valor) {
+      st[clave] = valor;
+      st.pagina = 1;
+      sincronizarControlesFiltro();
+      renderizarChips();
+      renderizarKpis();
+      renderizarGraficos();
+    }
+
+    function sincronizarControlesFiltro() {
+      if ($("f-anio")) $("f-anio").value = st.anio;
+      if ($("f-area")) $("f-area").value = st.area;
+      if ($("f-departamento")) $("f-departamento").value = st.departamento;
+      if ($("f-clasificacion")) $("f-clasificacion").value = st.clasificacion;
+      if ($("f-institucion")) $("f-institucion").value = st.institucion;
+    }
+
+    function renderizarChips() {
+      const barra = $("chips-barra");
+      const chips = [];
+
+      if (st.anio) chips.push({ k: "anio", label: `Convocatoria ${st.anio}` });
+      if (st.area) chips.push({ k: "area", label: `Área: ${st.area}` });
+      if (st.departamento) chips.push({ k: "departamento", label: `Dpto: ${st.departamento}` });
+      if (st.clasificacion) chips.push({ k: "clasificacion", label: `Categoría ${st.clasificacion}` });
+      if (st.institucion) chips.push({ k: "institucion", label: `Inst: ${st.institucion.length > 25 ? st.institucion.slice(0, 23) + "…" : st.institucion}` });
+
+      barra.innerHTML = chips.map(c => `
+        <span class="chip-filtro">
+          <span>${c.label}</span>
+          <button type="button" onclick="fijarFiltro('${c.k}', '')" aria-label="Quitar filtro">×</button>
+        </span>
+      `).join("");
+    }
+
+    // ─── Buscador Instantáneo Universal CADIT ───
+    let resultadosBusqueda = [];
+    const normalizar = t => String(t ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").trim();
+
+    function buscarEnCatalogo(texto) {
+      const q = normalizar(texto);
+      const caja = $("resultados");
+      if (!caja) return;
+      if (!q) {
+        caja.hidden = true;
+        resultadosBusqueda = [];
+        return;
+      }
+
+      const opciones = [];
+
+      // Departamentos
+      Object.keys(MAPA_CODIGOS_DEPTO).forEach(d => {
+        if (normalizar(d).includes(q)) {
+          opciones.push({ tipo: "Departamento", texto: d, accion: () => fijarFiltro("departamento", d) });
+        }
+      });
+
+      // Grandes Áreas
+      ["Ciencias Sociales", "Ingeniería y Tecnología", "Ciencias Naturales", "Ciencias Médicas y de la Salud", "Humanidades", "Ciencias Agrícolas"].forEach(a => {
+        if (normalizar(a).includes(q)) {
+          opciones.push({ tipo: "Gran Área OECD", texto: a, accion: () => fijarFiltro("area", a) });
+        }
+      });
+
+      // Instituciones clave
+      const instUnicas = new Set(RAW_DATA.catalogo_grupos.map(g => g.inst).filter(Boolean));
+      instUnicas.forEach(inst => {
+        if (normalizar(inst).includes(q)) {
+          opciones.push({ tipo: "Institución Aval", texto: inst, accion: () => fijarFiltro("institucion", inst) });
+        }
+      });
+
+      // Grupos de investigación destacados
+      RAW_DATA.catalogo_grupos.slice(0, 500).forEach(g => {
+        if (normalizar(g.nombre).includes(q) || normalizar(g.cod).includes(q)) {
+          opciones.push({ tipo: `Grupo (${g.cat})`, texto: `${g.nombre} · ${g.inst}`, accion: () => {
+            fijarFiltro("anio", String(g.anio));
+            const inp = $("buscar");
+            if (inp) inp.value = g.nombre;
+          }});
+        }
+      });
+
+      resultadosBusqueda = opciones.slice(0, 8);
+
+      if (!resultadosBusqueda.length) {
+        caja.innerHTML = '<p style="padding:10px 14px;margin:0;color:#64748B;font-size:12px;">No se encontraron coincidencias para la búsqueda.</p>';
+      } else {
+        caja.replaceChildren(...resultadosBusqueda.map(it => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.innerHTML = `<b>${it.texto}</b><small style="display:block;color:#64748B;font-size:11px;">${it.tipo}</small>`;
+          b.onclick = () => {
+            it.accion();
+            caja.hidden = true;
+            $("buscar").value = "";
+          };
+          return b;
+        }));
+      }
+      caja.hidden = false;
+    }
+
+    // ─── Exportaciones Oficiales (PDF y Excel) ───
+    function exportarXlsx() {
+      if (typeof XLSX === "undefined") return;
+      const grupos = obtenerGruposFiltrados();
+      const libro = XLSX.utils.book_new();
+
+      const kpisAoa = [
+        ["Indicador", "Valor"],
+        ["Total Grupos Reconocidos", grupos.length],
+        ["Grupos en Excelencia (A1 y A)", grupos.filter(g => g.cat === "A1" || g.cat === "A").length],
+        ["Grupos Categoría A1", grupos.filter(g => g.cat === "A1").length],
+        ["Departamentos con Presencia", new Set(grupos.map(g => g.depto)).size],
+        ["Convocatoria Seleccionada", st.anio || "Todas"],
+        ["Gran Área Seleccionada", st.area || "Todas"],
+        ["Departamento Seleccionado", st.departamento || "Todos"]
+      ];
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet(kpisAoa), "Resumen Ejecutivo");
+
+      const detalleData = grupos.map(g => ({
+        "Convocatoria": g.anio,
+        "Código Grupo": g.cod,
+        "Nombre del Grupo": g.nombre,
+        "Categoría": g.cat,
+        "Gran Área": g.area,
+        "Departamento": g.depto,
+        "Institución Aval": g.inst,
+        "Es UNIMINUTO": g.uniminuto ? "SÍ" : "NO",
+        "Antigüedad (Años)": g.edad
+      }));
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.json_to_sheet(detalleData), "Grupos de Investigación");
+
+      XLSX.writeFile(libro, `MinCiencias_CADIT_${st.anio || "Consolidado"}.xlsx`);
+    }
+
+    function exportarPdf() {
+      if (typeof jspdf === "undefined") return;
+      const { jsPDF } = jspdf;
+      const doc = new jsPDF("p", "pt", "a4");
+      const grupos = obtenerGruposFiltrados();
+
+      doc.setFillColor(40, 48, 68);
+      doc.rect(0, 0, 595, 75, "F");
+
+      doc.setTextColor(255, 204, 0);
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("CADIT · Vicerrectoría Académica UNIMINUTO", 40, 34);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      doc.text("Reporte Ejecutivo de Capacidad Científica · MinCiencias", 40, 54);
+
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text(`Resumen Analítico - Convocatoria ${st.anio || "Consolidada"}`, 40, 110);
+
+      const kpis = [
+        `• Total Grupos Reconocidos: ${fmt(grupos.length)}`,
+        `• Grupos en Excelencia (A1 y A): ${fmt(grupos.filter(g => g.cat === "A1" || g.cat === "A").length)}`,
+        `• Grupos Categoría A1: ${fmt(grupos.filter(g => g.cat === "A1").length)}`,
+        `• Departamentos con Cobertura: ${new Set(grupos.map(g => g.depto)).size} de 33`,
+        `• Grupos Avalados UNIMINUTO: ${fmt(grupos.filter(g => g.uniminuto).length)}`
+      ];
+
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      let y = 140;
+      kpis.forEach(line => {
+        doc.text(line, 50, y);
+        y += 20;
+      });
+
+      doc.save(`Reporte_MinCiencias_${st.anio || "Consolidado"}.pdf`);
+    }
+
+    // ─── Inicialización Principal ───
+    async function inicializar() {
+      try {
+        const res = await fetch("datos/minciencias_datos.json");
+        if (!res.ok) throw new Error("No se pudo cargar datos/minciencias_datos.json");
+        RAW_DATA = await res.json();
+
+        // 1. Llenar Selectores de Filtro
+        const anios = RAW_DATA.metadata.anios || [];
+        $("f-anio").innerHTML = anios.slice().reverse().map(a => `<option value="${a}">Convocatoria ${a}${a === RAW_DATA.metadata.ultimo_anio ? " (Última Oficial)" : ""}</option>`).join("") + '<option value="">Todas las Convocatorias</option>';
+        $("f-anio").value = st.anio;
+
+        const ultimoAnioStr = String(RAW_DATA.metadata.ultimo_anio);
+        const areasData = RAW_DATA.grandes_areas[ultimoAnioStr] || RAW_DATA.grandes_areas[RAW_DATA.metadata.ultimo_anio] || [];
+        const areas = Array.isArray(areasData) ? areasData.map(item => item.area) : [];
+        $("f-area").innerHTML = '<option value="">Todas las Grandes Áreas</option>' + areas.map(a => `<option value="${a}">${a}</option>`).join("");
+
+        const deptos = Object.keys(MAPA_CODIGOS_DEPTO).sort();
+        $("f-departamento").innerHTML = '<option value="">Todos los Departamentos</option>' + deptos.map(d => `<option value="${d}">${d}</option>`).join("");
+
+        const instUnicas = Array.from(new Set(RAW_DATA.catalogo_grupos.map(g => g.inst).filter(Boolean))).sort();
+        $("f-institucion").innerHTML = '<option value="">Todas las instituciones</option>' + instUnicas.map(i => `<option value="${i}">${i}</option>`).join("");
+
+        // 2. Renderizar KPIs y Gráficas de inmediato
+        renderizarChips();
+        renderizarKpis();
+        renderizarGraficos();
+
+        // 3. Inicializar Mapa ECharts (asíncrono protegido)
+        try {
+          await inicializarMapaColombiaEcharts();
+          const grupos = obtenerGruposFiltrados();
+          const deptosInfo = {};
+          grupos.forEach(g => {
+            if (!g.depto || g.depto === "SIN INFORMACIÓN") return;
+            if (!deptosInfo[g.depto]) deptosInfo[g.depto] = { total: 0, excelencia: 0 };
+            deptosInfo[g.depto].total++;
+            if (g.cat === "A1" || g.cat === "A") deptosInfo[g.depto].excelencia++;
+          });
+          pintarMapaColombia(deptosInfo);
+        } catch (mapErr) {
+          console.warn("Mapa ECharts cargará en segundo plano:", mapErr);
+        }
+
+        // 4. Conectar Eventos de Filtro
+        $("f-anio").addEventListener("change", e => fijarFiltro("anio", e.target.value));
+        $("f-area").addEventListener("change", e => fijarFiltro("area", e.target.value));
+        $("f-departamento").addEventListener("change", e => fijarFiltro("departamento", e.target.value));
+        $("f-clasificacion").addEventListener("change", e => fijarFiltro("clasificacion", e.target.value));
+        $("f-institucion").addEventListener("change", e => fijarFiltro("institucion", e.target.value));
+
+        $("btn-limpiar").addEventListener("click", () => {
+          st.anio = String(RAW_DATA.metadata.ultimo_anio);
+          st.area = "";
+          st.departamento = "";
+          st.clasificacion = "";
+          st.institucion = "";
+          st.pagina = 1;
+          sincronizarControlesFiltro();
+          renderizarChips();
+          renderizarKpis();
+          renderizarGraficos();
+        });
+
+        $("btn-toggle-avanzados").addEventListener("click", () => {
+          const panel = $("panel-filtros-avanzados");
+          const abierto = !panel.hidden;
+          panel.hidden = abierto;
+          $("btn-toggle-avanzados").setAttribute("aria-expanded", String(!abierto));
+        });
+
+        // 5. Paginación de Tabla
+        $("btn-ant").addEventListener("click", () => {
+          if (st.pagina > 1) {
+            st.pagina--;
+            renderizarTabla(obtenerGruposFiltrados());
+          }
+        });
+        $("btn-sig").addEventListener("click", () => {
+          const total = obtenerGruposFiltrados().length;
+          const maxPag = Math.ceil(total / st.porPagina);
+          if (st.pagina < maxPag) {
+            st.pagina++;
+            renderizarTabla(obtenerGruposFiltrados());
+          }
+        });
+
+        // 6. Buscador
+        $("buscar")?.addEventListener("input", e => buscarEnCatalogo(e.target.value));
+        $("buscar")?.addEventListener("keydown", e => {
+          if (e.key === "Enter" && resultadosBusqueda[0]) {
+            e.preventDefault();
+            resultadosBusqueda[0].accion();
+            $("resultados").hidden = true;
+            $("buscar").value = "";
+          }
+          if (e.key === "Escape") $("resultados").hidden = true;
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            $("resultados")?.querySelector("button")?.focus();
+          }
+        });
+        document.addEventListener("click", e => {
+          if (!e.target.closest(".buscar")) {
+            const res = $("resultados");
+            if (res) res.hidden = true;
+          }
+        });
+
+        // 7. Exportación
+        $("xlsx").addEventListener("click", exportarXlsx);
+        $("pdf").addEventListener("click", exportarPdf);
+
+      } catch (err) {
+        console.error("Error al inicializar tablero MinCiencias:", err);
+      }
+    }
+
+    // Navegación lateral universal
+    document.querySelectorAll("nav#menu button[data-href]").forEach(btn => {
+      btn.addEventListener("click", () => { location.href = btn.dataset.href; });
+    });
+
+    // Menú móvil
+    const btnMenu = $("btn-menu-movil");
+    if (btnMenu) {
+      btnMenu.addEventListener("click", () => {
+        const lateral = document.querySelector(".lateral");
+        const abierto = lateral.classList.toggle("abierto");
+        btnMenu.setAttribute("aria-expanded", String(abierto));
+        btnMenu.querySelector(".icono-hamburguesa").style.display = abierto ? "none" : "";
+        btnMenu.querySelector(".icono-cerrar").style.display = abierto ? "" : "none";
+      });
+    }
+
+    // Resize observer para ECharts y Chart.js
+    window.addEventListener("resize", () => {
+      if (chartMapaEcharts) chartMapaEcharts.resize();
+      Object.values(graficos).forEach(chart => { if (chart && chart.resize) chart.resize(); });
+    });
+
+    document.addEventListener("DOMContentLoaded", inicializar);
+  </script>
+</body>
+
+</html>

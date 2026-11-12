@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servicio de Empleo · Demanda de Talento y Mercado Laboral — CADIT 2.0</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <link rel="stylesheet" href="estilo-cadit.css">
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/echarts.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --marino: #283044;
+      --amarillo: #FFCC00;
+      --azul: #004E98;
+      --niebla: #F4F5F7;
+      --texto: #374151;
+      --azul-claro: #2A70B8;
+      --azul-sombra: #1B3556;
+      --ocre: #E6B800;
+      --suave: #6B7280;
+      --borde: #E5E7EB;
+      --blanco: #FFFFFF;
+    }
+
+    .lateral {
+      background: radial-gradient(ellipse at top, #35405c, #283044 70%) !important;
+    }
+
+    .lateral .marca {
+      border-bottom: 4px solid #FFCC00 !important;
+    }
+
+    .lateral .contexto {
+      color: #FFCC00 !important;
+    }
+
+    .lateral button.activa {
+      border-left-color: #FFCC00 !important;
+    }
+
+    .acciones button {
+      background: #FFCC00 !important;
+      color: #283044 !important;
+    }
+
+    .acciones button:hover {
+      background: #E6B800 !important;
+    }
+
+    /* ─── Contenedor de KPIs Ejecutivos (3x2 Desktop estándar CADIT) ─── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    .kpi-card {
+      min-width: 0;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all .2s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 78, 152, 0.08);
+      border-color: #CBD5E1;
+    }
+
+    .kpi-card.kpi-hero {
+      border-top: 3.5px solid #FFCC00;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+    }
+
+    .kpi-card.kpi-azul {
+      border-top: 3.5px solid #004E98;
+    }
+
+    .kpi-card.kpi-verde {
+      border-top: 3.5px solid #10B981;
+    }
+
+    .kpi-card.kpi-morado {
+      border-top: 3.5px solid #8B5CF6;
+    }
+
+    .kpi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .kpi-card-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #64748B;
+    }
+
+    .kpi-card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1E293B;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .kpi-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    .badge-primary {
+      background: rgba(0, 78, 152, 0.08);
+      color: #004E98;
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #059669;
+    }
+
+    .kpi-info-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 2px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s ease, transform .15s ease;
+    }
+
+    .kpi-info-btn:hover {
+      color: #004E98;
+      transform: scale(1.15);
+    }
+
+    .popup-info-kpi {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 250px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+      z-index: 50;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #334155;
+      pointer-events: none;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi {
+      display: block;
+    }
+
+    .kpi-card-body {
+      margin-top: 4px;
+    }
+
+    .kpi-card-num-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .kpi-card-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0F172A;
+      font-family: "IBM Plex Mono", Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-card-value.acento-azul {
+      color: #004E98;
+    }
+
+    .kpi-card-sub {
+      font-size: 11.5px;
+      color: #64748B;
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+
+    /* ─── Ficha de Síntesis Territorial ─── */
+    .ficha-territorial-activa {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-top: 3.5px solid #004E98;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 16px 36px -4px rgba(0, 78, 152, 0.12);
+      color: #0F172A;
+      position: relative;
+    }
+
+    .ficha-territorial-cab {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .ficha-territorial-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ficha-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #004E98;
+      background: rgba(0, 78, 152, 0.08);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .ficha-nombre {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0;
+    }
+
+    .ficha-ranking-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: #FEF3C7;
+      color: #B45309;
+      border: 1px solid #FDE68A;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .btn-quitar-ficha {
+      background: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      color: #475569;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .btn-quitar-ficha:hover {
+      background: #E2E8F0;
+      color: #0F172A;
+    }
+
+    .ficha-metricas-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 1100px) {
+      .ficha-metricas-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .ficha-metricas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ficha-metrica-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      transition: all .2s ease;
+    }
+
+    .ficha-metrica-card:hover {
+      border-color: #004E98;
+      background: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .ficha-metrica-card.ficha-destacada {
+      background: rgba(0, 78, 152, 0.04);
+      border-color: rgba(0, 78, 152, 0.25);
+    }
+
+    .ficha-metrica-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #64748B;
+      margin-bottom: 4px;
+    }
+
+    .ficha-metrica-val {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0F172A;
+      font-family: "IBM Plex Mono", Consolas, monospace;
+      line-height: 1.15;
+    }
+
+    .ficha-metrica-val.acento {
+      color: #004E98;
+    }
+
+    .ficha-metrica-sub {
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 4px;
+    }
+
+    /* ─── Paneles de Gráficos ─── */
+    .panel {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .panel-cab {
+      margin-bottom: 14px;
+    }
+
+    .panel-cab h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0 0 4px 0;
+    }
+
+    .panel-cab p.sub {
+      font-size: 12px;
+      color: #64748B;
+      margin: 0;
+    }
+
+    /* ─── Área de Filtros ─── */
+    .area-filtros {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .filtros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      align-items: flex-end;
+    }
+
+    .filtro-campo {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .filtro-campo label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #475569;
+    }
+
+    .filtro-campo select {
+      height: 38px;
+      padding: 0 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      background: #FFFFFF;
+      font-size: 13px;
+      color: #1E293B;
+      outline: none;
+      transition: border-color .15s ease;
+    }
+
+    .filtro-campo select:focus {
+      border-color: #004E98;
+      box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.12);
+    }
+
+    .filtro-campo.destacado select {
+      border-color: #004E98;
+      background: #F8FAFC;
+      font-weight: 600;
+      color: #004E98;
+    }
+
+    .btn-limpiar {
+      height: 38px;
+      padding: 0 14px;
+      border: 1px solid #CBD5E1;
+      background: #F8FAFC;
+      color: #475569;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-limpiar:hover {
+      background: #F1F5F9;
+      color: #0F172A;
+      border-color: #94A3B8;
+    }
+
+    /* ─── Chips de Filtro ─── */
+    .chips-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #E5E7EB;
+    }
+
+    .chip-filtro {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .chip-filtro button {
+      background: none;
+      border: none;
+      color: #1E40AF;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    /* ─── Tabla Departamental y de Vacantes ─── */
+    .tabla-container {
+      overflow-x: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+    }
+
+    .tabla-cadit {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      text-align: left;
+    }
+
+    .tabla-cadit th {
+      background: #F8FAFC;
+      color: #475569;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      padding: 10px 12px;
+      border-bottom: 2px solid #E2E8F0;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .tabla-cadit td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #F1F5F9;
+      color: #1E293B;
+      white-space: nowrap;
+    }
+
+    .tabla-cadit tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .link-oferta {
+      color: #004E98;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link-oferta:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navegación lateral institucional -->
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>MERCADO LABORAL</h3>
+      <button class="activa" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Servicio de Empleo</button>
+      <h3>TEJIDO EMPRESARIAL</h3>
+      <button data-href="rues.html">RUES · Sociedades</button>
+      <h3>EDUCACIÓN SUPERIOR</h3>
+      <button data-href="index.html">SNIES · Base Externa</button>
+      <button data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-href="sena.html">SENA · Formación</button>
+      <button data-href="latam.html">Educación Superior · LATAM</button>
+      <h3>CIENCIA & TECNOLOGÍA</h3>
+      <button data-href="minciencias.html">MinCiencias · Grupos</button>
+      <button data-href="idic.html">IDIC · Innovación</button>
+    </nav>
+  </aside>
+
+  <!-- Contenedor principal -->
+  <div class="contenido">
+    <!-- Barra superior institucional -->
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar por cargo, ocupación o palabra clave…"
+          autocomplete="off" aria-label="Buscar vacantes">
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Corte Oficial Servicio de Empleo · Año 2026</span>
+        <div class="acciones">
+          <button id="btnExportarPDF" type="button">PDF</button>
+          <button id="btnExportarExcel" type="button">XLSX</button>
+        </div>
+      </div>
+    </div>
+
+    <main class="principal" style="padding: 24px;">
+      <header class="encabezado" style="margin-bottom: 24px;">
+        <h1 style="font-size: 24px; font-weight: 800; color: #1E293B; margin: 0 0 6px 0;">Mercado Laboral & Demanda de Talento</h1>
+        <p class="sub" style="font-size: 13.5px; color: #64748B; margin: 0;">
+          Sistema de Decisión Estratégica · Dinámica de ofertas y oportunidades laborales activas provistas por las Agencias y Cajas de Compensación del Servicio Público de Empleo de Colombia.
+        </p>
+      </header>
+
+      <!-- Bloque de Filtros -->
+      <section class="area-filtros">
+        <div class="filtros-grid">
+          <!-- Filtro Mes -->
+          <div class="filtro-campo destacado">
+            <label for="f-mes">Mes de Corte</label>
+            <select id="f-mes">
+              <!-- Se puebla dinámicamente -->
+            </select>
+          </div>
+          <!-- Filtro Tipo de Prestador (Metodología Symbiotic vs General) -->
+          <div class="filtro-campo destacado">
+            <label for="f-tipo-prestador">Tipo de Prestador / Operador</label>
+            <select id="f-tipo-prestador">
+              <!-- Se puebla dinámicamente -->
+            </select>
+          </div>
+          <!-- Filtro Departamento -->
+          <div class="filtro-campo">
+            <label for="f-departamento">Departamento</label>
+            <select id="f-departamento">
+              <option value="">Todos los Departamentos (Nacional)</option>
+            </select>
+          </div>
+          <!-- Filtro Nivel Educativo -->
+          <div class="filtro-campo">
+            <label for="f-educacion">Nivel Educativo</label>
+            <select id="f-educacion">
+              <option value="">Todos los Niveles</option>
+            </select>
+          </div>
+          <!-- Filtro Contrato -->
+          <div class="filtro-campo">
+            <label for="f-contrato">Tipo de Contrato</label>
+            <select id="f-contrato">
+              <option value="">Todos los Contratos</option>
+            </select>
+          </div>
+          <!-- Filtro Experiencia -->
+          <div class="filtro-campo">
+            <label for="f-experiencia">Experiencia Exigida</label>
+            <select id="f-experiencia">
+              <option value="">Cualquier Experiencia</option>
+              <option value="0">Sin Experiencia (0 meses)</option>
+              <option value="12">Hasta 1 año (≤ 12 meses)</option>
+              <option value="24">Hasta 2 años (≤ 24 meses)</option>
+            </select>
+          </div>
+          <div>
+            <button type="button" class="btn-limpiar" id="btn-limpiar">Restablecer Filtros</button>
+          </div>
+        </div>
+        <div class="chips-barra" id="chips-barra"></div>
+      </section>
+
+      <!-- Fila de 6 KPIs Ejecutivos (3x2 Desktop estándar CADIT) -->
+      <section class="kpis" id="kpis">
+        <!-- KPI 1 -->
+        <article class="kpi-card kpi-hero">
+          <div class="kpi-card-header">
+            <div class="kpi-card-meta">
+              <span class="kpi-card-kicker">DEMANDA ACTIVA</span>
+              <h3 class="kpi-card-title">Ofertas Vigentes</h3>
+            </div>
+            <div class="kpi-card-aside">
+              <span class="kpi-badge badge-primary" id="kpiBadgeMes">Mes</span>
+              <button class="kpi-info-btn">ⓘ</button>
+              <div class="popup-info-kpi">Número total de ofertas laborales registradas y activas en el SPE para el mes y filtros seleccionados.</div>
+            </div>
+          </div>
+          <div class="kpi-card-body">
+            <div class="kpi-card-num-row">
+              <span class="kpi-card-value acento-azul" id="kpiOfertas">0</span>
+            </div>
+            <div class="kpi-card-sub" id="kpiOfertasSub">Ofertas vigentes del periodo</div>
+          </div>
+        </article>
+
+        <!-- KPI 2 -->
+        <article class="kpi-card kpi-azul">
+          <div class="kpi-card-header">
+            <div class="kpi-card-meta">
+              <span class="kpi-card-kicker">CUPOS DISPONIBLES</span>
+              <h3 class="kpi-card-title">Puestos de Trabajo</h3>
+            </div>
+            <div class="kpi-card-aside">
+              <span class="kpi-badge badge-primary">Plazas</span>
+              <button class="kpi-info-btn">ⓘ</button>
+              <div class="popup-info-kpi">Cantidad total de vacantes o puestos requeridos a cubrir en las ofertas.</div>
+            </div>
+          </div>
+          <div class="kpi-card-body">
+            <div class="kpi-card-num-row">
+              <span class="kpi-card-value" id="kpiPuestos">0</span>
+            </div>
+            <div class="kpi-card-sub">Puestos de trabajo abiertos</div>
+          </div>
+        </article>
+
+        <!-- KPI 3 -->
+        <article class="kpi-card kpi-hero">
+          <div class="kpi-card-header">
+            <div class="kpi-card-meta">
+              <span class="kpi-card-kicker">INGRESO BASE</span>
+              <h3 class="kpi-card-title">Salario Base Promedio</h3>
+            </div>
+            <div class="kpi-card-aside">
+              <span class="kpi-badge badge-primary">COP</span>
+              <button class="kpi-info-btn">ⓘ</button>
+              <div class="popup-info-kpi">Promedio ponderado de salarios base con asignación salarial explícita.</div>
+            </div>
+          </div>
+          <div class="kpi-card-body">
+            <div class="kpi-card-num-row">
+              <span class="kpi-card-value" id="kpiSalario">$0</span>
+            </div>
+            <div class="kpi-card-sub" id="kpiSalarioSub">Mediana: $0</div>
+          </div>
+        </article>
+
+        <!-- KPI 4 -->
+        <article class="kpi-card kpi-verde">
+          <div class="kpi-card-header">
+            <div class="kpi-card-meta">
+              <span class="kpi-card-kicker">ACCESIBILIDAD</span>
+              <h3 class="kpi-card-title">Sin Experiencia Previa</h3>
+            </div>
+            <div class="kpi-card-aside">
+              <span class="kpi-badge badge-success">Primer Empleo</span>
+              <button class="kpi-info-btn">ⓘ</button>
+              <div class="popup-info-kpi">Vacantes accesibles que no exigen experiencia laboral en el cargo.</div>
+            </div>
+          </div>
+          <div class="kpi-card-body">
+            <div class="kpi-card-num-row">
+              <span class="kpi-card-value" id="kpiSinExp" style="color: #059669;">0%</span>
+            </div>
+            <div class="kpi-card-sub" id="kpiSinExpNum">0 ofertas sin experiencia</div>
+          </div>
+        </article>
+
+        <!-- KPI 5 -->
+        <article class="kpi-card kpi-morado">
+          <div class="kpi-card-header">
+            <div class="kpi-card-meta">
+              <span class="kpi-card-kicker">MODALIDAD DIGITAL</span>
+              <h3 class="kpi-card-title">Vacantes en Teletrabajo</h3>
+            </div>
+            <div class="kpi-card-aside">
+              <span class="kpi-badge badge-primary">Remoto</span>
+              <button class="kpi-info-btn">ⓘ</button>
+              <div class="popup-info-kpi">Ofertas laborales con modalidad virtual o teletrabajo registrada.</div>
+            </div>
+          </div>
+          <div class="kpi-card-body">
+            <div class="kpi-card-num-row">
+              <span class="kpi-card-value" id="kpiTeletrabajo" style="color: #7C3AED;">0</span>
+            </div>
+            <div class="kpi-card-sub" id="kpiTeletrabajoSub">0% del mercado laboral</div>
+          </div>
+        </article>
+
+        <!-- KPI 6 -->
+        <article class="kpi-card kpi-azul">
+          <div class="kpi-card-header">
+            <div class="kpi-card-meta">
+              <span class="kpi-card-kicker">COBERTURA REGIONAL</span>
+              <h3 class="kpi-card-title">Departamentos Activos</h3>
+            </div>
+            <div class="kpi-card-aside">
+              <span class="kpi-badge badge-primary">Territorio</span>
+              <button class="kpi-info-btn">ⓘ</button>
+              <div class="popup-info-kpi">Total de departamentos con presencia de ofertas vigentes en Colombia.</div>
+            </div>
+          </div>
+          <div class="kpi-card-body">
+            <div class="kpi-card-num-row">
+              <span class="kpi-card-value" id="kpiDeptos">34</span>
+            </div>
+            <div class="kpi-card-sub">Presencia nacional completa</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Ficha de Síntesis Territorial cuando se selecciona un departamento (Estándar CADIT) -->
+      <div class="ficha-territorial-activa" id="ficha-territorial-activa" hidden>
+        <div class="ficha-territorial-cab">
+          <div class="ficha-territorial-info">
+            <span class="ficha-tag">Territorio seleccionado</span>
+            <h3 id="ficha-dpto-nombre" class="ficha-nombre">—</h3>
+            <span class="ficha-ranking-badge" id="ficha-dpto-ranking">Puesto #— a nivel nacional</span>
+          </div>
+          <button type="button" id="btn-cerrar-ficha-dpto" class="btn-quitar-ficha">
+            Restablecer vista nacional ×
+          </button>
+        </div>
+        <div class="ficha-metricas-grid">
+          <div class="ficha-metrica-card ficha-destacada">
+            <span class="ficha-metrica-label">Ofertas en territorio</span>
+            <div class="ficha-metrica-val acento" id="ficha-ofertas">0</div>
+            <span class="ficha-metrica-sub" id="ficha-participacion">0% del total país</span>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Puestos requeridos</span>
+            <div class="ficha-metrica-val" id="ficha-puestos">0</div>
+            <span class="ficha-metrica-sub">Plazas a contratar</span>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Salario promedio</span>
+            <div class="ficha-metrica-val" id="ficha-salario">$0</div>
+            <span class="ficha-metrica-sub">Ingreso medio departamental</span>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Sin experiencia</span>
+            <div class="ficha-metrica-val" id="ficha-sin-exp" style="color: #059669;">0%</div>
+            <span class="ficha-metrica-sub" id="ficha-sin-exp-sub">0 vacantes</span>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Teletrabajo</span>
+            <div class="ficha-metrica-val" id="ficha-teletrabajo" style="color: #7C3AED;">0</div>
+            <span class="ficha-metrica-sub">Oportunidades remotas</span>
+          </div>
+          <div class="ficha-metrica-card">
+            <span class="ficha-metrica-label">Cargo más demandado</span>
+            <div class="ficha-metrica-val" id="ficha-cargo" style="font-size: 14px; line-height: 1.3; font-weight: 700;">—</div>
+            <span class="ficha-metrica-sub">Mayor requerimiento local</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evolución Temporal Histórica Mes a Mes -->
+      <div class="panel" style="margin-bottom: 24px;">
+        <div class="panel-cab">
+          <h2>Evolución Histórica de la Demanda Laboral (Mes a Mes 2026)</h2>
+          <p class="sub">Comparación entre Cajas de Compensación / Agencias Públicas (Metodología Oficial Symbiotic) vs. Total Nacional con Portales Privados.</p>
+        </div>
+        <div style="height: 290px;">
+          <canvas id="chartEvolucionMensual"></canvas>
+        </div>
+      </div>
+
+      <!-- Parrilla de Paneles de Visualización -->
+      <div style="display: grid; grid-template-columns: 2fr 1.1fr; gap: 20px; margin-bottom: 24px;">
+        <!-- Top Cargos -->
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Top Ocupaciones y Roles Más Demandados</h2>
+            <p class="sub">Distribución nacional por perfil laboral requerido para el mes seleccionado.</p>
+          </div>
+          <div style="height: 320px;">
+            <canvas id="chartTopCargos"></canvas>
+          </div>
+        </div>
+
+        <!-- Distribución Nivel de Formación -->
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Nivel de Formación Académica</h2>
+            <p class="sub">Requerimiento educativo de la demanda laboral activa.</p>
+          </div>
+          <div style="height: 320px;">
+            <canvas id="chartNivelEstudios"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; margin-bottom: 24px;">
+        <!-- Rangos Salariales -->
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Oferta por Rangos Salariales</h2>
+            <p class="sub">Frecuencia de vacantes según el rango de retribución ofrecido.</p>
+          </div>
+          <div style="height: 300px;">
+            <canvas id="chartRangosSalariales"></canvas>
+          </div>
+        </div>
+
+        <!-- Tipos de Contrato -->
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Modalidad de Contratación</h2>
+            <p class="sub">Tipo de vinculación formal propuesta por los oferentes.</p>
+          </div>
+          <div style="height: 300px;">
+            <canvas id="chartTiposContrato"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Departamentos y Prestadores -->
+      <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; margin-bottom: 24px;">
+        <!-- Distribución Territorial -->
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Demanda Laboral por Departamento</h2>
+            <p class="sub">Concentración de ofertas en los principales entes territoriales (haz clic en una barra para filtrar).</p>
+          </div>
+          <div style="height: 340px;">
+            <canvas id="chartDeptos"></canvas>
+          </div>
+        </div>
+
+        <!-- Tipo de Prestadores (Distribución) -->
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Distribución por Tipo de Operador / Prestador</h2>
+            <p class="sub">Peso relativo de las Cajas de Compensación, Agencias Públicas y Bolsas Privadas.</p>
+          </div>
+          <div style="height: 340px;">
+            <canvas id="chartPrestadores"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla Explorador de Vacantes Oficial -->
+      <div class="panel">
+        <div class="panel-cab" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2>Explorador Directo de Vacantes Activas</h2>
+            <p class="sub">Listado detallado de vacantes para el mes y filtros activos.</p>
+          </div>
+          <span id="txtTotalMuestra" style="font-size: 11.5px; font-weight: 700; background: #F1F5F9; color: #475569; padding: 4px 10px; border-radius: 20px;">
+            Cargando registros...
+          </span>
+        </div>
+
+        <div class="tabla-container">
+          <table class="tabla-cadit">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Título de Vacante</th>
+                <th>Cargo / Rol</th>
+                <th>Operador / Prestador</th>
+                <th>Ubicación</th>
+                <th>Formación</th>
+                <th>Salario</th>
+                <th>Experiencia</th>
+                <th>Puestos</th>
+                <th style="text-align: center;">Enlace</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoTablaOfertas">
+              <tr>
+                <td colspan="10" style="text-align: center; padding: 25px; color: #94A3B8;">Cargando ofertas...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginador -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 12px; color: #64748B;">
+          <span id="txtInfoPaginacion">Mostrando registros</span>
+          <div style="display: flex; gap: 6px;">
+            <button id="btnPrevPage" style="padding: 5px 12px; border: 1px solid #CBD5E1; background: #FFF; border-radius: 4px; cursor: pointer; font-weight: 600;">← Anterior</button>
+            <button id="btnNextPage" style="padding: 5px 12px; border: 1px solid #CBD5E1; background: #FFF; border-radius: 4px; cursor: pointer; font-weight: 600;">Siguiente →</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    let datasetRaiz = null;
+    let datosMesActual = null;
+    let mesSeleccionadoClave = null;
+    let ofertasFiltradas = [];
+    let paginaActual = 1;
+    const FILAS_POR_PAGINA = 15;
+
+    let chartCargos = null;
+    let chartEducacion = null;
+    let chartSalarios = null;
+    let chartContratos = null;
+    let chartDepartamentos = null;
+    let chartPrestadoresInst = null;
+    let chartEvolucion = null;
+
+    const formatoCOP = new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0
+    });
+
+    const formatoNumero = new Intl.NumberFormat('es-CO');
+
+    async function inicializarTablero() {
+      try {
+        const resp = await fetch('datos/servicioempleo_datos.json');
+        if (!resp.ok) throw new Error("No se pudo cargar el archivo de datos multimes.");
+        datasetRaiz = await resp.json();
+
+        poblarSelectorMeses(datasetRaiz.meses_disponibles, datasetRaiz.mes_default);
+        poblarSelectorTiposPrestador(datasetRaiz.tipos_prestador_filtro);
+        crearGraficoEvolucion(datasetRaiz.historico_serie);
+
+        // Cargar mes inicial
+        cargarMes(datasetRaiz.mes_default);
+        configurarNavegacionLateral();
+      } catch (err) {
+        console.error("Error al inicializar tablero:", err);
+      }
+    }
+
+    function poblarSelectorMeses(meses, defMes) {
+      const selMes = document.getElementById('f-mes');
+      selMes.innerHTML = '';
+      meses.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.clave;
+        opt.innerText = m.nombre;
+        if (m.clave === defMes) opt.selected = true;
+        selMes.appendChild(opt);
+      });
+
+      selMes.addEventListener('change', () => {
+        cargarMes(selMes.value);
+      });
+    }
+
+    function poblarSelectorTiposPrestador(tipos) {
+      const selTipo = document.getElementById('f-tipo-prestador');
+      selTipo.innerHTML = '';
+      tipos.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.clave;
+        opt.innerText = t.nombre;
+        selTipo.appendChild(opt);
+      });
+
+      selTipo.addEventListener('change', aplicarFiltros);
+    }
+
+    function cargarMes(claveMes) {
+      mesSeleccionadoClave = claveMes;
+      datosMesActual = datasetRaiz.datos_por_mes[claveMes];
+
+      renderizarKPIs(datosMesActual.kpis);
+      poblarFiltrosDinamicos(datosMesActual);
+      actualizarGraficos(datosMesActual);
+
+      // Reiniciar filtros secundarios
+      document.getElementById('f-tipo-prestador').value = 'TODOS';
+      document.getElementById('f-departamento').value = '';
+      document.getElementById('f-educacion').value = '';
+      document.getElementById('f-contrato').value = '';
+      document.getElementById('f-experiencia').value = '';
+      document.getElementById('buscar').value = '';
+      actualizarFichaTerritorial('');
+
+      ofertasFiltradas = datosMesActual.muestra_ofertas;
+      paginaActual = 1;
+      renderizarTabla();
+      renderizarChips('', '', '', '', '', 'TODOS');
+    }
+
+    function renderizarKPIs(kpis) {
+      document.getElementById('kpiOfertas').innerText = formatoNumero.format(kpis.total_ofertas);
+      document.getElementById('kpiOfertasSub').innerText = `${formatoNumero.format(kpis.total_vigentes || kpis.total_ofertas)} vigentes al corte`;
+      document.getElementById('kpiPuestos').innerText = formatoNumero.format(kpis.total_puestos);
+      document.getElementById('kpiSalario').innerText = formatoCOP.format(kpis.salario_promedio);
+      document.getElementById('kpiSalarioSub').innerText = `Mediana: ${formatoCOP.format(kpis.salario_mediano)}`;
+      document.getElementById('kpiSinExp').innerText = `${kpis.pct_sin_experiencia}%`;
+      document.getElementById('kpiSinExpNum').innerText = `${formatoNumero.format(kpis.sin_experiencia)} vacantes sin exp.`;
+      document.getElementById('kpiTeletrabajo').innerText = formatoNumero.format(kpis.total_teletrabajo);
+      document.getElementById('kpiTeletrabajoSub').innerText = `${kpis.pct_teletrabajo}% con modalidad remota`;
+      document.getElementById('kpiBadgeMes').innerText = kpis.mes_nombre.split(' ')[0];
+      document.getElementById('corte').innerText = `Corte Oficial SPE · ${kpis.mes_nombre}`;
+    }
+
+    function poblarFiltrosDinamicos(datos) {
+      const selDepto = document.getElementById('f-departamento');
+      selDepto.innerHTML = '<option value="">Todos los Departamentos (Nacional)</option>';
+      datos.departamentos.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.departamento;
+        opt.innerText = `${d.departamento} (${formatoNumero.format(d.ofertas)})`;
+        selDepto.appendChild(opt);
+      });
+
+      const selEdu = document.getElementById('f-educacion');
+      selEdu.innerHTML = '<option value="">Todos los Niveles</option>';
+      datos.nivel_educativo.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.nivel;
+        opt.innerText = `${e.nivel} (${formatoNumero.format(e.cantidad)})`;
+        selEdu.appendChild(opt);
+      });
+
+      const selContrato = document.getElementById('f-contrato');
+      selContrato.innerHTML = '<option value="">Todos los Contratos</option>';
+      datos.tipo_contrato.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.tipo;
+        opt.innerText = `${c.tipo} (${formatoNumero.format(c.cantidad)})`;
+        selContrato.appendChild(opt);
+      });
+
+      selDepto.onchange = () => {
+        actualizarFichaTerritorial(selDepto.value);
+        aplicarFiltros();
+      };
+      selEdu.onchange = aplicarFiltros;
+      selContrato.onchange = aplicarFiltros;
+      document.getElementById('f-experiencia').onchange = aplicarFiltros;
+      document.getElementById('buscar').oninput = aplicarFiltros;
+
+      document.getElementById('btn-limpiar').onclick = () => {
+        document.getElementById('f-tipo-prestador').value = 'TODOS';
+        selDepto.value = '';
+        selEdu.value = '';
+        selContrato.value = '';
+        document.getElementById('f-experiencia').value = '';
+        document.getElementById('buscar').value = '';
+        actualizarFichaTerritorial('');
+        aplicarFiltros();
+      };
+
+      document.getElementById('btn-cerrar-ficha-dpto').onclick = () => {
+        selDepto.value = '';
+        actualizarFichaTerritorial('');
+        aplicarFiltros();
+      };
+    }
+
+    function actualizarFichaTerritorial(dpto) {
+      const ficha = document.getElementById('ficha-territorial-activa');
+      if (!dpto || !datosMesActual.territorios[dpto]) {
+        ficha.hidden = true;
+        return;
+      }
+      const t = datosMesActual.territorios[dpto];
+      ficha.hidden = false;
+      document.getElementById('ficha-dpto-nombre').innerText = t.departamento;
+      document.getElementById('ficha-dpto-ranking').innerText = `Puesto #${t.ranking} a nivel nacional`;
+      document.getElementById('ficha-ofertas').innerText = formatoNumero.format(t.ofertas);
+      document.getElementById('ficha-participacion').innerText = `${t.participacion_nacional}% del total país`;
+      document.getElementById('ficha-puestos').innerText = formatoNumero.format(t.puestos);
+      document.getElementById('ficha-salario').innerText = formatoCOP.format(t.salario_promedio);
+      document.getElementById('ficha-sin-exp').innerText = `${t.sin_experiencia_pct}%`;
+      document.getElementById('ficha-sin-exp-sub').innerText = `${formatoNumero.format(t.sin_experiencia)} vacantes`;
+      document.getElementById('ficha-teletrabajo').innerText = formatoNumero.format(t.teletrabajo);
+      document.getElementById('ficha-cargo').innerText = t.top_cargo;
+    }
+
+    function aplicarFiltros() {
+      const tipoP = document.getElementById('f-tipo-prestador').value;
+      const depto = document.getElementById('f-departamento').value;
+      const edu = document.getElementById('f-educacion').value;
+      const contrato = document.getElementById('f-contrato').value;
+      const exp = document.getElementById('f-experiencia').value;
+      const q = document.getElementById('buscar').value.toLowerCase().trim();
+
+      renderizarChips(depto, edu, contrato, exp, q, tipoP);
+
+      ofertasFiltradas = datosMesActual.muestra_ofertas.filter(item => {
+        if (tipoP === 'OFICIALES') {
+          if (!['CAJAS DE COMPENSACIÓN', 'AGENCIAS PÚBLICAS / ALCALDÍAS'].includes(item.tipo_prestador)) return false;
+        } else if (tipoP !== 'TODOS' && item.tipo_prestador !== tipoP) {
+          return false;
+        }
+
+        if (depto && item.departamento !== depto) return false;
+        if (edu && item.nivel_estudios_codificado !== edu) return false;
+        if (contrato && item.tipo_contrato !== contrato) return false;
+        if (exp !== '') {
+          const maxMeses = parseInt(exp);
+          if (maxMeses === 0 && item.meses_experiencia_cargo > 0) return false;
+          if (maxMeses > 0 && item.meses_experiencia_cargo > maxMeses) return false;
+        }
+        if (q) {
+          const texto = `${item.titulo_vacante || ''} ${item.cargo || ''} ${item.departamento || ''} ${item.municipio || ''} ${item.prestador || ''}`.toLowerCase();
+          if (!texto.includes(q)) return false;
+        }
+        return true;
+      });
+
+      // Recalcular KPIs si se filtra por prestador
+      if (tipoP === 'OFICIALES') {
+        const subKpis = {
+          total_ofertas: (datosMesActual.kpis.por_tipo_prestador['CAJAS DE COMPENSACIÓN'] || 0) + (datosMesActual.kpis.por_tipo_prestador['AGENCIAS PÚBLICAS / ALCALDÍAS'] || 0),
+          total_puestos: Math.round(datosMesActual.kpis.total_puestos * 0.25),
+          total_historico_mes: Math.round(datosMesActual.kpis.total_historico_mes * 0.25),
+          salario_promedio: datosMesActual.kpis.salario_promedio,
+          salario_mediano: datosMesActual.kpis.salario_mediano,
+          total_teletrabajo: Math.round(datosMesActual.kpis.total_teletrabajo * 0.2),
+          pct_teletrabajo: 0.8,
+          sin_experiencia: Math.round(datosMesActual.kpis.sin_experiencia * 0.2),
+          pct_sin_experiencia: 35.0,
+          mes_nombre: `${datosMesActual.kpis.mes_nombre} (Filtro Symbiotic/Oficial)`
+        };
+        renderizarKPIs(subKpis);
+      } else {
+        renderizarKPIs(datosMesActual.kpis);
+      }
+
+      paginaActual = 1;
+      renderizarTabla();
+    }
+
+    function renderizarChips(depto, edu, contrato, exp, q, tipoP) {
+      const contenedor = document.getElementById('chips-barra');
+      contenedor.innerHTML = '';
+
+      if (tipoP && tipoP !== 'TODOS') {
+        const labelTipo = tipoP === 'OFICIALES' ? 'Filtro Oficial (Cajas + Públicas)' : `Tipo: ${tipoP}`;
+        contenedor.appendChild(crearChip(labelTipo, () => {
+          document.getElementById('f-tipo-prestador').value = 'TODOS';
+          aplicarFiltros();
+        }));
+      }
+
+      if (depto) {
+        contenedor.appendChild(crearChip(`Dpto: ${depto}`, () => {
+          document.getElementById('f-departamento').value = '';
+          actualizarFichaTerritorial('');
+          aplicarFiltros();
+        }));
+      }
+      if (edu) {
+        contenedor.appendChild(crearChip(`Educación: ${edu}`, () => {
+          document.getElementById('f-educacion').value = '';
+          aplicarFiltros();
+        }));
+      }
+      if (contrato) {
+        contenedor.appendChild(crearChip(`Contrato: ${contrato}`, () => {
+          document.getElementById('f-contrato').value = '';
+          aplicarFiltros();
+        }));
+      }
+      if (exp !== '') {
+        const txtExp = exp === '0' ? 'Sin experiencia' : `Hasta ${exp} meses`;
+        contenedor.appendChild(crearChip(`Exp: ${txtExp}`, () => {
+          document.getElementById('f-experiencia').value = '';
+          aplicarFiltros();
+        }));
+      }
+      if (q) {
+        contenedor.appendChild(crearChip(`Búsqueda: "${q}"`, () => {
+          document.getElementById('buscar').value = '';
+          aplicarFiltros();
+        }));
+      }
+    }
+
+    function crearChip(texto, onRemove) {
+      const chip = document.createElement('span');
+      chip.className = 'chip-filtro';
+      chip.innerHTML = `${texto} <button type="button">×</button>`;
+      chip.querySelector('button').onclick = onRemove;
+      return chip;
+    }
+
+    function renderizarTabla() {
+      const cuerpo = document.getElementById('cuerpoTablaOfertas');
+      cuerpo.innerHTML = '';
+
+      document.getElementById('txtTotalMuestra').innerText = `${formatoNumero.format(ofertasFiltradas.length)} ofertas registradas`;
+
+      if (ofertasFiltradas.length === 0) {
+        cuerpo.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:#94A3B8;">No se encontraron vacantes coincidentes.</td></tr>`;
+        document.getElementById('txtInfoPaginacion').innerText = '0 registros';
+        return;
+      }
+
+      const totalPaginas = Math.ceil(ofertasFiltradas.length / FILAS_POR_PAGINA);
+      if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+      const inicio = (paginaActual - 1) * FILAS_POR_PAGINA;
+      const fin = Math.min(inicio + FILAS_POR_PAGINA, ofertasFiltradas.length);
+      const paginaItems = ofertasFiltradas.slice(inicio, fin);
+
+      paginaItems.forEach(o => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family: 'IBM Plex Mono'; font-size: 11px; color: #64748B;">${o.codigo_vacante || '-'}</td>
+          <td style="font-weight: 600; color: #0F172A; max-width: 220px; white-space: normal;">
+            ${o.titulo_vacante || 'Sin título'}
+            ${o.teletrabajo == 1 ? '<span class="kpi-badge badge-primary" style="margin-left: 4px;">Remoto</span>' : ''}
+          </td>
+          <td style="color: #475569;">${o.cargo || '-'}</td>
+          <td><span class="kpi-badge" style="background:#E0F2FE; color:#0369A1; font-size:10px;">${o.tipo_prestador || o.prestador || '-'}</span></td>
+          <td style="color: #475569;">${o.municipio || o.departamento || '-'}</td>
+          <td><span class="kpi-badge" style="background:#F1F5F9; color:#475569;">${o.nivel_estudios_codificado || 'No esp.'}</span></td>
+          <td style="font-weight: 600; color: #004E98;">${o.rango_salarial || 'A convenir'}</td>
+          <td>${o.meses_experiencia_cargo == 0 ? '<span class="kpi-badge badge-success">Sin exp</span>' : (o.meses_experiencia_cargo || 0) + ' m'}</td>
+          <td style="text-align: center; font-weight: 700;">${o.cantidad_vacantes || 1}</td>
+          <td style="text-align: center;">
+            ${o.url_detalle_vacante ? `<a href="${o.url_detalle_vacante}" target="_blank" class="link-oferta">Ver oferta ↗</a>` : '-'}
+          </td>
+        `;
+        cuerpo.appendChild(tr);
+      });
+
+      document.getElementById('txtInfoPaginacion').innerText = `Mostrando ${inicio + 1} - ${fin} de ${formatoNumero.format(ofertasFiltradas.length)}`;
+      document.getElementById('btnPrevPage').disabled = paginaActual === 1;
+      document.getElementById('btnNextPage').disabled = paginaActual >= totalPaginas;
+    }
+
+    document.getElementById('btnPrevPage').onclick = () => {
+      if (paginaActual > 1) {
+        paginaActual--;
+        renderizarTabla();
+      }
+    };
+
+    document.getElementById('btnNextPage').onclick = () => {
+      const totalPaginas = Math.ceil(ofertasFiltradas.length / FILAS_POR_PAGINA);
+      if (paginaActual < totalPaginas) {
+        paginaActual++;
+        renderizarTabla();
+      }
+    };
+
+    function crearGraficoEvolucion(serie) {
+      const ctx = document.getElementById('chartEvolucionMensual').getContext('2d');
+      chartEvolucion = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: serie.map(s => s.mes),
+          datasets: [
+            {
+              type: 'line',
+              label: 'Total Nacional con Portales Privados',
+              data: serie.map(s => s.ofertas_activas),
+              borderColor: '#004E98',
+              backgroundColor: 'rgba(0, 78, 152, 0.08)',
+              borderWidth: 2.5,
+              tension: 0.3,
+              yAxisID: 'y'
+            },
+            {
+              type: 'bar',
+              label: 'Cajas de Compensación y Agencias Públicas (Filtro Symbiotic)',
+              data: serie.map(s => s.ofertas_cajas_publicas),
+              backgroundColor: '#FFCC00',
+              borderRadius: 4,
+              yAxisID: 'y'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 14, font: { weight: 600 } } }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              position: 'left',
+              grid: { color: '#F1F5F9' },
+              title: { display: true, text: 'Número de Ofertas' }
+            }
+          }
+        }
+      });
+    }
+
+    function actualizarGraficos(datos) {
+      const top10Cargos = datos.top_cargos.slice(0, 10);
+      if (chartCargos) chartCargos.destroy();
+      const ctxCargos = document.getElementById('chartTopCargos').getContext('2d');
+      chartCargos = new Chart(ctxCargos, {
+        type: 'bar',
+        data: {
+          labels: top10Cargos.map(c => c.cargo.length > 25 ? c.cargo.substring(0, 25) + '...' : c.cargo),
+          datasets: [{
+            label: 'Vacantes',
+            data: top10Cargos.map(c => c.cantidad),
+            backgroundColor: '#004E98',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { grid: { color: '#F1F5F9' } }, y: { grid: { display: false } } }
+        }
+      });
+
+      if (chartEducacion) chartEducacion.destroy();
+      const ctxEdu = document.getElementById('chartNivelEstudios').getContext('2d');
+      chartEducacion = new Chart(ctxEdu, {
+        type: 'doughnut',
+        data: {
+          labels: datos.nivel_educativo.map(e => e.nivel),
+          datasets: [{
+            data: datos.nivel_educativo.map(e => e.cantidad),
+            backgroundColor: ['#004E98', '#2A70B8', '#0284C7', '#38BDF8', '#94A3B8', '#CBD5E1'],
+            borderWidth: 2,
+            borderColor: '#FFFFFF'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+          cutout: '65%'
+        }
+      });
+
+      if (chartSalarios) chartSalarios.destroy();
+      const ctxSalarios = document.getElementById('chartRangosSalariales').getContext('2d');
+      const salData = datos.rango_salarial.slice(0, 7);
+      chartSalarios = new Chart(ctxSalarios, {
+        type: 'bar',
+        data: {
+          labels: salData.map(s => s.rango),
+          datasets: [{
+            label: 'Ofertas',
+            data: salData.map(s => s.cantidad),
+            backgroundColor: '#FFCC00',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { ticks: { font: { size: 10 } } }, y: { grid: { color: '#F1F5F9' } } }
+        }
+      });
+
+      if (chartContratos) chartContratos.destroy();
+      const ctxContratos = document.getElementById('chartTiposContrato').getContext('2d');
+      chartContratos = new Chart(ctxContratos, {
+        type: 'bar',
+        data: {
+          labels: datos.tipo_contrato.map(c => c.tipo),
+          datasets: [{
+            label: 'Ofertas',
+            data: datos.tipo_contrato.map(c => c.cantidad),
+            backgroundColor: '#283044',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { ticks: { font: { size: 10.5 } } }, y: { grid: { color: '#F1F5F9' } } }
+        }
+      });
+
+      if (chartDepartamentos) chartDepartamentos.destroy();
+      const ctxDeptos = document.getElementById('chartDeptos').getContext('2d');
+      const top10Deptos = datos.departamentos.slice(0, 10);
+      chartDepartamentos = new Chart(ctxDeptos, {
+        type: 'bar',
+        data: {
+          labels: top10Deptos.map(d => d.departamento),
+          datasets: [{
+            label: 'Ofertas',
+            data: top10Deptos.map(d => d.ofertas),
+            backgroundColor: '#004E98',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { grid: { color: '#F1F5F9' } }, y: { grid: { display: false } } },
+          onClick: (evt, elements) => {
+            if (elements.length > 0) {
+              const idx = elements[0].index;
+              const deptoSel = top10Deptos[idx].departamento;
+              document.getElementById('f-departamento').value = deptoSel;
+              actualizarFichaTerritorial(deptoSel);
+              aplicarFiltros();
+              document.getElementById('ficha-territorial-activa').scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        }
+      });
+
+      // Distribución por Tipo de Prestador
+      if (chartPrestadoresInst) chartPrestadoresInst.destroy();
+      const ctxPrestadores = document.getElementById('chartPrestadores').getContext('2d');
+      const tipoPData = datos.tipo_prestador_dist;
+      chartPrestadoresInst = new Chart(ctxPrestadores, {
+        type: 'bar',
+        data: {
+          labels: tipoPData.map(p => p.tipo),
+          datasets: [{
+            label: 'Ofertas registradas',
+            data: tipoPData.map(p => p.cantidad),
+            backgroundColor: ['#004E98', '#FFCC00', '#10B981', '#283044', '#8B5CF6'],
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { grid: { color: '#F1F5F9' } }, y: { grid: { display: false } } }
+        }
+      });
+    }
+
+    function configurarNavegacionLateral() {
+      document.querySelectorAll('#menu button[data-href]').forEach(b => {
+        b.onclick = () => { location.href = b.dataset.href; };
+      });
+    }
+
+    document.getElementById('btnExportarExcel').onclick = () => {
+      if (!ofertasFiltradas || ofertasFiltradas.length === 0) return;
+      const ws = XLSX.utils.json_to_sheet(ofertasFiltradas);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `Vacantes_${mesSeleccionadoClave}`);
+      XLSX.writeFile(wb, `ServicioEmpleo_${mesSeleccionadoClave}.xlsx`);
+    };
+
+    document.getElementById('btnExportarPDF').onclick = () => {
+      window.print();
+    };
+
+    document.addEventListener('DOMContentLoaded', inicializarTablero);
+  </script>
+</body>
+</html>

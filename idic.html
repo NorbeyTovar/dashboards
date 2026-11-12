@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IDIC · Índice Departamental de Innovación para Colombia — CADIT 2.0</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <link rel="stylesheet" href="estilo-cadit.css">
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/echarts.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --marino: #283044;
+      --amarillo: #FFCC00;
+      --azul: #004E98;
+      --niebla: #F4F5F7;
+      --texto: #374151;
+      --azul-claro: #2A70B8;
+      --azul-sombra: #1B3556;
+      --ocre: #E6B800;
+      --suave: #6B7280;
+      --borde: #E5E7EB;
+      --blanco: #FFFFFF;
+    }
+
+    .lateral {
+      background: radial-gradient(ellipse at top, #35405c, #283044 70%) !important;
+    }
+
+    .lateral .marca {
+      border-bottom: 4px solid #FFCC00 !important;
+    }
+
+    .lateral .contexto {
+      color: #FFCC00 !important;
+    }
+
+    .lateral button.activa {
+      border-left-color: #FFCC00 !important;
+    }
+
+    .acciones button {
+      background: #FFCC00 !important;
+      color: #283044 !important;
+    }
+
+    .acciones button:hover {
+      background: #E6B800 !important;
+    }
+
+    /* ─── Contenedor de KPIs Ejecutivos (3x2 en desktop para evitar truncamiento) ─── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    .kpi-card {
+      min-width: 0;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 142px;
+      box-sizing: border-box;
+      position: relative;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 3px 8px rgba(15, 23, 42, 0.02);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card:hover {
+      border-color: #004E98;
+      box-shadow: 0 6px 20px rgba(0, 78, 152, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .kpi-card.kpi-hero {
+      border-top: 3.5px solid #FFCC00;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFC 100%);
+    }
+
+    .kpi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .kpi-card-kicker {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #64748B;
+    }
+
+    .kpi-card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1E293B;
+      white-space: normal;
+      word-break: normal;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .kpi-badge {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    .badge-primary { background: rgba(0, 78, 152, 0.08); color: #004E98; }
+    .badge-success { background: rgba(22, 163, 74, 0.1); color: #15803D; }
+    .badge-gold { background: rgba(230, 184, 0, 0.18); color: #8A6D00; }
+    .badge-neutral { background: #F1F5F9; color: #475569; }
+
+    .kpi-info-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 2px;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s ease, transform .15s ease;
+    }
+
+    .kpi-info-btn:hover {
+      color: #004E98;
+      transform: scale(1.15);
+    }
+
+    .popup-info-kpi {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 270px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      z-index: 50;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #334155;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi {
+      display: block;
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: #0F172A;
+      font-size: 12px;
+      margin-bottom: 5px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .popup-info-meta {
+      margin-top: 6px;
+      padding-top: 5px;
+      border-top: 1px dashed #E2E8F0;
+      font-size: 10.5px;
+      color: #64748B;
+    }
+
+    .kpi-card-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0F172A;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'tnum';
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      overflow: visible;
+      margin: 4px 0 2px;
+    }
+
+    .kpi-card-val.val-hero {
+      font-size: 30px;
+      font-weight: 800;
+      color: #004E98;
+    }
+
+    .kpi-card-track {
+      width: 100%;
+      height: 4px;
+      background: #F1F5F9;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 6px 0 4px;
+    }
+
+    .kpi-card-track-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .kpi-card-sub {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #64748B;
+      white-space: normal;
+      margin: 0;
+      line-height: 1.35;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .kpi-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .kpi-delta.delta-up { background: rgba(22, 163, 74, 0.1); color: #15803D; }
+    .kpi-delta.delta-down { background: rgba(220, 38, 38, 0.1); color: #B91C1C; }
+    .kpi-delta.delta-neutral { background: #F1F5F9; color: #64748B; }
+
+    /* ─── Sistema de Filtros CADIT ─── */
+    .area-filtros {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
+    .filtros-prioritarios {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+    }
+
+    .filtro-campo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 170px;
+    }
+
+    .filtro-campo label {
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #475569;
+    }
+
+    .filtro-campo select {
+      padding: 8px 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px;
+      font: inherit;
+      font-size: 13px;
+      color: #1E293B;
+      background: #FFFFFF;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      cursor: pointer;
+    }
+
+    .filtro-campo select:focus {
+      outline: none;
+      border-color: #004E98;
+      box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.1);
+    }
+
+    .filtros-acciones {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-avanzados {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      color: #334155;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color .15s ease, border-color .15s ease;
+    }
+
+    .btn-avanzados:hover {
+      background: #F1F5F9;
+      border-color: #94A3B8;
+    }
+
+    .btn-limpiar {
+      background: transparent;
+      border: none;
+      color: #64748B;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .15s ease;
+    }
+
+    .btn-limpiar:hover {
+      color: #B91C1C;
+    }
+
+    .chips-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #E5E7EB;
+    }
+
+    .chips-barra:empty {
+      display: none;
+    }
+
+    .chip-filtro {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .chip-filtro button {
+      background: none;
+      border: none;
+      color: #1E40AF;
+      cursor: pointer;
+      font-size: 13px;
+      line-height: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── Controles Flotantes de Zoom para el Mapa ─── */
+    .mapa-zoom-controles {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 4px;
+      box-shadow: 0 4px 12px rgba(40, 48, 68, 0.08);
+      z-index: 10;
+    }
+
+    .mapa-zoom-controles button {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FFFFFF;
+      border: 1px solid var(--borde);
+      border-radius: 5px;
+      color: var(--marino);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s ease;
+      padding: 0;
+    }
+
+    .mapa-zoom-controles button:hover {
+      background: #F4F5F7;
+      border-color: var(--azul);
+      color: var(--azul);
+      transform: scale(1.05);
+    }
+
+    .mapa-zoom-controles button:active {
+      background: var(--amarillo);
+      color: var(--marino);
+      transform: scale(0.95);
+    }
+
+    /* ─── Pestañas de Modo del Escalafón ─── */
+    .ranking-tabs {
+      display: inline-flex;
+      gap: 3px;
+      background: #F1F5F9;
+      padding: 3px;
+      border-radius: 7px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .btn-tab-ranking {
+      border: none;
+      background: transparent;
+      color: #64748B;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all .15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-tab-ranking:hover {
+      color: #0F172A;
+    }
+
+    .btn-tab-ranking.activa {
+      background: #FFFFFF;
+      color: #004E98;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    }
+
+    /* ─── Cuadrículas y Gráficos CADIT ─── */
+    .cuadricula-2 {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 1080px) {
+      .cuadricula-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cuadricula-territorial {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    @media (max-width: 1080px) {
+      .cuadricula-territorial {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-cab {
+      margin-bottom: 14px;
+    }
+
+    .panel-cab h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0F172A;
+      margin: 0 0 4px;
+    }
+
+    .panel-cab p.sub {
+      font-size: 12.5px;
+      color: #64748B;
+      margin: 0;
+    }
+
+    .grafico-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 320px;
+    }
+
+    /* ─── Tabla Interactiva de Detalle ─── */
+    .tabla-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    table.tabla-cadit {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12.5px;
+    }
+
+    table.tabla-cadit th {
+      background: #F8FAFC;
+      color: #334155;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-bottom: 1px solid #E2E8F0;
+      white-space: nowrap;
+    }
+
+    table.tabla-cadit td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #F1F5F9;
+      color: #334155;
+    }
+
+    table.tabla-cadit tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .tag-grupo {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .tag-alto { background: #E0F2FE; color: #004E98; border: 1px solid #BAE6FD; }
+    .tag-medio-alto { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+    .tag-medio { background: #FEF9C3; color: #854D0E; border: 1px solid #FEF08A; }
+    .tag-medio-bajo { background: #FFEDD5; color: #C2410C; border: 1px solid #FED7AA; }
+    .tag-bajo { background: #FEE2E2; color: #B91C1C; border: 1px solid #FECACA; }
+
+    .tag-brecha-pos { color: #15803D; font-weight: 700; }
+    .tag-brecha-neg { color: #B91C1C; font-weight: 700; }
+    .tag-brecha-cero { color: #64748B; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- Barra lateral institucional CADIT -->
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>Ciencia y Tecnología</h3>
+      <button data-v="minciencias" data-href="minciencias.html">MinCiencias · Grupos</button>
+      <button data-v="idic" class="activa">IDIC · Innovación</button>
+      <button data-v="rues" data-href="rues.html">RUES · Empresas</button>
+      <h3>Educación Superior</h3>
+      <button data-v="snies" data-href="index.html">SNIES – Base Externa</button>
+      <button data-v="icetex" data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-v="sena" data-href="sena.html">SENA · Formación</button>
+      <button data-v="latam" data-href="latam.html">Educación Superior · LATAM</button>
+    </nav>
+  </aside>
+
+  <!-- Contenedor principal -->
+  <div class="contenido">
+    <!-- Barra superior institucional -->
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar departamento, pilar o grupo de innovación…" autocomplete="off" aria-label="Buscar filtros">
+        <div id="resultados" hidden></div>
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Corte Oficial IDIC 2024 · DNP / OCyT</span>
+        <div class="acciones">
+          <button id="pdf" type="button" style="display: none;">PDF</button>
+          <button id="xlsx" type="button" style="display: none;">XLSX</button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Encabezado Oficial Homologado CADIT -->
+      <div class="encabezado">
+        <h1 id="titulo">Índice Departamental de Innovación · IDIC</h1>
+        <p id="subtitulo">Sistema de Decisión Estratégica · Capacidades y resultados de innovación territorial sobre <b>33 departamentos</b> de Colombia evaluados en 7 pilares y 21 subpilares (2018–2024) bajo metodología DNP y OCyT.</p>
+      </div>
+
+      <!-- Sistema de Filtros Reactivos -->
+      <section id="area-filtros" class="area-filtros">
+        <div class="filtros-prioritarios">
+          <div class="filtro-campo">
+            <label for="f-anio">Edición / Año IDIC</label>
+            <select id="f-anio">
+              <option value="2024" selected>2024 (Última Oficial)</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+              <option value="2018">2018</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-grupo">Nivel de Desempeño</label>
+            <select id="f-grupo">
+              <option value="">Todos los Niveles</option>
+              <option value="1">Alto</option>
+              <option value="2">Medio-alto</option>
+              <option value="3">Medio</option>
+              <option value="4">Medio-bajo</option>
+              <option value="5">Bajo</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-departamento">Departamento de Evaluación</label>
+            <select id="f-departamento">
+              <option value="">Todos los Departamentos (Nacional)</option>
+            </select>
+          </div>
+          <div class="filtros-acciones">
+            <button type="button" id="btn-limpiar" class="btn-limpiar" title="Limpiar todos los filtros">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Limpiar filtros</span>
+            </button>
+          </div>
+        </div>
+        <div class="chips-barra" id="chips-barra"></div>
+      </section>
+
+      <!-- Fila de 6 KPIs Ejecutivos (3x2 Desktop sin truncamiento) -->
+      <section class="kpis" id="kpis"></section>
+
+      <!-- Módulo 1: Cartografía Territorial + Radar de 7 Pilares -->
+      <div class="cuadricula-territorial">
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Cartografía de innovación · ¿Cómo se distribuyen las capacidades territoriales?</h2>
+            <p class="sub">Puntaje general IDIC por departamento (0 a 100) · Clic en un departamento para filtrar el tablero y comparar su perfil</p>
+          </div>
+          <div class="grafico-wrap" style="min-height: 460px; position: relative;">
+            <div id="g-mapa-colombia" style="width: 100%; height: 460px;"></div>
+            <div class="mapa-zoom-controles">
+              <button type="button" id="btn-zoom-in" title="Acercar mapa">+</button>
+              <button type="button" id="btn-zoom-out" title="Alejar mapa">−</button>
+              <button type="button" id="btn-zoom-reset" title="Restablecer vista centrada">↺</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-cab">
+            <h2 id="titulo-radar">Perfil multidimensional · ¿Cuáles son las fortalezas y brechas frente al país?</h2>
+            <p class="sub" id="sub-radar">Comparativa en telaraña de los 7 pilares analíticos del territorio seleccionado vs. el promedio nacional</p>
+          </div>
+          <div class="grafico-wrap" style="min-height: 460px;">
+            <div id="g-radar-pilares" style="width: 100%; height: 460px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Módulo 2: Evolución Multianual + Ranking Departamental -->
+      <div class="cuadricula-2">
+        <div class="panel">
+          <div class="panel-cab">
+            <h2>Evolución histórica · ¿Cómo ha variado el desempeño en el tiempo?</h2>
+            <p class="sub">Trayectoria continua de puntaje IDIC (2018–2024) para el territorio evaluado y la media nacional</p>
+          </div>
+          <div class="grafico-wrap"><canvas id="g-evolucion"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-cab" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h2>Escalafón nacional · ¿Qué posición ocupa cada departamento?</h2>
+              <p class="sub">Puntaje IDIC ordenado de mayor a menor con distintivo de grupo · Clic en una barra para filtrar</p>
+            </div>
+            <div class="ranking-tabs">
+              <button type="button" class="btn-tab-ranking activa" data-modo="top10">Top 10 Líderes</button>
+              <button type="button" class="btn-tab-ranking" data-modo="bottom10">10 con Oportunidad</button>
+              <button type="button" class="btn-tab-ranking" data-modo="todos">Ver los 33</button>
+            </div>
+          </div>
+          <div class="grafico-wrap" id="wrap-ranking-barras" style="height: 380px; position: relative;"><canvas id="g-ranking-barras"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Módulo 3: Desglose de los 21 Subpilares -->
+      <div class="panel" style="margin-bottom: 26px;">
+        <div class="panel-cab">
+          <h2>Desglose de subpilares · ¿Qué factores específicos impulsan o limitan el territorio?</h2>
+          <p class="sub">Puntajes de los 21 subpilares clasificados en Insumos (Pilares 1 al 5) y Resultados (Pilares 6 y 7)</p>
+        </div>
+        <div class="grafico-wrap" style="min-height: 340px;"><canvas id="g-subpilares"></canvas></div>
+      </div>
+
+      <!-- Módulo 4: Tabla Detalle Paginada -->
+      <div class="panel">
+        <div class="panel-cab" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2>Resultados Consolidados por Departamento</h2>
+            <p class="sub">Desglose de scores, rankings, tipología y brechas territoriales para el año seleccionado</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="search" id="buscar-tabla" placeholder="Buscar en la tabla…" style="padding: 6px 12px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 12.5px;">
+            <span style="font-size: 12px; color: #64748B;"><strong id="tabla-total">0</strong> departamentos</span>
+          </div>
+        </div>
+
+        <div class="tabla-container">
+          <table class="tabla-cadit" id="tabla-deptos">
+            <thead>
+              <tr>
+                <th style="width: 70px; text-align: center;">Puesto</th>
+                <th style="width: 70px; text-align: center;">DANE</th>
+                <th>Departamento</th>
+                <th style="text-align: right;">Score IDIC</th>
+                <th style="text-align: center;">Grupo</th>
+                <th style="text-align: right;">Insumos</th>
+                <th style="text-align: right;">Resultados</th>
+                <th>Pilar Más Fuerte</th>
+                <th style="text-align: right;">Brecha País</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-body">
+              <tr><td colspan="9" style="text-align: center; padding: 24px; color: #64748B;">Cargando datos analíticos del IDIC...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 10px;">
+          <div style="font-size: 12px; color: #64748B;" id="paginador-info">Página 1 de 1</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="btn-ant" class="btn-avanzados" style="padding: 5px 10px; font-size: 11.5px;" disabled>Anterior</button>
+            <button id="btn-sig" class="btn-avanzados" style="padding: 5px 10px; font-size: 11.5px;">Siguiente</button>
+            <select id="por-pagina" style="padding: 4px 8px; border: 1px solid #CBD5E1; border-radius: 4px; font-size: 11.5px;">
+              <option value="10">10 / pág</option>
+              <option value="20">20 / pág</option>
+              <option value="33" selected>Ver todos (33)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+  // ─── Configuración Global de Chart.js bajo Estándar CADIT 2.0 ───
+  Chart.defaults.font.family = '"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+  Chart.defaults.color = "#374151";
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => (n == null || isNaN(n)) ? "—" : Math.round(Number(n)).toLocaleString("es-CO");
+  const fmt1 = n => (n == null || isNaN(n)) ? "—" : Number(n).toFixed(1).replace(".", ",");
+  const pct = n => (n == null || isNaN(n)) ? "0 %" : Number(n).toFixed(1).replace(".", ",") + " %";
+
+  const MAPA_CODIGOS_DEPTO = {
+    "ANTIOQUIA": "CO-ANT", "ATLÁNTICO": "CO-ATL", "BOGOTÁ, D.C.": "CO-DC", "BOLÍVAR": "CO-BOL",
+    "BOYACÁ": "CO-BOY", "CALDAS": "CO-CAL", "CAQUETÁ": "CO-CAQ", "CAUCA": "CO-CAU",
+    "CESAR": "CO-CES", "CÓRDOBA": "CO-COR", "CUNDINAMARCA": "CO-CUN", "CHOCÓ": "CO-CHO",
+    "HUILA": "CO-HUI", "LA GUAJIRA": "CO-LAG", "MAGDALENA": "CO-MAG", "META": "CO-MET",
+    "NARIÑO": "CO-NAR", "NORTE DE SANTANDER": "CO-NSA", "QUINDÍO": "CO-QUI", "RISARALDA": "CO-RIS",
+    "SANTANDER": "CO-SAN", "SUCRE": "CO-SUC", "TOLIMA": "CO-TOL", "VALLE DEL CAUCA": "CO-VAC",
+    "ARAUCA": "CO-ARA", "CASANARE": "CO-CAS", "PUTUMAYO": "CO-PUT",
+    "ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA": "CO-SAP",
+    "AMAZONAS": "CO-AMA", "GUAINÍA": "CO-GUA", "GUAVIARE": "CO-GUV", "VAUPÉS": "CO-VAU",
+    "VICHADA": "CO-VID"
+  };
+
+  const MAPA_ID_A_SVG_NAME = {
+    "CO-AMA": "Amazonas", "CO-ANT": "Antioquia", "CO-ARA": "Arauca", "CO-ATL": "Atlántico",
+    "CO-BOL": "Bolívar", "CO-BOY": "Boyacá", "CO-CAL": "Caldas", "CO-CAQ": "Caquetá",
+    "CO-CAS": "Casanare", "CO-CAU": "Cauca", "CO-CES": "Cesar", "CO-CHO": "Chocó",
+    "CO-COR": "Córdoba", "CO-CUN": "Cundinamarca", "CO-GUA": "Guainia", "CO-GUV": "Guaviare",
+    "CO-HUI": "Huila", "CO-MAG": "Magdalena", "CO-MET": "Meta", "CO-NAR": "Nariño",
+    "CO-NSA": "Norde de Santander", "CO-PUT": "Putumayo", "CO-QUI": "Quindio", "CO-RIS": "Risaralda",
+    "CO-SAN": "Santander", "CO-SUC": "Sucre", "CO-TOL": "Tolima", "CO-VAU": "Vaupés",
+    "CO-VID": "Vichada", "CO-DC": "Distrito Capital de Bogotá", "CO-LAG": "La Guajira",
+    "CO-SAP": "San Andrés, Providencia y Santa Catalina"
+  };
+
+  const SVG_NAME_A_DEPTO = {};
+  Object.entries(MAPA_CODIGOS_DEPTO).forEach(([depto, cod]) => {
+    const svgNom = MAPA_ID_A_SVG_NAME[cod];
+    if (svgNom) SVG_NAME_A_DEPTO[svgNom.toLowerCase()] = depto;
+  });
+  SVG_NAME_A_DEPTO["distrito capital de bogotá"] = "BOGOTÁ, D.C.";
+  SVG_NAME_A_DEPTO["distrito capital de bogota"] = "BOGOTÁ, D.C.";
+  SVG_NAME_A_DEPTO["bogotá, d.c."] = "BOGOTÁ, D.C.";
+  SVG_NAME_A_DEPTO["bogota, d.c."] = "BOGOTÁ, D.C.";
+
+  let DATA = null;
+  let graficos = {};
+  let chartMapaEcharts = null;
+  let chartRadarEcharts = null;
+  let mapaSvgRegistrado = false;
+
+  const st = {
+    anio: 2024,
+    grupo: "",
+    departamento: "",
+    busqueda: "",
+    pagina: 1,
+    porPagina: 33
+  };
+
+  function destruirGrafico(id) {
+    if (graficos[id]) {
+      graficos[id].destroy();
+      delete graficos[id];
+    }
+  }
+
+  // ─── Generador Oficial de Tarjetas KPI CADIT (Pilar 1 - 3x2) ───
+  function tarjetaKPI({ kicker, titulo, valRaw, valFormateado, sub, badge, badgeCls = "badge-neutral", delta, deltaCls = "delta-neutral", trackPct = 0, trackColor = "#004E98", esHero = false, id, popupData }) {
+    return `
+      <div class="kpi-card ${esHero ? 'kpi-hero' : ''}">
+        <div class="kpi-card-header">
+          <div class="kpi-card-meta">
+            <span class="kpi-card-kicker">${kicker}</span>
+            <h3 class="kpi-card-title">${titulo}</h3>
+          </div>
+          <div class="kpi-card-aside">
+            <span class="kpi-badge ${badgeCls}">${badge}</span>
+            <button type="button" class="kpi-info-btn" aria-label="Información metodológica" data-id="${id}">ⓘ</button>
+            <div class="popup-info-kpi" id="popup-${id}">
+              <div class="popup-info-header">${popupData.titulo || titulo}</div>
+              <p style="margin:0 0 4px 0;">${popupData.mide || ""}</p>
+              ${popupData.calculo ? `<p style="margin:4px 0 0 0;font-size:10.5px;color:#004E98;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+              <div class="popup-info-meta">Fuente: ${popupData.fuente || "DNP · OCyT · IDIC"}</div>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card-val ${esHero ? 'val-hero' : ''}" data-val="${valRaw}">${valFormateado}</div>
+        <div class="kpi-card-track"><div class="kpi-card-track-fill" style="width: ${trackPct}%; background: ${trackColor};"></div></div>
+        <div class="kpi-card-footer">
+          <p class="kpi-card-sub">${sub}</p>
+          ${delta ? `<span class="kpi-delta ${deltaCls}">${delta}</span>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  // ─── Carga de Datos y Arranque ───
+  async function cargarDatos() {
+    try {
+      const res = await fetch("datos/idic_datos.json");
+      if (!res.ok) throw new Error("No se pudo cargar idic_datos.json");
+      DATA = await res.json();
+
+      poblarSelectDeptos();
+      await inicializarMapaColombiaEcharts();
+      inicializarRadarEcharts();
+      actualizarDashboard();
+    } catch (e) {
+      console.error("Error al inicializar tablero IDIC:", e);
+      $("tabla-body").innerHTML = `<tr><td colspan="9" style="text-align: center; color: #E63946; padding: 24px;">Error al cargar datos analíticos: ${e.message}</td></tr>`;
+    }
+  }
+
+  function poblarSelectDeptos() {
+    const sel = $("f-departamento");
+    const deptos = DATA.por_anio[DATA.metadata.corte_default] || [];
+    const deptosOrdenados = [...deptos].sort((a, b) => a.departamento.localeCompare(b.departamento));
+
+    sel.innerHTML = `<option value="">Todos los Departamentos (Nacional)</option>` +
+      deptosOrdenados.map(d => `<option value="${d.departamento}">${d.departamento}</option>`).join("");
+  }
+
+  // ─── Núcleo Reactivo de Actualización ───
+  function actualizarDashboard() {
+    if (!DATA) return;
+
+    const anio = Number(st.anio);
+    const listaCompleta = DATA.por_anio[anio] || [];
+    
+    // Filtrado de la lista
+    let listaFiltrada = listaCompleta.filter(d => {
+      if (st.grupo && d.grupo_id !== Number(st.grupo)) return false;
+      if (st.departamento && d.departamento.toUpperCase() !== st.departamento.toUpperCase()) return false;
+      return true;
+    });
+
+    if (st.busqueda) {
+      const q = st.busqueda.toLowerCase();
+      listaFiltrada = listaFiltrada.filter(d => 
+        d.departamento.toLowerCase().includes(q) ||
+        d.cod_dane.includes(q) ||
+        d.grupo_desc.toLowerCase().includes(q) ||
+        d.pilar_fuerte.toLowerCase().includes(q)
+      );
+    }
+
+    renderizarChipsFiltro();
+
+    // 1. Renderizar KPIs 3x2
+    renderizarKPIs(listaFiltrada, listaCompleta);
+
+    // 2. Pintar Mapa Coroplético Colombia
+    pintarMapaColombia(listaCompleta);
+
+    // 3. Pintar Radar de los 7 Pilares
+    pintarRadarPilares(st.departamento);
+
+    // 4. Gráfico Evolución Multianual
+    pintarGraficoEvolucion(st.departamento);
+
+    // 5. Ranking de Barras
+    pintarGraficoRanking(listaFiltrada.length < listaCompleta.length && !st.departamento ? listaFiltrada : listaCompleta);
+
+    // 6. Desglose de los 21 Subpilares
+    pintarGraficoSubpilares(st.departamento);
+
+    // 7. Renderizar Tabla Paginada
+    renderizarTabla(listaFiltrada);
+  }
+
+  function renderizarChipsFiltro() {
+    const c = $("chips-barra");
+    const chips = [];
+
+    if (st.anio !== 2024) {
+      chips.push(`<span class="chip-filtro">Edición: ${st.anio} <button onclick="quitarFiltro('anio')">×</button></span>`);
+    }
+    if (st.grupo) {
+      const gNom = ["", "Alto", "Medio-alto", "Medio", "Medio-bajo", "Bajo"][Number(st.grupo)];
+      chips.push(`<span class="chip-filtro">Grupo: ${gNom} <button onclick="quitarFiltro('grupo')">×</button></span>`);
+    }
+    if (st.departamento) {
+      chips.push(`<span class="chip-filtro">Depto: ${st.departamento} <button onclick="quitarFiltro('depto')">×</button></span>`);
+    }
+
+    c.innerHTML = chips.join("");
+  }
+
+  window.quitarFiltro = function(tipo) {
+    if (tipo === "anio") { st.anio = 2024; $("f-anio").value = "2024"; }
+    if (tipo === "grupo") { st.grupo = ""; $("f-grupo").value = ""; }
+    if (tipo === "depto") { st.departamento = ""; $("f-departamento").value = ""; }
+    st.pagina = 1;
+    actualizarDashboard();
+  };
+
+  // ─── 1. KPIs Oficiales CADIT 2.0 (3x2) ───
+  function renderizarKPIs(filtrados, completos) {
+    const kpisEl = $("kpis");
+    const esNacional = !st.departamento;
+    
+    if (esNacional) {
+      const promNal = completos.length ? (completos.reduce((acc, d) => acc + d.score_idic, 0) / completos.length) : 0;
+      const lider = completos[0] || { departamento: "Bogotá, D.C.", score_idic: 0 };
+      
+      const conAvance = completos.filter(d => d.puestos_ganados != null);
+      const mayorAvance = conAvance.length ? conAvance.reduce((prev, curr) => curr.puestos_ganados > prev.puestos_ganados ? curr : prev, conAvance[0]) : null;
+
+      const promsPilares = [1, 2, 3, 4, 5, 6, 7].map(num => {
+        const avg = completos.reduce((acc, d) => acc + d[`p${num}`], 0) / (completos.length || 1);
+        const nom = DATA.metadata.pilares.find(p => p.id === num).nombre;
+        return { id: num, nombre: nom, avg: round2(avg) };
+      });
+      promsPilares.sort((a, b) => b.avg - a.avg);
+      const fuertePais = promsPilares[0];
+      const debilPais = promsPilares[promsPilares.length - 1];
+
+      const totalLiderazgo = completos.filter(d => d.grupo_id === 1 || d.grupo_id === 2).length;
+      const pctLiderazgo = (totalLiderazgo / (completos.length || 1) * 100);
+
+      kpisEl.innerHTML = `
+        ${tarjetaKPI({
+          kicker: "CAPACIDAD GENERAL",
+          titulo: "Score IDIC Promedio País",
+          valRaw: promNal,
+          valFormateado: fmt1(promNal),
+          sub: "Media nacional ponderada sobre escala de 0 a 100",
+          badge: "Nacional",
+          badgeCls: "badge-primary",
+          trackPct: promNal,
+          trackColor: "#004E98",
+          esHero: true,
+          id: "kpi-1",
+          popupData: {
+            titulo: "Puntaje General IDIC (Promedio País)",
+            mide: "Puntaje promedio global de innovación en los 33 departamentos de Colombia.",
+            calculo: "Media aritmética simple del Score IDIC departamental en la edición anual.",
+            fuente: "DNP · OCyT · Metodología IDIC 2024"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "LIDERAZGO TERRITORIAL",
+          titulo: "Líder Nacional en Innovación",
+          valRaw: lider.score_idic,
+          valFormateado: lider.departamento,
+          sub: `Puntaje ${fmt1(lider.score_idic)} pts · Posición #1 en el ranking`,
+          badge: "Puesto #1",
+          badgeCls: "badge-gold",
+          trackPct: lider.score_idic,
+          trackColor: "#E6B800",
+          id: "kpi-2",
+          popupData: {
+            titulo: "Líder Nacional en Innovación",
+            mide: "Departamento con el desempeño más alto del país en capacidades y resultados.",
+            calculo: "Departamento con DENSE_RANK() = 1 según score general IDIC.",
+            fuente: "DNP · OCyT · Resultados IDIC 2024"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "DINÁMICA INTERANUAL",
+          titulo: "Mayor Salto en el Escalafón",
+          valRaw: mayorAvance ? mayorAvance.puestos_ganados : 0,
+          valFormateado: mayorAvance ? `+${mayorAvance.puestos_ganados} puestos` : "—",
+          sub: mayorAvance ? `${mayorAvance.departamento} (Puesto #${mayorAvance.rank_idic} · ${fmt1(mayorAvance.score_idic)} pts)` : "Sin variación interanual",
+          badge: "Avance",
+          badgeCls: "badge-success",
+          delta: mayorAvance ? `+${mayorAvance.puestos_ganados}` : null,
+          deltaCls: "delta-up",
+          trackPct: mayorAvance ? (mayorAvance.puestos_ganados / 10 * 100) : 0,
+          trackColor: "#15803D",
+          id: "kpi-3",
+          popupData: {
+            titulo: "Mayor Avance en el Escalafón",
+            mide: "Territorio con mayor escalamiento de puestos respecto a la edición anterior.",
+            calculo: "Ranking_Año_Anterior - Ranking_Año_Actual.",
+            fuente: "DNP · Matriz de Variación Histórica"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "FORTALEZA NACIONAL",
+          titulo: "Pilar de Mayor Desempeño",
+          valRaw: fuertePais.avg,
+          valFormateado: fuertePais.nombre,
+          sub: `Promedio país de ${fmt1(fuertePais.avg)} pts · Pilar #${fuertePais.id}`,
+          badge: `${fmt1(fuertePais.avg)} pts`,
+          badgeCls: "badge-primary",
+          trackPct: fuertePais.avg,
+          trackColor: "#004E98",
+          id: "kpi-4",
+          popupData: {
+            titulo: "Pilar con Mayor Puntaje País",
+            mide: "Dimensión del IDIC con mayor madurez y consolidación a nivel nacional.",
+            calculo: "MAX(AVG(Pilar_i)) entre los 7 pilares evaluados.",
+            fuente: "DNP · OCyT · 7 Pilares de Innovación"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "BRECHA / OPORTUNIDAD",
+          titulo: "Pilar con Mayor Rezago",
+          valRaw: debilPais.avg,
+          valFormateado: debilPais.nombre,
+          sub: `Promedio país de ${fmt1(debilPais.avg)} pts · Oportunidad de política pública`,
+          badge: `${fmt1(debilPais.avg)} pts`,
+          badgeCls: "badge-neutral",
+          trackPct: debilPais.avg,
+          trackColor: "#E63946",
+          id: "kpi-5",
+          popupData: {
+            titulo: "Pilar con Mayor Rezago País",
+            mide: "Dimensión del IDIC con menor puntuación promedio que requiere focalización de inversión.",
+            calculo: "MIN(AVG(Pilar_i)) entre los 7 pilares evaluados.",
+            fuente: "DNP · OCyT · 7 Pilares de Innovación"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "CONCENTRACIÓN TERRITORIAL",
+          titulo: "Departamentos en Alto y Medio-Alto",
+          valRaw: totalLiderazgo,
+          valFormateado: `${totalLiderazgo} de ${completos.length}`,
+          sub: `${fmt1(pctLiderazgo)}% de los departamentos concentran el liderazgo innovador`,
+          badge: `${fmt1(pctLiderazgo)}%`,
+          badgeCls: "badge-gold",
+          trackPct: pctLiderazgo,
+          trackColor: "#E6B800",
+          id: "kpi-6",
+          popupData: {
+            titulo: "Departamentos en Grupos Superiores",
+            mide: "Proporción de territorios en los dos niveles más altos del escalafón nacional.",
+            calculo: "COUNT(DISTINCT depto) WHERE grupo_id IN (1, 2).",
+            fuente: "DNP · Clasificación de 5 Grupos IDIC"
+          }
+        })}
+      `;
+    } else {
+      const d = completos.find(x => x.departamento.toUpperCase() === st.departamento.toUpperCase()) || completos[0];
+      const promNal = completos.reduce((acc, x) => acc + x.score_idic, 0) / (completos.length || 1);
+      const brecha = d.score_idic - promNal;
+
+      kpisEl.innerHTML = `
+        ${tarjetaKPI({
+          kicker: "PUNTAJE GENERAL TERRITORIAL",
+          titulo: `Score IDIC · ${d.departamento}`,
+          valRaw: d.score_idic,
+          valFormateado: fmt1(d.score_idic),
+          sub: `Puntaje general sobre 100 · Grupo: ${d.grupo_desc}`,
+          badge: d.grupo_desc,
+          badgeCls: d.grupo_id <= 2 ? "badge-success" : "badge-neutral",
+          trackPct: d.score_idic,
+          trackColor: "#004E98",
+          esHero: true,
+          id: "kpi-1",
+          popupData: {
+            titulo: "Score General IDIC Departamental",
+            mide: `Nivel integral de innovación territorial de ${d.departamento}.`,
+            calculo: "(Subíndice Insumos + Subíndice Resultados) / 2.",
+            fuente: "DNP · OCyT · IDIC"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "ESCALAFÓN NACIONAL",
+          titulo: "Posición en el Ranking",
+          valRaw: d.rank_idic,
+          valFormateado: `#${d.rank_idic}`,
+          sub: `Puesto ${d.rank_idic} de 33 departamentos evaluados`,
+          badge: `De 33`,
+          badgeCls: "badge-primary",
+          trackPct: ((34 - d.rank_idic) / 33 * 100),
+          trackColor: "#004E98",
+          id: "kpi-2",
+          popupData: {
+            titulo: "Posición Relativa en el Ranking",
+            mide: "Lugar ocupado en el escalafón nacional de innovación.",
+            calculo: "Orden descendente por Score IDIC.",
+            fuente: "DNP · OCyT"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "BRECHA VS MEDIA PAÍS",
+          titulo: "Diferencial vs. Promedio Nacional",
+          valRaw: brecha,
+          valFormateado: `${brecha >= 0 ? '+' : ''}${fmt1(brecha)} pts`,
+          sub: brecha >= 0 ? "Por encima de la media nacional" : "Por debajo de la media nacional",
+          badge: brecha >= 0 ? "Favorable" : "Desfavorable",
+          badgeCls: brecha >= 0 ? "badge-success" : "badge-neutral",
+          delta: `${fmt1(Math.abs(brecha))} pts`,
+          deltaCls: brecha >= 0 ? "delta-up" : "delta-down",
+          trackPct: Math.min(100, Math.abs(brecha) * 2),
+          trackColor: brecha >= 0 ? "#15803D" : "#B91C1C",
+          id: "kpi-3",
+          popupData: {
+            titulo: "Brecha vs. Media País",
+            mide: "Distancia en puntos respecto a la media de innovación de Colombia.",
+            calculo: "Score_Depto - Promedio_Nacional_IDIC.",
+            fuente: "Cálculo CADIT sobre datos DNP"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "CONDICIONES DE ENTORNO",
+          titulo: "Subíndice de Insumos",
+          valRaw: d.score_insumos,
+          valFormateado: fmt1(d.score_insumos),
+          sub: `Puesto #${d.rank_insumos} en insumos · Pilares 1 al 5`,
+          badge: `Insumos`,
+          badgeCls: "badge-primary",
+          trackPct: d.score_insumos,
+          trackColor: "#004E98",
+          id: "kpi-4",
+          popupData: {
+            titulo: "Subíndice de Insumos",
+            mide: "Capacidad instalada, capital humano, infraestructura y sofisticación.",
+            calculo: "Promedio simple de Pilares 1, 2, 3, 4 y 5.",
+            fuente: "DNP · Subíndice Insumos"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "IMPACTO Y PRODUCCIÓN",
+          titulo: "Subíndice de Resultados",
+          valRaw: d.score_resultados,
+          valFormateado: fmt1(d.score_resultados),
+          sub: `Puesto #${d.rank_resultados} en resultados · Pilares 6 y 7`,
+          badge: `Resultados`,
+          badgeCls: "badge-primary",
+          trackPct: d.score_resultados,
+          trackColor: "#9C27B0",
+          id: "kpi-5",
+          popupData: {
+            titulo: "Subíndice de Resultados",
+            mide: "Producción de conocimiento, desarrollos tecnológicos y producción creativa.",
+            calculo: "Promedio simple de Pilares 6 y 7.",
+            fuente: "DNP · Subíndice Resultados"
+          }
+        })}
+
+        ${tarjetaKPI({
+          kicker: "DIMENSIÓN DESTACADA",
+          titulo: "Pilar Más Fuerte",
+          valRaw: d.p1,
+          valFormateado: d.pilar_fuerte,
+          sub: "Mayor fortaleza relativa dentro del departamento",
+          badge: "Fortaleza",
+          badgeCls: "badge-gold",
+          trackPct: 80,
+          trackColor: "#E6B800",
+          id: "kpi-6",
+          popupData: {
+            titulo: "Pilar con Mayor Desempeño Territorial",
+            mide: "Dimensión donde el departamento alcanza su mayor puntuación relativa.",
+            calculo: "MAX(Pilar_i) para el departamento evaluado.",
+            fuente: "DNP · Desglose por Pilares"
+          }
+        })}
+      `;
+    }
+  }
+
+  // ─── 2. Mapa Coroplético ECharts de Colombia (Interactividad Bidireccional) ───
+  async function inicializarMapaColombiaEcharts() {
+    if (mapaSvgRegistrado) return;
+    try {
+      const svgRes = await fetch("colombia.svg");
+      if (!svgRes.ok) return;
+      const svgText = await svgRes.text();
+      echarts.registerMap("colombia_svg", { svg: svgText });
+      mapaSvgRegistrado = true;
+
+      const dom = $("g-mapa-colombia");
+      if (!dom) return;
+      chartMapaEcharts = echarts.init(dom);
+
+      chartMapaEcharts.on("click", params => {
+        let dpto = null;
+        if (params.data && params.data.dpto) {
+          dpto = params.data.dpto;
+        } else if (params.name) {
+          dpto = SVG_NAME_A_DEPTO[params.name.toLowerCase()] || params.name;
+        }
+        if (dpto) {
+          fijarFiltroDepartamento(st.departamento.toUpperCase() === dpto.toUpperCase() ? "" : dpto);
+        }
+      });
+
+      // Controles y sincronización de Zoom & Pan
+      let zoomNivel = 1.15;
+      chartMapaEcharts.on("georoam", params => {
+        if (params.zoom != null) {
+          const opt = chartMapaEcharts.getOption();
+          if (opt && opt.series && opt.series[0] && opt.series[0].zoom) {
+            zoomNivel = opt.series[0].zoom;
+          }
+        }
+      });
+      $("btn-zoom-in")?.addEventListener("click", () => {
+        zoomNivel = Math.min(zoomNivel + 0.3, 4.5);
+        chartMapaEcharts?.setOption({ series: [{ zoom: zoomNivel }] });
+      });
+      $("btn-zoom-out")?.addEventListener("click", () => {
+        zoomNivel = Math.max(zoomNivel - 0.3, 0.9);
+        chartMapaEcharts?.setOption({ series: [{ zoom: zoomNivel }] });
+      });
+      $("btn-zoom-reset")?.addEventListener("click", () => {
+        zoomNivel = 1.15;
+        chartMapaEcharts?.setOption({ series: [{ zoom: 1.15, center: null }] });
+      });
+    } catch (e) {
+      console.warn("No se pudo cargar el mapa SVG de Colombia:", e);
+    }
+  }
+
+  function pintarMapaColombia(deptos) {
+    if (!chartMapaEcharts || !mapaSvgRegistrado) return;
+
+    const dptoActivo = (st.departamento || "").toUpperCase();
+    const mapDataMap = {};
+    deptos.forEach(d => {
+      mapDataMap[d.departamento.toUpperCase()] = d;
+    });
+
+    const seriesData = Object.entries(MAPA_CODIGOS_DEPTO).map(([dpto, cod]) => {
+      const svgName = MAPA_ID_A_SVG_NAME[cod] || dpto;
+      const info = mapDataMap[dpto.toUpperCase()];
+      const val = info ? info.score_idic : 0;
+      const rank = info ? info.rank_idic : "—";
+      const grp = info ? info.grupo_desc : "—";
+      const estaSeleccionado = dptoActivo && dptoActivo === dpto.toUpperCase();
+
+      return {
+        name: svgName,
+        value: val,
+        dpto: dpto,
+        rank: rank,
+        grupo: grp,
+        insumos: info ? info.score_insumos : 0,
+        resultados: info ? info.score_resultados : 0,
+        selected: estaSeleccionado
+      };
+    });
+
+    const option = {
+      tooltip: {
+        trigger: "item",
+        backgroundColor: "rgba(40, 48, 68, 0.96)",
+        borderColor: "#283044",
+        borderWidth: 1,
+        padding: [10, 14],
+        textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+        formatter: params => {
+          const d = params.data;
+          if (!d) return `<b>${params.name}</b>`;
+          return `
+            <strong style="color:#FFCC00;font-size:14px;display:block;margin-bottom:4px;">${d.dpto}</strong>
+            Score IDIC: <b>${fmt1(d.value)} pts</b> (Puesto #${d.rank})<br/>
+            Grupo de Desempeño: <b>${d.grupo}</b><br/>
+            Insumos: <b>${fmt1(d.insumos)}</b> | Resultados: <b>${fmt1(d.resultados)}</b><br/>
+            <span style="font-size:10.5px;color:#94A3B8;display:block;margin-top:6px;">
+              ${d.selected ? 'Filtro territorial activo · Clic para quitar' : 'Clic para filtrar este departamento'}
+            </span>
+          `;
+        }
+      },
+      visualMap: {
+        left: 10,
+        bottom: 10,
+        min: 10,
+        max: 85,
+        orient: "vertical",
+        text: ["Alto", "Bajo"],
+        textStyle: { color: "#64748B", fontSize: 11, fontFamily: "'IBM Plex Sans'" },
+        inRange: {
+          color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004E98", "#1E1B4B"]
+        },
+        calculable: true
+      },
+      series: [
+        {
+          name: "IDIC",
+          type: "map",
+          map: "colombia_svg",
+          roam: true,
+          zoom: 1.15,
+          scaleLimit: { min: 0.9, max: 4.5 },
+          emphasis: {
+            label: { show: false },
+            itemStyle: {
+              areaColor: "#FFCC00",
+              borderColor: "#283044",
+              borderWidth: 1.5
+            }
+          },
+          select: {
+            itemStyle: {
+              areaColor: "#FFCC00",
+              borderColor: "#283044",
+              borderWidth: 2
+            }
+          },
+          data: seriesData
+        }
+      ]
+    };
+
+    chartMapaEcharts.setOption(option, true);
+  }
+
+  // ─── 3. Radar ECharts de los 7 Pilares ───
+  function inicializarRadarEcharts() {
+    const dom = $("g-radar-pilares");
+    if (!dom) return;
+    chartRadarEcharts = echarts.init(dom);
+  }
+
+  function pintarRadarPilares(deptoFiltro) {
+    if (!chartRadarEcharts || !DATA) return;
+
+    const anio = Number(st.anio);
+    const lista = DATA.por_anio[anio] || [];
+    
+    const promP1 = avgKey(lista, "p1");
+    const promP2 = avgKey(lista, "p2");
+    const promP3 = avgKey(lista, "p3");
+    const promP4 = avgKey(lista, "p4");
+    const promP5 = avgKey(lista, "p5");
+    const promP6 = avgKey(lista, "p6");
+    const promP7 = avgKey(lista, "p7");
+
+    const indicators = [
+      { name: "1. Instituciones", max: 100 },
+      { name: "2. Capital Humano", max: 100 },
+      { name: "3. Infraestructura", max: 100 },
+      { name: "4. Mercados", max: 100 },
+      { name: "5. Negocios", max: 100 },
+      { name: "6. Conocimiento y Tec.", max: 100 },
+      { name: "7. Creativa", max: 100 }
+    ];
+
+    const seriesData = [
+      {
+        value: [promP1, promP2, promP3, promP4, promP5, promP6, promP7],
+        name: "Promedio Nacional",
+        lineStyle: { width: 2, type: "dashed", color: "#64748B" },
+        itemStyle: { color: "#64748B" },
+        areaStyle: { color: "rgba(100, 116, 139, 0.15)" }
+      }
+    ];
+
+    if (deptoFiltro) {
+      const d = lista.find(x => x.departamento.toUpperCase() === deptoFiltro.toUpperCase());
+      if (d) {
+        seriesData.push({
+          value: [d.p1, d.p2, d.p3, d.p4, d.p5, d.p6, d.p7],
+          name: d.departamento,
+          lineStyle: { width: 3, color: "#004E98" },
+          itemStyle: { color: "#004E98" },
+          areaStyle: { color: "rgba(0, 78, 152, 0.35)" }
+        });
+      }
+    }
+
+    const option = {
+      tooltip: {
+        trigger: "item",
+        backgroundColor: "rgba(40, 48, 68, 0.96)",
+        textStyle: { color: "#FFFFFF" }
+      },
+      legend: {
+        bottom: 5,
+        data: seriesData.map(s => s.name),
+        textStyle: { color: "#283044", fontWeight: 600 }
+      },
+      radar: {
+        indicator: indicators,
+        shape: "polygon",
+        radius: "68%",
+        splitNumber: 4,
+        axisName: {
+          color: "#283044",
+          fontSize: 11,
+          fontWeight: 600
+        },
+        splitLine: { lineStyle: { color: "#E2E8F0" } },
+        splitArea: { show: true, areaStyle: { color: ["#F8FAFC", "#FFFFFF"] } }
+      },
+      series: [
+        {
+          type: "radar",
+          data: seriesData
+        }
+      ]
+    };
+
+    chartRadarEcharts.setOption(option, true);
+  }
+
+  // ─── 4. Gráfico Evolución Multianual (Chart.js) ───
+  function pintarGraficoEvolucion(deptoFiltro) {
+    destruirGrafico("g-evolucion");
+    const ctx = $("g-evolucion").getContext("2d");
+
+    const anios = DATA.historico_nacional.anios;
+    const proms = DATA.historico_nacional.score_idic;
+
+    const datasets = [
+      {
+        label: "Promedio Nacional",
+        data: proms,
+        borderColor: "#94A3B8",
+        borderDash: [5, 5],
+        borderWidth: 2,
+        pointRadius: 3,
+        tension: 0.2
+      }
+    ];
+
+    if (deptoFiltro) {
+      const deptoItem = Object.values(DATA.por_depto).find(d => d.departamento.toUpperCase() === deptoFiltro.toUpperCase());
+      if (deptoItem) {
+        const tray = deptoItem.trayectoria;
+        const vals = anios.map(a => {
+          const item = tray.find(t => t.anio === a);
+          return item ? item.score_idic : null;
+        });
+
+        datasets.push({
+          label: deptoItem.departamento,
+          data: vals,
+          borderColor: "#004E98",
+          backgroundColor: "rgba(0, 78, 152, 0.08)",
+          fill: true,
+          borderWidth: 3,
+          pointRadius: 5,
+          pointBackgroundColor: "#FFCC00",
+          pointBorderColor: "#283044",
+          pointBorderWidth: 1.5,
+          tension: 0.2
+        });
+      }
+    }
+
+    graficos["g-evolucion"] = new Chart(ctx, {
+      type: "line",
+      data: { labels: anios, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "top", labels: { boxWidth: 12, font: { weight: 600 } } },
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.dataset.label}: ${fmt1(ctx.parsed.y)} pts`
+            }
+          }
+        },
+        scales: {
+          y: { min: 0, max: 100, grid: { color: "#F1F5F9" }, ticks: { callback: v => `${v} pts` } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // ─── 5. Ranking Departamental de Barras Horizontales (Chart.js) ───
+  let modoRanking = "top10"; // "top10", "bottom10", "todos"
+  let ultimaListaRanking = [];
+
+  function limpiarNombreDepto(nom) {
+    if (!nom) return "";
+    let n = String(nom).trim();
+    if (n.toUpperCase().includes("SAN ANDRÉS") || n.toUpperCase().includes("SAN ANDRES")) {
+      return "San Andrés y Providencia";
+    }
+    if (n.toUpperCase().includes("BOGOTÁ") || n.toUpperCase().includes("BOGOTA")) {
+      return "Bogotá, D.C.";
+    }
+    return n;
+  }
+
+  const pluginEtiquetasRanking = {
+    id: "pluginEtiquetasRanking",
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        meta.data.forEach((bar, index) => {
+          const val = dataset.data[index];
+          if (val !== undefined && val !== null) {
+            ctx.save();
+            ctx.font = "bold 10px Inter, sans-serif";
+            const xPos = bar.x + 6;
+            const maxX = chart.chartArea.right - 45;
+            if (xPos > maxX) {
+              ctx.fillStyle = "#FFFFFF";
+              ctx.textAlign = "right";
+              ctx.textBaseline = "middle";
+              ctx.fillText(fmt1(val) + " pts", bar.x - 6, bar.y);
+            } else {
+              ctx.fillStyle = "#334155";
+              ctx.textAlign = "left";
+              ctx.textBaseline = "middle";
+              ctx.fillText(fmt1(val) + " pts", xPos, bar.y);
+            }
+            ctx.restore();
+          }
+        });
+      });
+    }
+  };
+
+  function pintarGraficoRanking(deptos) {
+    ultimaListaRanking = deptos || [];
+    destruirGrafico("g-ranking-barras");
+
+    const ordenadosTotal = [...deptos].sort((a, b) => b.score_idic - a.score_idic);
+    let datosMostrar = ordenadosTotal;
+    const wrap = $("wrap-ranking-barras");
+
+    if (modoRanking === "top10") {
+      datosMostrar = ordenadosTotal.slice(0, 10);
+      if (wrap) wrap.style.height = "380px";
+    } else if (modoRanking === "bottom10") {
+      datosMostrar = ordenadosTotal.slice(-10);
+      if (wrap) wrap.style.height = "380px";
+    } else {
+      // Ver los 33
+      datosMostrar = ordenadosTotal;
+      if (wrap) wrap.style.height = "860px";
+    }
+
+    const ctx = $("g-ranking-barras").getContext("2d");
+    const labels = datosMostrar.map(d => `#${d.rank_idic} ${limpiarNombreDepto(d.departamento)}`);
+    const valores = datosMostrar.map(d => d.score_idic);
+    const colores = datosMostrar.map(d => {
+      if (st.departamento && d.departamento.toUpperCase() === st.departamento.toUpperCase()) return "#FFCC00";
+      if (d.grupo_id === 1) return "#004E98"; // Líderes
+      if (d.grupo_id === 2) return "#15803D"; // Medio-alto
+      if (d.grupo_id === 3) return "#22C55E"; // Medio
+      if (d.grupo_id === 4) return "#F59E0B"; // Medio-bajo
+      return "#64748B"; // Oportunidad
+    });
+
+    graficos["g-ranking-barras"] = new Chart(ctx, {
+      type: "bar",
+      plugins: [pluginEtiquetasRanking],
+      data: {
+        labels,
+        datasets: [{
+          data: valores,
+          backgroundColor: colores,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: "y",
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => `Score IDIC: ${fmt1(ctx.parsed.x)} pts (${datosMostrar[ctx.dataIndex].grupo_desc})`
+            }
+          }
+        },
+        onClick: (evt, elements) => {
+          if (elements.length > 0) {
+            const idx = elements[0].index;
+            const deptoClick = datosMostrar[idx].departamento;
+            fijarFiltroDepartamento(st.departamento.toUpperCase() === deptoClick.toUpperCase() ? "" : deptoClick);
+          }
+        },
+        scales: {
+          x: {
+            min: 0,
+            max: 100,
+            grid: { color: "#F1F5F9" },
+            ticks: { callback: v => `${v}` }
+          },
+          y: {
+            grid: { display: false },
+            ticks: {
+              autoSkip: false,
+              font: { size: modoRanking === "todos" ? 10 : 11, weight: "500" }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // ─── 6. Desglose de los 21 Subpilares (Chart.js) ───
+  function pintarGraficoSubpilares(deptoFiltro) {
+    destruirGrafico("g-subpilares");
+    const ctx = $("g-subpilares").getContext("2d");
+
+    const anio = Number(st.anio);
+    const lista = DATA.por_anio[anio] || [];
+    const subCats = DATA.metadata.subpilares;
+
+    const promsSub = subCats.map(sc => {
+      const clave = sc.clave.split("_")[1];
+      const avg = lista.reduce((acc, d) => acc + (d.subpilares[`sub_${clave}`] || 0), 0) / (lista.length || 1);
+      return round2(avg);
+    });
+
+    const labels = subCats.map(sc => `${sc.id}. ${sc.nombre}`);
+
+    const datasets = [
+      {
+        label: "Promedio Nacional",
+        data: promsSub,
+        backgroundColor: "rgba(100, 116, 139, 0.4)",
+        borderRadius: 4
+      }
+    ];
+
+    if (deptoFiltro) {
+      const d = lista.find(x => x.departamento.toUpperCase() === deptoFiltro.toUpperCase());
+      if (d) {
+        const deptoVals = subCats.map(sc => {
+          const clave = sc.clave.split("_")[1];
+          return d.subpilares[`sub_${clave}`] || 0;
+        });
+
+        datasets.push({
+          label: d.departamento,
+          data: deptoVals,
+          backgroundColor: "#004E98",
+          borderRadius: 4
+        });
+      }
+    }
+
+    graficos["g-subpilares"] = new Chart(ctx, {
+      type: "bar",
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "top", labels: { boxWidth: 12, font: { weight: 600 } } },
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.dataset.label}: ${fmt1(ctx.parsed.y)} pts`
+            }
+          }
+        },
+        scales: {
+          y: { min: 0, max: 100, grid: { color: "#F1F5F9" }, ticks: { callback: v => `${v}` } },
+          x: { grid: { display: false }, ticks: { font: { size: 9.5 }, maxRotation: 45, minRotation: 45 } }
+        }
+      }
+    });
+  }
+
+  // ─── 7. Tabla Detalle con Paginación y Buscador ───
+  function renderizarTabla(deptos) {
+    const total = deptos.length;
+    $("tabla-total").textContent = fmt(total);
+
+    const inicio = (st.pagina - 1) * st.porPagina;
+    const fin = inicio + st.porPagina;
+    const pag = deptos.slice(inicio, fin);
+    const totalPaginas = Math.max(1, Math.ceil(total / st.porPagina));
+
+    $("paginador-info").textContent = `Página ${st.pagina} de ${totalPaginas}`;
+    $("btn-ant").disabled = st.pagina <= 1;
+    $("btn-sig").disabled = st.pagina >= totalPaginas;
+
+    const tb = $("tabla-body");
+    if (!pag.length) {
+      tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:#64748B;">No se encontraron departamentos con los filtros actuales.</td></tr>`;
+      return;
+    }
+
+    tb.innerHTML = pag.map(d => {
+      let grupoCls = "tag-medio";
+      if (d.grupo_id === 1) grupoCls = "tag-alto";
+      else if (d.grupo_id === 2) grupoCls = "tag-medio-alto";
+      else if (d.grupo_id === 4) grupoCls = "tag-medio-bajo";
+      else if (d.grupo_id === 5) grupoCls = "tag-bajo";
+
+      let brechaCls = "tag-brecha-cero";
+      if (d.brecha_nal > 0) brechaCls = "tag-brecha-pos";
+      else if (d.brecha_nal < 0) brechaCls = "tag-brecha-neg";
+
+      const brechaSigno = d.brecha_nal > 0 ? "+" : "";
+
+      return `
+        <tr style="cursor: pointer;" onclick="fijarFiltroDepartamento('${d.departamento}')">
+          <td style="text-align: center;"><b>#${d.rank_idic}</b></td>
+          <td style="text-align: center;"><code>${d.cod_dane}</code></td>
+          <td><b>${d.departamento}</b></td>
+          <td style="text-align: right; font-weight: 700; color: #004E98;">${fmt1(d.score_idic)}</td>
+          <td style="text-align: center;"><span class="tag-grupo ${grupoCls}">${d.grupo_desc}</span></td>
+          <td style="text-align: right;">${fmt1(d.score_insumos)}</td>
+          <td style="text-align: right;">${fmt1(d.score_resultados)}</td>
+          <td>${d.pilar_fuerte}</td>
+          <td style="text-align: right;"><span class="${brechaCls}">${brechaSigno}${fmt1(d.brecha_nal)}</span></td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  // ─── Controladores de Eventos y Filtros ───
+  function fijarFiltroDepartamento(depto) {
+    st.departamento = depto;
+    $("f-departamento").value = depto;
+    st.pagina = 1;
+    actualizarDashboard();
+  }
+
+  $("f-anio").addEventListener("change", e => {
+    st.anio = Number(e.target.value);
+    st.pagina = 1;
+    $("corte").textContent = `Corte Oficial IDIC ${st.anio} · DNP / OCyT`;
+    actualizarDashboard();
+  });
+
+  $("f-grupo").addEventListener("change", e => {
+    st.grupo = e.target.value;
+    st.pagina = 1;
+    actualizarDashboard();
+  });
+
+  $("f-departamento").addEventListener("change", e => {
+    st.departamento = e.target.value;
+    st.pagina = 1;
+    actualizarDashboard();
+  });
+
+  $("btn-limpiar").addEventListener("click", () => {
+    st.anio = 2024;
+    st.grupo = "";
+    st.departamento = "";
+    st.busqueda = "";
+    st.pagina = 1;
+    $("f-anio").value = "2024";
+    $("f-grupo").value = "";
+    $("f-departamento").value = "";
+    $("buscar").value = "";
+    $("buscar-tabla").value = "";
+    const res = $("resultados");
+    if (res) res.hidden = true;
+    $("corte").textContent = "Corte Oficial IDIC 2024 · DNP / OCyT";
+    actualizarDashboard();
+  });
+
+  // ─── Buscador Instantáneo Universal CADIT ───
+  let resultadosBusqueda = [];
+  const normalizar = t => String(t ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").trim();
+
+  function buscarEnCatalogo(texto) {
+    const q = normalizar(texto);
+    const caja = $("resultados");
+    if (!caja) return;
+    if (!q) {
+      caja.hidden = true;
+      resultadosBusqueda = [];
+      return;
+    }
+
+    const opciones = [];
+    const anioActual = Number(st.anio) || 2024;
+    const deptosAnio = (DATA && DATA.por_anio && DATA.por_anio[anioActual]) ? DATA.por_anio[anioActual] : [];
+
+    // 1. Departamentos (Evaluados en IDIC)
+    deptosAnio.forEach(d => {
+      if (normalizar(d.departamento).includes(q) || normalizar(d.codigo_dane).includes(q)) {
+        opciones.push({
+          tipo: `Departamento · Score: ${d.score_idic.toFixed(2)} pts (Puesto #${d.posicion_departamental} · Nivel ${d.grupo_desempeno})`,
+          texto: d.departamento,
+          accion: () => {
+            fijarFiltroDepartamento(d.departamento);
+          }
+        });
+      }
+    });
+
+    // Búsqueda en mapa general si aún no hay coincidencia
+    if (opciones.length === 0) {
+      Object.keys(MAPA_CODIGOS_DEPTO).forEach(d => {
+        if (normalizar(d).includes(q)) {
+          opciones.push({
+            tipo: "Departamento de Colombia",
+            texto: d,
+            accion: () => {
+              fijarFiltroDepartamento(d);
+            }
+          });
+        }
+      });
+    }
+
+    // 2. Niveles de Desempeño IDIC
+    const grupos = [
+      { id: "1", nombre: "Alto", desc: "Grupo 1 · Líderes nacionales en capacidades y resultados" },
+      { id: "2", nombre: "Medio-alto", desc: "Grupo 2 · Desempeño intermedio superior" },
+      { id: "3", nombre: "Medio", desc: "Grupo 3 · Desempeño intermedio" },
+      { id: "4", nombre: "Medio-bajo", desc: "Grupo 4 · Oportunidades de fortalecimiento territorial" },
+      { id: "5", nombre: "Bajo", desc: "Grupo 5 · Prioridad territorial de inversión CTeI" }
+    ];
+    grupos.forEach(g => {
+      if (normalizar(g.nombre).includes(q) || normalizar("nivel " + g.nombre).includes(q) || normalizar("grupo " + g.nombre).includes(q)) {
+        opciones.push({
+          tipo: `Nivel de Desempeño · ${g.desc}`,
+          texto: `Nivel ${g.nombre}`,
+          accion: () => {
+            st.grupo = g.id;
+            $("f-grupo").value = g.id;
+            st.pagina = 1;
+            actualizarDashboard();
+          }
+        });
+      }
+    });
+
+    // 3. Pilares de Innovación (7 Pilares Oficiales DNP)
+    const pilares = [
+      { num: 1, nombre: "Instituciones", tipo: "Insumo · Entorno institucional y regulatorio" },
+      { num: 2, nombre: "Capital humano e investigación", tipo: "Insumo · Educación y capacidades científicas" },
+      { num: 3, nombre: "Infraestructura", tipo: "Insumo · Conectividad y sostenibilidad" },
+      { num: 4, nombre: "Sofisticación de mercados", tipo: "Insumo · Crédito, inversión y comercio" },
+      { num: 5, nombre: "Sofisticación de negocios", tipo: "Insumo · Absorción de tecnología y talento" },
+      { num: 6, nombre: "Producción de conocimiento y tecnología", tipo: "Resultado · Invención y patentes" },
+      { num: 7, nombre: "Producción creativa", tipo: "Resultado · Activos intangibles y bienes creativos" }
+    ];
+    pilares.forEach(p => {
+      if (normalizar(p.nombre).includes(q) || normalizar("pilar " + p.nombre).includes(q) || normalizar("pilar " + p.num).includes(q)) {
+        opciones.push({
+          tipo: `Pilar ${p.num} IDIC · ${p.tipo}`,
+          texto: `Pilar ${p.num}: ${p.nombre}`,
+          accion: () => {
+            document.querySelector(".cuadricula-territorial")?.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+      }
+    });
+
+    // 4. Subíndices IDIC
+    if (normalizar("insumos").includes(q) || normalizar("subindice insumos").includes(q)) {
+      opciones.push({
+        tipo: "Componente Estructural IDIC · Pilares 1 a 5",
+        texto: "Subíndice de Insumos de Innovación",
+        accion: () => {
+          document.querySelector(".cuadricula-territorial")?.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    }
+    if (normalizar("resultados").includes(q) || normalizar("subindice resultados").includes(q)) {
+      opciones.push({
+        tipo: "Componente Estructural IDIC · Pilares 6 y 7",
+        texto: "Subíndice de Resultados de Innovación",
+        accion: () => {
+          document.querySelector(".cuadricula-territorial")?.scrollIntoView({ behavior: "smooth" });
+        }
+      });
+    }
+
+    // 5. Cortes / Años Oficiales
+    [2024, 2023, 2022, 2021, 2020, 2019, 2018].forEach(yr => {
+      if (String(yr).includes(q) || normalizar(`corte ${yr}`).includes(q) || normalizar(`idic ${yr}`).includes(q)) {
+        opciones.push({
+          tipo: "Edición Anual Oficial · Metodología DNP / OCyT",
+          texto: `Corte IDIC ${yr}`,
+          accion: () => {
+            st.anio = yr;
+            $("f-anio").value = String(yr);
+            $("corte").textContent = `Corte Oficial IDIC ${st.anio} · DNP / OCyT`;
+            st.pagina = 1;
+            actualizarDashboard();
+          }
+        });
+      }
+    });
+
+    resultadosBusqueda = opciones.slice(0, 8);
+
+    if (!resultadosBusqueda.length) {
+      caja.innerHTML = '<p style="padding:10px 14px;margin:0;color:#64748B;font-size:12px;">No se encontraron coincidencias para la búsqueda.</p>';
+    } else {
+      caja.replaceChildren(...resultadosBusqueda.map(it => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = `<b>${it.texto}</b><small style="display:block;color:#64748B;font-size:11px;margin-top:2px;">${it.tipo}</small>`;
+        b.onclick = () => {
+          it.accion();
+          caja.hidden = true;
+          $("buscar").value = "";
+        };
+        return b;
+      }));
+    }
+    caja.hidden = false;
+  }
+
+  // ─── Listeners del Buscador Universal ───
+  $("buscar")?.addEventListener("input", e => buscarEnCatalogo(e.target.value));
+  $("buscar")?.addEventListener("keydown", e => {
+    if (e.key === "Enter" && resultadosBusqueda[0]) {
+      e.preventDefault();
+      resultadosBusqueda[0].accion();
+      $("resultados").hidden = true;
+      $("buscar").value = "";
+    }
+    if (e.key === "Escape") $("resultados").hidden = true;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      $("resultados")?.querySelector("button")?.focus();
+    }
+  });
+
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".buscar")) {
+      const res = $("resultados");
+      if (res) res.hidden = true;
+    }
+  });
+
+  // Filtro instantáneo exclusivo para la tabla inferior
+  $("buscar-tabla").addEventListener("input", e => {
+    st.busqueda = e.target.value.trim();
+    st.pagina = 1;
+    actualizarDashboard();
+  });
+
+  $("btn-ant").addEventListener("click", () => {
+    if (st.pagina > 1) {
+      st.pagina--;
+      const lista = DATA.por_anio[st.anio] || [];
+      renderizarTabla(lista);
+    }
+  });
+
+  $("btn-sig").addEventListener("click", () => {
+    st.pagina++;
+    const lista = DATA.por_anio[st.anio] || [];
+    renderizarTabla(lista);
+  });
+
+  $("por-pagina").addEventListener("change", e => {
+    st.porPagina = Number(e.target.value);
+    st.pagina = 1;
+    actualizarDashboard();
+  });
+
+  // Pestañas de modo del Ranking Departamental
+  document.querySelectorAll(".btn-tab-ranking").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".btn-tab-ranking").forEach(b => b.classList.remove("activa"));
+      btn.classList.add("activa");
+      modoRanking = btn.getAttribute("data-modo") || "top10";
+      if (ultimaListaRanking && ultimaListaRanking.length) {
+        pintarGraficoRanking(ultimaListaRanking);
+      }
+    });
+  });
+
+  // ─── Navegación Lateral Cruzada ───
+  document.querySelectorAll("aside.lateral nav#menu button[data-href]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const href = btn.getAttribute("data-href");
+      if (href && href !== "idic.html") {
+        window.location.href = href;
+      }
+    });
+  });
+
+  // Menú móvil
+  const btnMenuMovil = $("btn-menu-movil");
+  if (btnMenuMovil) {
+    btnMenuMovil.addEventListener("click", () => {
+      const lateral = document.querySelector(".lateral");
+      lateral.classList.toggle("abierta");
+      const abierta = lateral.classList.contains("abierta");
+      btnMenuMovil.setAttribute("aria-expanded", String(abierta));
+      btnMenuMovil.querySelector(".icono-hamburguesa").style.display = abierta ? "none" : "";
+      btnMenuMovil.querySelector(".icono-cerrar").style.display = abierta ? "" : "none";
+    });
+  }
+
+  // Funciones auxiliares
+  function round2(n) { return Math.round(Number(n) * 100) / 100; }
+  function avgKey(arr, key) {
+    if (!arr.length) return 0;
+    return round2(arr.reduce((acc, x) => acc + (x[key] || 0), 0) / arr.length);
+  }
+
+  window.addEventListener("resize", () => {
+    if (chartMapaEcharts) chartMapaEcharts.resize();
+    if (chartRadarEcharts) chartRadarEcharts.resize();
+  });
+
+  document.addEventListener("DOMContentLoaded", cargarDatos);
+</script>
+</body>
+</html>

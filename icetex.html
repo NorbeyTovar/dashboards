@@ -1,0 +1,8021 @@
+<!doctype html>
+
+<html lang="es">
+
+
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Tablero ICETEX · CADIT</title>
+
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+
+  <!-- Tipografía de marca; sin internet el navegador usa su sans-serif. -->
+
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:wght@600&display=swap">
+
+  <script src="vendor/chart.umd.min.js"></script>
+
+  <script src="vendor/jspdf.umd.min.js"></script>
+
+  <script src="vendor/xlsx.full.min.js"></script>
+
+  <script src="vendor/echarts.min.js"></script>
+
+  <script>
+
+    if (!window.echarts) {
+
+      document.write('<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"><\/script>');
+
+    }
+
+  </script>
+
+  <link rel="stylesheet" href="estilo-cadit.css"> <!-- estilo común de los tableros CADIT -->
+
+  <style>
+    :root {
+
+      --marino: #283044;
+
+      /* Azul oscuro: barra lateral y fondo navegacion */
+
+      --amarillo: #FFCC00;
+
+      /* Amarillo: botones de exportacion, acentos, highlights */
+
+      --azul: #004E98;
+
+      /* Azul primario: visualizacion de datos, barras solidas */
+
+      --niebla: #F4F5F7;
+
+      /* Gris claro: estructura de tabla y fondos */
+
+      --texto: #374151;
+
+      /* Gris oscuro: tipografia principal, listas y cifras */
+
+      --azul-claro: #2A70B8;
+
+      /* Azul interactivo / hover */
+
+      --azul-sombra: #1B3556;
+
+      --ocre: #E6B800;
+
+      /* Hover para botones amarillos */
+
+      --suave: #6B7280;
+
+      /* Gris neutro para subtitulos y notas */
+
+      --borde: #E5E7EB;
+
+      /* Bordes de paneles y tablas */
+
+    }
+
+
+
+    /* Ajustes de estilo especificos para la paleta de ICETEX */
+
+    .lateral {
+
+      background: radial-gradient(ellipse at top, #35405c, #283044 70%) !important;
+
+    }
+
+
+
+    .lateral .marca {
+
+      border-bottom: 4px solid #FFCC00 !important;
+
+    }
+
+
+
+    .lateral .contexto {
+
+      color: #FFCC00 !important;
+
+    }
+
+
+
+    .lateral button.activa {
+
+      border-left-color: #FFCC00 !important;
+
+    }
+
+
+
+    .acciones button {
+
+      background: #FFCC00 !important;
+
+      color: #283044 !important;
+
+    }
+
+
+
+    .acciones button:hover {
+
+      background: #E6B800 !important;
+
+    }
+
+
+
+    th {
+
+      background: #F4F5F7 !important;
+
+      color: #374151 !important;
+
+    }
+
+
+
+    table {
+
+      color: #374151 !important;
+
+    }
+
+
+
+    tr.clic:hover td {
+
+      background: #F4F5F7 !important;
+
+    }
+
+
+
+
+
+    /* ─── Contenedor de KPIs Ejecutivos (Plantilla Maestra CADIT) ─── */
+
+    /* ─── Contenedor de KPIs Ejecutivos (3x2 en desktop para evitar truncamiento) ─── */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 980px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .kpis {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    .kpi-card {
+
+      min-width: 0;
+
+      background: #FFFFFF;
+
+      border: 1px solid #E2E8F0;
+
+      border-radius: 10px;
+
+      padding: 16px 18px;
+
+      text-align: left;
+
+      font: inherit;
+
+      color: inherit;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: space-between;
+
+      min-height: 142px;
+
+      box-sizing: border-box;
+
+      position: relative;
+
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 3px 8px rgba(15, 23, 42, 0.02);
+
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s cubic-bezier(0.16, 1, 0.3, 1);
+
+      animation: fadeSlideUp .3s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+    }
+
+
+
+    /* Tarjetas interactivas (con filtro) */
+
+    button.kpi-card {
+
+      cursor: pointer;
+
+      width: 100%;
+
+      appearance: none;
+
+      -webkit-appearance: none;
+
+      background: #FFFFFF;
+
+    }
+
+
+
+    button.kpi-card:hover {
+
+      border-color: #004E98;
+
+      box-shadow: 0 6px 20px rgba(0, 78, 152, 0.1);
+
+      transform: translateY(-2px);
+
+    }
+
+
+
+    button.kpi-card:hover .kpi-card-action-icon {
+
+      opacity: 1;
+
+      transform: translate(2px, -2px);
+
+      color: #004E98;
+
+    }
+
+
+
+    button.kpi-card:active {
+
+      transform: translateY(0);
+
+    }
+
+
+
+    /* Cabecera de tarjeta: Kicker de categoría + Badges / Acciones */
+
+    .kpi-card-header {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: flex-start;
+
+      gap: 10px;
+
+      margin-bottom: 6px;
+
+    }
+
+
+
+    .kpi-card-meta {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 2px;
+
+      min-width: 0;
+      flex: 1;
+
+    }
+
+
+
+    .kpi-card-kicker {
+
+      font-size: 10px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: .08em;
+
+      color: #64748B;
+
+    }
+
+
+
+    .kpi-card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1E293B;
+      white-space: normal;
+      word-break: normal;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+
+
+    .kpi-card-aside {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      flex-shrink: 0;
+
+      position: relative;
+
+      scroll-margin-top: 80px;
+
+    }
+
+
+
+    .kpi-info-btn {
+
+      background: transparent;
+
+      border: none;
+
+      color: #94A3B8;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      line-height: 1;
+
+      padding: 2px;
+
+      cursor: pointer;
+
+      border-radius: 50%;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      transition: color .15s ease, transform .15s ease;
+
+    }
+
+
+
+    .kpi-info-btn:hover {
+
+      color: #004E98;
+
+      transform: scale(1.15);
+
+    }
+
+
+
+    .popup-info-kpi {
+
+      display: none;
+
+      position: absolute;
+
+      top: calc(100% + 6px);
+
+      right: 0;
+
+      width: 250px;
+
+      background: #FFFFFF;
+
+      border: 1px solid #CBD5E1;
+
+      border-radius: 8px;
+
+      padding: 12px 14px;
+
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+      z-index: 50;
+
+      text-align: left;
+
+      font-size: 11.5px;
+
+      line-height: 1.4;
+
+      color: #334155;
+
+      pointer-events: none;
+
+    }
+
+
+
+    .kpi-card-aside:hover .popup-info-kpi {
+
+      display: block;
+
+    }
+
+
+
+    .popup-info-header {
+
+      font-weight: 700;
+
+      color: #004E98;
+
+      margin-bottom: 6px;
+
+      font-size: 12px;
+
+      border-bottom: 1px solid #F1F5F9;
+
+      padding-bottom: 4px;
+
+    }
+
+
+
+    .popup-info-meta {
+
+      margin-top: 8px;
+
+      padding-top: 6px;
+
+      border-top: 1px dashed #E2E8F0;
+
+      font-size: 10px;
+
+      color: #64748B;
+
+      font-style: italic;
+
+    }
+
+
+
+    /* Badges sobrios y de alta legibilidad */
+
+    .kpi-badge {
+
+      font-size: 10.5px;
+
+      font-weight: 600;
+
+      padding: 2px 7px;
+
+      border-radius: 4px;
+
+      white-space: nowrap;
+
+      letter-spacing: .01em;
+
+      line-height: 1.3;
+
+    }
+
+
+
+    .kpi-badge.badge-primary {
+
+      background: rgba(0, 78, 152, 0.08);
+
+      color: #004E98;
+
+      border: 1px solid rgba(0, 78, 152, 0.2);
+
+    }
+
+
+
+    .kpi-badge.badge-gold {
+
+      background: rgba(255, 204, 0, 0.18);
+
+      color: #854D0E;
+
+      border: 1px solid rgba(255, 204, 0, 0.45);
+
+      font-weight: 700;
+
+    }
+
+
+
+    .kpi-badge.badge-neutral {
+
+      background: #F1F5F9;
+
+      color: #475569;
+
+      border: 1px solid #E2E8F0;
+
+    }
+
+
+
+    .kpi-badge.badge-success {
+
+      background: rgba(22, 163, 74, 0.08);
+
+      color: #15803D;
+
+      border: 1px solid rgba(22, 163, 74, 0.2);
+
+    }
+
+
+
+    /* Flecha sutil de affordance interactivo */
+
+    .kpi-card-action-icon {
+
+      font-size: 13px;
+
+      color: #94A3B8;
+
+      opacity: 0.4;
+
+      transition: all .2s ease;
+
+      line-height: 1;
+
+    }
+
+
+
+    /* Cuerpo: Cifra principal con tipografía tabular */
+
+    .kpi-card-body {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: baseline;
+
+      gap: 12px;
+
+      margin: 4px 0 2px;
+
+    }
+
+
+
+    .kpi-card-val {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0F172A;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'tnum';
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      overflow: visible;
+    }
+
+
+
+    .kpi-card-val.val-hero {
+
+      font-size: 30px;
+
+      font-weight: 800;
+
+      color: #004E98;
+
+    }
+
+
+
+    .kpi-card-val.val-text {
+
+      font-size: 19px;
+
+      font-weight: 700;
+
+      color: #1E293B;
+
+      letter-spacing: -0.01em;
+
+    }
+
+
+
+    .kpi-card-spark-wrap {
+
+      flex-shrink: 0;
+
+    }
+
+
+
+    /* Sparkline refinada en azul CADIT */
+
+    .spark {
+
+      display: block;
+
+      width: 90px;
+
+      height: 28px;
+
+      overflow: visible;
+
+    }
+
+
+
+    /* Micro-barras de proporción institucional */
+
+    .kpi-card-track {
+
+      width: 100%;
+
+      height: 4px;
+
+      background: #F1F5F9;
+
+      border-radius: 2px;
+
+      overflow: hidden;
+
+      margin: 6px 0 4px;
+
+      display: flex;
+
+    }
+
+
+
+    .kpi-card-track-fill {
+
+      height: 100%;
+
+      border-radius: 2px;
+
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+    }
+
+
+
+    /* Pie de tarjeta */
+
+    .kpi-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+
+
+    .kpi-card-sub {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #64748B;
+      white-space: normal;
+      margin: 0;
+      line-height: 1.35;
+      flex: 1;
+      min-width: 0;
+    }
+
+
+
+    /* Indicador delta porcentual */
+
+    .kpi-delta {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 3px;
+
+      font-size: 11px;
+
+      font-weight: 700;
+
+      padding: 1px 6px;
+
+      border-radius: 3px;
+
+    }
+
+    .kpi-delta.delta-up {
+
+      background: rgba(22, 163, 74, 0.1);
+
+      color: #15803D;
+
+    }
+
+    .kpi-delta.delta-down {
+
+      background: rgba(220, 38, 38, 0.1);
+
+      color: #B91C1C;
+
+    }
+
+    .kpi-delta.delta-neutral {
+
+      background: #F1F5F9;
+
+      color: #64748B;
+
+    }
+
+
+
+    /* ─── Sistema de Filtros: Prioritarios + Desplegable Avanzado ─── */
+
+    .area-filtros {
+
+      background: #FFFFFF;
+
+      border: 1px solid var(--borde);
+
+      border-radius: 12px;
+
+      padding: 14px 18px;
+
+      margin-bottom: 22px;
+
+      box-shadow: 0 2px 8px rgba(33, 40, 68, 0.04);
+
+    }
+
+
+
+    .filtros-prioritarios {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 14px;
+
+      align-items: flex-end;
+
+    }
+
+
+
+    .filtro-campo {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 5px;
+
+      min-width: 130px;
+
+    }
+
+
+
+    .filtro-campo-depto {
+
+      min-width: 220px;
+
+      flex: 1;
+
+      max-width: 340px;
+
+    }
+
+
+
+    .filtro-campo label {
+
+      font-size: 11px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: .05em;
+
+      color: var(--suave);
+
+    }
+
+
+
+    .filtro-campo select {
+
+      padding: 8px 12px;
+
+      border: 1.5px solid var(--borde);
+
+      border-radius: 8px;
+
+      font: inherit;
+
+      font-size: 13px;
+
+      color: var(--texto);
+
+      background: #FFFFFF;
+
+      cursor: pointer;
+
+      transition: border-color .2s ease, box-shadow .2s ease;
+
+    }
+
+
+
+    .filtro-campo select:focus {
+
+      outline: 0;
+
+      border-color: var(--azul);
+
+      box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.15);
+
+    }
+
+
+
+    .filtros-acciones {
+
+      display: flex;
+
+      gap: 10px;
+
+      align-items: center;
+
+      margin-left: auto;
+
+      padding-bottom: 1px;
+
+    }
+
+
+
+    .btn-avanzados {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      padding: 8px 14px;
+
+      background: var(--niebla);
+
+      border: 1.5px solid var(--borde);
+
+      border-radius: 8px;
+
+      font: inherit;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+      color: var(--texto);
+
+      cursor: pointer;
+
+      transition: all .2s ease;
+
+    }
+
+
+
+    .btn-avanzados:hover {
+
+      background: #EAEFF6;
+
+      border-color: var(--azul);
+
+      color: var(--azul);
+
+    }
+
+
+
+    .btn-avanzados.con-filtros {
+
+      background: rgba(0, 78, 152, 0.08);
+
+      border-color: var(--azul);
+
+      color: var(--azul);
+
+    }
+
+
+
+    .badge-avanzados-conteo {
+
+      background: var(--azul);
+
+      color: #FFFFFF;
+
+      font-size: 11px;
+
+      font-weight: 700;
+
+      width: 18px;
+
+      height: 18px;
+
+      border-radius: 50%;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+    }
+
+
+
+    .icono-flecha {
+
+      transition: transform .25s ease;
+
+    }
+
+
+
+    .btn-avanzados[aria-expanded="true"] .icono-flecha {
+
+      transform: rotate(180deg);
+
+    }
+
+
+
+    .btn-limpiar {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      padding: 8px 12px;
+
+      background: transparent;
+
+      border: 1.5px solid transparent;
+
+      border-radius: 8px;
+
+      font: inherit;
+
+      font-size: 12.5px;
+
+      font-weight: 600;
+
+      color: var(--suave);
+
+      cursor: pointer;
+
+      transition: all .2s ease;
+
+    }
+
+
+
+    .btn-limpiar:hover {
+
+      color: var(--baja);
+
+      background: rgba(239, 68, 68, 0.08);
+
+      border-color: rgba(239, 68, 68, 0.2);
+
+    }
+
+
+
+    /* Panel Desplegable de Avanzados */
+
+    .panel-filtros-avanzados {
+
+      margin-top: 14px;
+
+      padding-top: 14px;
+
+      border-top: 1px solid #EDF0F5;
+
+      animation: fadeSlideUp .25s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+    }
+
+
+
+    .avanzados-cab {
+
+      display: flex;
+
+      align-items: baseline;
+
+      gap: 8px;
+
+      margin-bottom: 12px;
+
+    }
+
+
+
+    .avanzados-cab span {
+
+      font-size: 11.5px;
+
+      font-weight: 700;
+
+      color: var(--marino);
+
+      text-transform: uppercase;
+
+      letter-spacing: .05em;
+
+    }
+
+
+
+    .avanzados-cab small {
+
+      font-size: 12px;
+
+      color: var(--suave);
+
+    }
+
+
+
+    .avanzados-grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+
+      gap: 12px;
+
+    }
+
+
+
+    /* Barra de Chips de Filtros Activos */
+
+    .chips-barra {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 8px;
+
+      align-items: center;
+
+      margin-top: 12px;
+
+      padding-top: 12px;
+
+      border-top: 1px dashed #E5E7EB;
+
+    }
+
+
+
+    .chips-label {
+
+      font-size: 11.5px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: .05em;
+
+      color: var(--suave);
+
+      margin-right: 2px;
+
+    }
+
+
+
+    .chip {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      background: #E8EEF5;
+
+      border: 1px solid #CFDEEE;
+
+      color: #1A365D;
+
+      border-radius: 999px;
+
+      padding: 4px 8px 4px 12px;
+
+      font-size: 12px;
+
+      font-weight: 500;
+
+      animation: popIn .2s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+      transition: transform .15s ease, background-color .15s ease, border-color .15s ease;
+
+    }
+
+
+
+    .chip:hover {
+
+      background: #DCE7F3;
+
+      border-color: var(--azul);
+
+    }
+
+
+
+    .chip span b {
+
+      color: var(--azul);
+
+      font-weight: 700;
+
+    }
+
+
+
+    .chip button {
+
+      border: 0;
+
+      background: rgba(0, 78, 152, 0.15);
+
+      color: var(--azul);
+
+      border-radius: 50%;
+
+      width: 18px;
+
+      height: 18px;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      cursor: pointer;
+
+      line-height: 1;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      padding: 0;
+
+      transition: background-color .15s ease, color .15s ease, transform .1s ease;
+
+    }
+
+
+
+    .chip button:hover {
+
+      background: var(--baja);
+
+      color: #FFFFFF;
+
+      transform: scale(1.1);
+
+    }
+
+
+
+    /* Badges de Alcance / Resonancia de Filtros en Paneles */
+
+    .panel-tag-alcance {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 4px;
+
+      font-size: 11px;
+
+      font-weight: 600;
+
+      padding: 2px 8px;
+
+      border-radius: 4px;
+
+      letter-spacing: .02em;
+
+    }
+
+
+
+    .tag-multianual {
+
+      background: #EBF3FC;
+
+      color: #1A5FA4;
+
+      border: 1px solid #CFE2F7;
+
+    }
+
+
+
+    .tag-territorial {
+
+      background: #FEF7D6;
+
+      color: #7A5E00;
+
+      border: 1px solid #FCECB0;
+
+    }
+
+
+
+    .tag-reactivo {
+
+      background: #F4F5F7;
+
+      color: #4B5563;
+
+      border: 1px solid #E5E7EB;
+
+    }
+
+
+
+    /* chips antiguos removidos */
+
+    .chips-antiguos {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 8px;
+
+      margin: -6px 0 18px;
+
+      align-items: center;
+
+    }
+
+
+
+    .chips-barra:empty {
+
+      display: none;
+
+    }
+
+
+
+    .chips-label {
+
+      font-size: 12px;
+
+      color: var(--suave);
+
+      font-weight: 600;
+
+      margin-right: 4px;
+
+    }
+
+
+
+    .panel-cab {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: flex-start;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+    }
+
+
+
+    .toggle-serie {
+
+      display: inline-flex;
+
+      border: 1px solid var(--borde);
+
+      border-radius: 6px;
+
+      overflow: hidden;
+
+      background: #fff;
+
+    }
+
+
+
+    .btn-toggle {
+
+      background: #fff;
+
+      border: 0;
+
+      padding: 4px 10px;
+
+      font: inherit;
+
+      font-size: 12px;
+
+      color: var(--texto);
+
+      cursor: pointer;
+
+    }
+
+
+
+    .btn-toggle:not(:last-child) {
+
+      border-right: 1px solid var(--borde);
+
+    }
+
+
+
+    .btn-toggle:hover {
+
+      background: var(--niebla);
+
+    }
+
+
+
+    .btn-toggle.activa {
+
+      background: var(--azul);
+
+      color: #fff;
+
+      font-weight: 600;
+
+    }
+
+
+
+    /* ── Cuadrícula analítica fluida al 100% de la pantalla (Norma CADIT) ── */
+
+    main {
+
+      width: 100%;
+
+      min-width: 0;
+
+      box-sizing: border-box;
+
+      flex: 1;
+
+    }
+
+
+
+    .panel {
+
+      background: var(--panel);
+
+      border: 1px solid var(--borde);
+
+      border-radius: 10px;
+
+      padding: 18px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      transition: box-shadow .2s ease, border-color .2s ease;
+
+      box-shadow: 0 1px 3px rgba(40, 48, 68, 0.03);
+
+    }
+
+
+
+    .panel:hover {
+
+      box-shadow: 0 4px 14px rgba(0, 78, 152, .08);
+
+    }
+
+
+
+    .panel .grafico {
+
+      flex: 1;
+
+      min-height: 260px;
+
+      height: clamp(260px, 35vh, 340px);
+
+      width: 100%;
+
+      min-width: 0;
+
+      position: relative;
+
+      overflow: hidden;
+
+    }
+
+
+
+    .panel .grafico canvas {
+
+      max-width: 100% !important;
+
+      display: block;
+
+    }
+
+
+
+    /* Sección 2: Cuadrícula Tendencia Multianual (1.55fr Gráfico : 1fr Síntesis de Hitos) */
+
+    .cuadricula-tendencia {
+
+      display: grid;
+
+      grid-template-columns: 1.55fr 1fr;
+
+      gap: 16px;
+
+      margin-bottom: 26px;
+
+      align-items: stretch;
+
+      min-width: 0;
+
+    }
+
+
+
+    .panel-hitos {
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: space-between;
+
+    }
+
+
+
+    .hitos-grid {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 12px;
+
+      flex: 1;
+
+      align-content: stretch;
+
+    }
+
+
+
+    .hito-card {
+
+      background: #F8FAFC;
+
+      border: 1px solid #E5E7EB;
+
+      border-radius: 8px;
+
+      padding: 14px 16px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+
+      transition: background-color .15s ease, border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+
+    }
+
+
+
+    .hito-card:hover {
+
+      background: #FFFFFF;
+
+      border-color: #004E98;
+
+      transform: translateY(-2px);
+
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.06);
+
+    }
+
+
+
+    .hito-card.hito-destacado {
+
+      background: linear-gradient(135deg, rgba(255, 204, 0, 0.08) 0%, rgba(0, 78, 152, 0.04) 100%);
+
+      border-color: rgba(0, 78, 152, 0.25);
+
+    }
+
+
+
+    .hito-contenido {
+
+      display: flex;
+
+      flex-direction: column;
+
+      min-width: 0;
+
+      flex: 1;
+
+    }
+
+
+
+    .hito-label {
+
+      font-size: 11px;
+
+      font-weight: 600;
+
+      text-transform: uppercase;
+
+      letter-spacing: .04em;
+
+      color: #6B7280;
+
+      margin-bottom: 3px;
+
+    }
+
+
+
+    .hito-valor-fila {
+
+      display: flex;
+
+      align-items: baseline;
+
+      gap: 6px;
+
+      flex-wrap: wrap;
+
+    }
+
+
+
+    .hito-valor {
+
+      font-size: 18px;
+
+      font-weight: 700;
+
+      color: #283044;
+
+      font-variant-numeric: tabular-nums;
+
+      line-height: 1.2;
+
+    }
+
+
+
+    .hito-badge {
+
+      background: #004E98;
+
+      color: #FFFFFF;
+
+      font-size: 11px;
+
+      font-weight: 600;
+
+      padding: 1px 6px;
+
+      border-radius: 4px;
+
+    }
+
+
+
+    .hito-tag {
+
+      font-size: 11px;
+
+      font-weight: 600;
+
+      padding: 1px 6px;
+
+      border-radius: 4px;
+
+    }
+
+
+
+    .hito-tag.sube {
+
+      background: rgba(16, 185, 129, 0.12);
+
+      color: #059669;
+
+    }
+
+
+
+    .hito-tag.baja {
+
+      background: rgba(239, 68, 68, 0.12);
+
+      color: #DC2626;
+
+    }
+
+
+
+    .hito-unidad {
+
+      font-size: 11px;
+
+      color: #6B7280;
+
+      font-weight: 500;
+
+    }
+
+
+
+    .hito-sub {
+
+      font-size: 11px;
+
+      color: #6B7280;
+
+      margin-top: 3px;
+
+      line-height: 1.25;
+
+    }
+
+
+
+    /* Sección 3: Cuadrícula Perfil Social (Estrato 1.3fr : Ruralidad 1.05fr : Sector 0.75fr) */
+
+    .cuadricula-social {
+
+      display: grid;
+
+      grid-template-columns: 1.3fr 1.05fr 0.75fr;
+
+      gap: 16px;
+
+      margin-bottom: 26px;
+
+      align-items: stretch;
+
+      min-width: 0;
+
+    }
+
+
+
+
+
+
+
+    /* Contenedor responsivo para el Diagrama de Sankey con scroll táctil en pantallas angostas */
+
+    .panel-contenedor-sankey,
+
+    .panel-contenedor-sankey .panel {
+
+      min-width: 0;
+
+      max-width: 100%;
+
+      overflow: hidden;
+
+    }
+
+
+
+    .sankey-scroll-wrapper {
+
+      width: 100%;
+
+      max-width: 100%;
+
+      min-width: 0;
+
+      overflow-x: auto;
+
+      -webkit-overflow-scrolling: touch;
+
+      scrollbar-width: thin;
+
+      scrollbar-color: #CBD5E1 #F1F5F9;
+
+      position: relative;
+
+    }
+
+
+
+    .sankey-scroll-wrapper::-webkit-scrollbar {
+
+      height: 6px;
+
+    }
+
+
+
+    .sankey-scroll-wrapper::-webkit-scrollbar-track {
+
+      background: #F1F5F9;
+
+      border-radius: 999px;
+
+    }
+
+
+
+    .sankey-scroll-wrapper::-webkit-scrollbar-thumb {
+
+      background: #CBD5E1;
+
+      border-radius: 999px;
+
+    }
+
+
+
+    .panel .sankey-grafico-inner,
+    .sankey-scroll-wrapper #g-sankey-socioeconomico {
+
+      height: 480px;
+
+      min-height: 420px;
+
+      width: 100%;
+
+      min-width: 680px;
+
+      position: relative;
+
+    }
+
+
+
+    .sankey-hint-movil {
+
+      display: none;
+
+      font-size: 11.5px;
+
+      font-weight: 500;
+
+      color: #64748B;
+
+      background: #F8FAFC;
+
+      border: 1px dashed #CBD5E1;
+
+      padding: 4px 10px;
+
+      border-radius: 6px;
+
+      margin-top: 8px;
+
+      align-items: center;
+
+      gap: 6px;
+
+      width: fit-content;
+
+    }
+
+
+
+    @media (max-width: 768px) {
+
+      .sankey-hint-movil {
+
+        display: inline-flex;
+
+      }
+
+      .panel .sankey-grafico-inner,
+      .sankey-scroll-wrapper #g-sankey-socioeconomico {
+
+        height: 440px;
+
+        min-height: 380px;
+
+      }
+
+    }
+
+
+
+    /* Sección 4: Cuadrícula Territorial (Mapa 1.15fr : Ranking 1fr) */
+
+    .panel-contenedor-territorial {
+
+      margin-bottom: 26px;
+
+    }
+
+
+
+    /* Ficha de Síntesis Territorial (Fondo Blanco + Popup Ejecutivo de Alta Gama) */
+
+    .ficha-territorial-activa {
+
+      background: #FFFFFF;
+
+      border: 1px solid #CBD5E1;
+
+      border-top: 3.5px solid #004E98;
+
+      border-radius: 12px;
+
+      padding: 18px 22px;
+
+      margin-bottom: 22px;
+
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 16px 36px -4px rgba(0, 78, 152, 0.12), 0 0 0 1px rgba(0, 78, 152, 0.06);
+
+      color: #0F172A;
+
+      position: relative;
+
+    }
+
+
+
+    .ficha-territorial-activa.popup-activa {
+
+      animation: popupFichaTerritorial 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+      will-change: transform, opacity;
+
+    }
+
+
+
+    @keyframes popupFichaTerritorial {
+
+      0% {
+
+        opacity: 0;
+
+        transform: translateY(-24px) scale(0.965);
+
+        filter: blur(5px);
+
+      }
+
+      65% {
+
+        opacity: 1;
+
+        transform: translateY(2px) scale(1.003);
+
+        filter: blur(0);
+
+      }
+
+      100% {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+      }
+
+    }
+
+
+
+    /* Entrada escalonada de las 4 sub-tarjetas para mayor suavidad */
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(1) {
+
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(2) {
+
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both;
+
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(3) {
+
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+
+    }
+
+    .ficha-territorial-activa.popup-activa .ficha-metrica-card:nth-child(4) {
+
+      animation: fichaCardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both;
+
+    }
+
+
+
+    @keyframes fichaCardIn {
+
+      0% {
+
+        opacity: 0;
+
+        transform: translateY(12px);
+
+      }
+
+      100% {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+      }
+
+    }
+
+
+
+    .ficha-territorial-cab {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      flex-wrap: wrap;
+
+      gap: 12px;
+
+      padding-bottom: 12px;
+
+      margin-bottom: 14px;
+
+      border-bottom: 1px solid #E2E8F0;
+
+    }
+
+
+
+    .ficha-territorial-info {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+    }
+
+
+
+    .ficha-tag {
+
+      background: rgba(0, 78, 152, 0.08);
+
+      color: #004E98;
+
+      font-size: 11px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: .06em;
+
+      padding: 3px 9px;
+
+      border-radius: 4px;
+
+      border: 1px solid rgba(0, 78, 152, 0.2);
+
+    }
+
+
+
+    .ficha-nombre {
+
+      font-size: 21px;
+
+      font-weight: 800;
+
+      margin: 0;
+
+      color: #0F172A;
+
+      letter-spacing: -.02em;
+
+      line-height: 1.2;
+
+    }
+
+
+
+    .ficha-ranking-badge {
+
+      background: #004E98;
+
+      color: #FFFFFF;
+
+      font-size: 11.5px;
+
+      font-weight: 700;
+
+      padding: 3px 9px;
+
+      border-radius: 4px;
+
+      letter-spacing: .02em;
+
+    }
+
+
+
+    .btn-quitar-ficha {
+
+      background: #F8FAFC;
+
+      color: #475569;
+
+      border: 1px solid #CBD5E1;
+
+      border-radius: 6px;
+
+      padding: 6px 14px;
+
+      font-size: 12px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      transition: all .18s ease;
+
+    }
+
+
+
+    .btn-quitar-ficha:hover {
+
+      background: #004E98;
+
+      color: #FFFFFF;
+
+      border-color: #004E98;
+
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.18);
+
+    }
+
+
+
+    .ficha-metricas-grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(4, 1fr);
+
+      gap: 14px;
+
+    }
+
+
+
+    @media (max-width: 960px) {
+
+      .ficha-metricas-grid {
+
+        grid-template-columns: 1fr 1fr;
+
+      }
+
+    }
+
+
+
+    @media (max-width: 550px) {
+
+      .ficha-metricas-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+
+
+    .ficha-metrica-card {
+
+      background: #F8FAFC;
+
+      border: 1px solid #E2E8F0;
+
+      border-radius: 8px;
+
+      padding: 12px 14px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      transition: all .2s ease;
+
+    }
+
+
+
+    .ficha-metrica-card:hover {
+
+      border-color: #004E98;
+
+      background: #FFFFFF;
+
+      box-shadow: 0 4px 12px rgba(0, 78, 152, 0.08);
+
+      transform: translateY(-2px);
+
+    }
+
+
+
+    .ficha-metrica-card.ficha-destacada {
+
+      background: rgba(0, 78, 152, 0.04);
+
+      border-color: rgba(0, 78, 152, 0.25);
+
+    }
+
+
+
+    .ficha-metrica-label {
+
+      font-size: 10.5px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: .06em;
+
+      color: #64748B;
+
+      margin-bottom: 4px;
+
+    }
+
+
+
+    .ficha-metrica-num-fila {
+
+      display: flex;
+
+      align-items: baseline;
+
+      gap: 6px;
+
+      flex-wrap: wrap;
+
+    }
+
+
+
+    .ficha-metrica-val {
+
+      font-size: 22px;
+
+      font-weight: 800;
+
+      color: #0F172A;
+
+      font-variant-numeric: tabular-nums;
+
+      font-feature-settings: 'tnum';
+
+      line-height: 1.15;
+
+      letter-spacing: -0.02em;
+
+    }
+
+
+
+    .ficha-metrica-val.acento {
+
+      color: #004E98;
+
+    }
+
+
+
+    .ficha-metrica-unit {
+
+      font-size: 11px;
+
+      color: #64748B;
+
+      font-weight: 500;
+
+    }
+
+
+
+    .ficha-metrica-badge {
+
+      font-size: 11px;
+
+      font-weight: 700;
+
+      padding: 2px 7px;
+
+      border-radius: 4px;
+
+      line-height: 1.3;
+
+    }
+
+
+
+    .ficha-metrica-badge.fem {
+
+      background: rgba(79, 70, 229, 0.1);
+
+      color: #4338CA;
+
+      border: 1px solid rgba(79, 70, 229, 0.25);
+
+    }
+
+
+
+    .ficha-metrica-badge.masc {
+
+      background: rgba(0, 78, 152, 0.1);
+
+      color: #004E98;
+
+      border: 1px solid rgba(0, 78, 152, 0.25);
+
+    }
+
+
+
+    .ficha-metrica-sub {
+
+      font-size: 11px;
+
+      color: #64748B;
+
+      margin-top: 4px;
+
+      font-weight: 500;
+
+    }
+
+
+
+    .cuadricula-territorial {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1.15fr;
+
+      gap: 24px;
+
+      align-items: stretch;
+
+      min-height: 480px;
+
+      min-width: 0;
+
+    }
+
+
+
+    .mapa-ranking-wrapper {
+
+      display: flex;
+
+      flex-direction: column;
+
+      min-width: 0;
+
+      width: 100%;
+
+    }
+
+
+
+    .mapa-colombia-columna {
+
+      display: flex;
+
+      flex-direction: column;
+
+      min-width: 0;
+
+      width: 100%;
+
+      height: 100%;
+
+    }
+
+
+
+    /* Leyenda del mapa destacada con aclaración de porcentajes nacionales */
+
+    .mapa-leyenda-bloque {
+
+      background: #F8FAFC;
+
+      border: 1px solid #E5E7EB;
+
+      border-radius: 8px;
+
+      padding: 8px 12px;
+
+      margin-bottom: 10px;
+
+    }
+
+
+
+    .mapa-leyenda-encabezado {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      margin-bottom: 6px;
+
+      flex-wrap: wrap;
+
+      gap: 4px;
+
+    }
+
+
+
+    .mapa-leyenda-titulo {
+
+      font-size: 11px;
+
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: .04em;
+
+      color: #283044;
+
+    }
+
+
+
+    .mapa-leyenda-aclaracion {
+
+      font-size: 10.5px;
+
+      color: #6B7280;
+
+      font-style: italic;
+
+    }
+
+
+
+    .mapa-leyenda-filas {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      flex-wrap: wrap;
+
+    }
+
+
+
+    .mapa-leyenda-item {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 5px;
+
+      font-size: 11.5px;
+
+      font-weight: 600;
+
+      color: #374151;
+
+    }
+
+
+
+    .mapa-leyenda-caja {
+
+      width: 16px;
+
+      height: 12px;
+
+      border-radius: 3px;
+
+      border: 1px solid rgba(0, 0, 0, 0.25);
+
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+    }
+
+
+
+    /* Sección 5: Cuadrícula Académica y Financiera (Nivel Formación 1.45fr : Modalidad Crédito 1fr) */
+
+    .cuadricula-academica {
+
+      display: grid;
+
+      grid-template-columns: 1.45fr 1fr;
+
+      gap: 16px;
+
+      margin-bottom: 26px;
+
+      align-items: stretch;
+
+      min-width: 0;
+
+    }
+
+
+
+    /* Rejilla fallback para compatibilidad */
+
+    .rejilla {
+
+      display: grid;
+
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+
+      gap: 16px;
+
+      margin-bottom: 26px;
+
+    }
+
+
+
+    .panel-tendencia {
+
+      grid-column: 1 / -1;
+
+    }
+
+
+
+    /* ── Reglas Responsive Adaptables a Laptops y Pantallas Ultra-Wide ── */
+
+    @media (max-width: 1280px) {
+
+      .cuadricula-tendencia {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+
+      .cuadricula-social {
+
+        grid-template-columns: 1fr 1fr;
+
+      }
+
+
+
+      .cuadricula-social .panel:nth-child(3) {
+
+        grid-column: 1 / -1;
+
+      }
+
+
+
+      .cuadricula-territorial {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+
+      .cuadricula-academica {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+
+
+    @media (max-width: 860px) {
+
+      .cuadricula-social {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+
+      .cuadricula-social .panel:nth-child(3) {
+
+        grid-column: auto;
+
+      }
+
+
+
+      .hitos-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+
+
+    /* Controles y comportamiento de Zoom & Pan para el mapa de Colombia */
+
+    .mapa-colombia-wrapper {
+
+      position: relative;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      width: 100%;
+
+      min-width: 0;
+
+      flex: 1;
+
+      min-height: 380px;
+
+      max-height: 540px;
+
+      background: #F4F5F7;
+
+      border-radius: 10px;
+
+      border: 1px solid #E5E7EB;
+
+      padding: 12px;
+
+      box-sizing: border-box;
+
+      overflow: hidden;
+
+      transition: max-height .25s ease;
+
+    }
+
+
+
+    .mapa-colombia {
+
+      width: 100%;
+
+      height: 100%;
+
+      min-width: 0;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      user-select: none;
+
+      touch-action: pan-y;
+
+    }
+
+
+
+    .mapa-colombia.puede-arrastrar {
+
+      cursor: grab;
+
+    }
+
+
+
+    .mapa-colombia.arrastrando {
+
+      cursor: grabbing !important;
+
+    }
+
+
+
+    .mapa-colombia svg {
+
+      width: 100%;
+
+      height: 100%;
+
+      min-width: 0;
+
+      max-height: 500px;
+
+      aspect-ratio: 848 / 964;
+
+      display: block;
+
+      transform-origin: center center;
+
+      transition: transform .25s cubic-bezier(0.16, 1, 0.3, 1);
+
+      filter: drop-shadow(0 2px 8px rgba(0, 78, 152, .12));
+
+    }
+
+
+
+    .mapa-colombia svg.sin-transicion {
+
+      transition: none !important;
+
+    }
+
+
+
+    .mapa-zoom-controles {
+
+      position: absolute;
+
+      top: 10px;
+
+      right: 10px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 4px;
+
+      background: rgba(255, 255, 255, 0.95);
+
+      border: 1px solid #E5E7EB;
+
+      border-radius: 8px;
+
+      padding: 3px;
+
+      box-shadow: 0 4px 12px rgba(40, 48, 68, 0.1);
+
+      z-index: 8;
+
+    }
+
+
+
+    .mapa-zoom-controles button {
+
+      width: 26px;
+
+      height: 26px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background: #FFFFFF;
+
+      border: 1px solid #E5E7EB;
+
+      border-radius: 6px;
+
+      color: #283044;
+
+      cursor: pointer;
+
+      transition: background-color .15s ease, border-color .15s ease, transform .1s ease, color .15s ease;
+
+      padding: 0;
+
+    }
+
+
+
+    .mapa-zoom-controles button:hover {
+
+      background: #F4F5F7;
+
+      border-color: #004E98;
+
+      color: #004E98;
+
+      transform: scale(1.06);
+
+    }
+
+
+
+    .mapa-zoom-controles button:active {
+
+      transform: scale(0.94);
+
+      background: #FFCC00;
+
+      color: #283044;
+
+    }
+
+
+
+    .mapa-zoom-indicador {
+
+      position: absolute;
+
+      bottom: 10px;
+
+      left: 10px;
+
+      font-size: 11px;
+
+      font-weight: 600;
+
+      color: #4B5563;
+
+      background: rgba(255, 255, 255, 0.92);
+
+      padding: 3px 8px;
+
+      border-radius: 5px;
+
+      border: 1px solid #E5E7EB;
+
+      pointer-events: none;
+
+      z-index: 7;
+
+      display: none;
+
+    }
+
+
+
+    .mapa-estado-seleccion {
+
+      position: absolute;
+
+      top: 10px;
+
+      left: 10px;
+
+      background: #283044;
+
+      color: #FFFFFF;
+
+      border: 1.5px solid #FFCC00;
+
+      border-radius: 6px;
+
+      padding: 3px 8px;
+
+      font-size: 11px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+      z-index: 8;
+
+    }
+
+
+
+    .mapa-estado-seleccion b {
+
+      color: #FFCC00;
+
+    }
+
+
+
+    .mapa-estado-seleccion button {
+
+      background: none;
+
+      border: none;
+
+      color: #FFFFFF;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      padding: 0 2px;
+
+      line-height: 1;
+
+    }
+
+
+
+    .mapa-estado-seleccion button:hover {
+
+      color: #FFCC00;
+
+    }
+
+
+
+    .mapa-colombia path {
+
+      fill: #E2E8F0;
+
+      stroke: #FFFFFF;
+
+      stroke-width: 0.75px;
+
+      cursor: pointer;
+
+      transition: fill .2s ease, stroke .2s ease, stroke-width .2s ease, filter .2s ease, opacity .2s ease;
+
+    }
+
+
+
+    .mapa-colombia path:hover {
+
+      filter: brightness(1.12) drop-shadow(0 2px 6px rgba(0, 78, 152, .4));
+
+      stroke: #FFCC00 !important;
+
+      stroke-width: 2.2px !important;
+
+    }
+
+
+
+    .mapa-colombia path.seleccionado {
+
+      fill: #FFCC00 !important;
+
+      stroke: #283044 !important;
+
+      stroke-width: 2.8px !important;
+
+      filter: drop-shadow(0 0 10px rgba(255, 204, 0, 0.95)) !important;
+
+      opacity: 1 !important;
+
+    }
+
+
+
+    /* Tooltip estructurado con valor exacto y porcentaje nacional */
+
+    .mapa-tooltip {
+
+      position: absolute;
+
+      pointer-events: none;
+
+      background: rgba(40, 48, 68, .98);
+
+      color: #fff;
+
+      padding: 10px 14px;
+
+      border-radius: 8px;
+
+      font-size: 12px;
+
+      line-height: 1.4;
+
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+
+      z-index: 10;
+
+      transform: translate(-50%, -115%);
+
+      border: 1px solid rgba(255, 204, 0, .45);
+
+      min-width: 200px;
+
+    }
+
+
+
+    .mapa-tooltip .tt-header {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: baseline;
+
+      gap: 8px;
+
+      margin-bottom: 6px;
+
+      padding-bottom: 4px;
+
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+    }
+
+
+
+    .mapa-tooltip .tt-dpto {
+
+      color: #FFCC00;
+
+      font-size: 13.5px;
+
+      font-weight: 700;
+
+    }
+
+
+
+    .mapa-tooltip .tt-puesto {
+
+      background: #004E98;
+
+      color: #FFFFFF;
+
+      font-size: 10.5px;
+
+      font-weight: 600;
+
+      padding: 1px 6px;
+
+      border-radius: 4px;
+
+    }
+
+
+
+    .mapa-tooltip .tt-fila {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 12px;
+
+      font-size: 11.5px;
+
+      margin-bottom: 3px;
+
+    }
+
+
+
+    .mapa-tooltip .tt-label {
+
+      color: #94A3B8;
+
+    }
+
+
+
+    .mapa-tooltip .tt-val {
+
+      color: #F8FAFC;
+
+      font-variant-numeric: tabular-nums;
+
+    }
+
+
+
+    .mapa-tooltip .tt-val.highlight {
+
+      color: #FFCC00;
+
+      font-weight: 700;
+
+    }
+
+
+
+    .mapa-tooltip .tt-footer {
+
+      margin-top: 6px;
+
+      padding-top: 4px;
+
+      border-top: 1px dashed rgba(255, 255, 255, 0.15);
+
+      font-size: 10.5px;
+
+      color: #CBD5E1;
+
+    }
+
+
+
+    /* Media query movida a sección de cuadrículas */
+
+
+
+    /* Adaptaciones Responsivas ICETEX para Móvil y Laptop */
+
+    @media (max-width: 768px) {
+
+      .filtros-prioritarios {
+
+        flex-direction: column !important;
+
+        align-items: stretch !important;
+
+        gap: 10px;
+
+      }
+
+
+
+      .filtro-campo,
+      .filtro-campo-depto {
+
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        min-width: 0 !important;
+
+      }
+
+
+
+      .filtros-acciones {
+
+        margin-left: 0 !important;
+
+        width: 100% !important;
+
+        display: flex;
+
+        gap: 8px;
+
+      }
+
+
+
+      .btn-avanzados,
+      .btn-limpiar {
+
+        flex: 1;
+
+        justify-content: center;
+
+      }
+
+
+
+      .mapa-colombia {
+
+        touch-action: pan-y !important;
+
+      }
+
+
+
+      .mapa-colombia-wrapper {
+
+        min-height: 320px !important;
+
+        max-height: 420px !important;
+
+        padding: 8px !important;
+
+      }
+
+
+
+      .mapa-colombia svg {
+
+        max-height: 380px !important;
+
+        min-height: 300px !important;
+
+      }
+
+
+
+      .ficha-territorial-activa {
+
+        padding: 16px 14px;
+
+      }
+
+
+
+      .ficha-territorial-cab {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 12px;
+
+      }
+
+
+
+      .btn-quitar-ficha {
+
+        width: 100%;
+
+        justify-content: center;
+
+      }
+
+    }
+  </style>
+
+</head>
+
+
+
+<body>
+
+  <aside class="lateral">
+
+    <div class="marca">
+
+      <div class="marca-info">
+
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+
+      </div>
+
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+
+        <span>Menú</span>
+
+      </button>
+
+    </div>
+
+    <nav id="menu" aria-label="Secciones del tablero">
+
+      <h3>Créditos · ICETEX</h3>
+
+      <button data-v="otorgados" class="activa">Otorgados</button>
+
+      <button data-v="renovados">Renovados</button>
+
+      <button data-v="beneficiarios">Nuevos beneficiarios</button>
+
+      <h3>Otros tableros</h3>
+
+      <button data-v="sena">SENA · Formación</button>
+
+      <button data-v="snies">SNIES – Base Externa</button>
+
+      <button data-v="latam">Educación Superior · LATAM</button>
+
+      <button data-v="minciencias">MinCiencias · Grupos</button>
+
+      <button data-v="idic">IDIC · Innovación</button>
+
+      <button data-v="rues">RUES · Empresas</button>
+
+    </nav>
+
+  </aside>
+
+
+
+  <div class="contenido">
+
+    <div class="barra">
+
+      <div class="buscar">
+
+        <input id="buscar" type="search" placeholder="Buscar filtro (departamento, nivel, estrato, sector…)…"
+          autocomplete="off" aria-label="Buscar filtros">
+
+        <div id="resultados" hidden></div>
+
+      </div>
+
+      <div class="barra-subfila">
+
+        <span class="corte" id="corte"></span>
+        <span id="badge-origen-datos" style="font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:6px;background:#F3F4F6;color:#4B5563;border:1px solid #E5E7EB;margin-left:10px;vertical-align:middle;">● Verificando origen…</span>
+
+        <div class="acciones"><button id="pdf" disabled style="display: none;">PDF</button> <button id="xlsx" disabled
+            style="display: none;">XLSX</button></div>
+
+      </div>
+
+    </div>
+
+
+
+    <main>
+
+      <div class="encabezado">
+
+        <h1 id="titulo">Créditos educativos · ICETEX</h1>
+
+        <p id="subtitulo"></p>
+
+      </div>
+
+
+
+      <section id="area-filtros" class="area-filtros">
+
+        <!-- 1. Filtros Prioritarios (Siempre visibles) -->
+
+        <div class="filtros-prioritarios" id="filtros-prioritarios">
+
+          <div class="filtro-campo">
+
+            <label for="f-anio">Año</label>
+
+            <select id="f-anio"></select>
+
+          </div>
+
+          <div class="filtro-campo">
+
+            <label for="f-periodo">Periodo</label>
+
+            <select id="f-periodo"></select>
+
+          </div>
+
+          <div class="filtro-campo filtro-campo-depto">
+
+            <label for="f-departamento">Departamento de origen</label>
+
+            <select id="f-departamento"></select>
+
+          </div>
+
+
+
+          <div class="filtros-acciones">
+
+            <button type="button" id="btn-toggle-avanzados" class="btn-avanzados" aria-expanded="false"
+              aria-controls="panel-filtros-avanzados">
+
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                <path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6" />
+
+              </svg>
+
+              <span>Filtros avanzados</span>
+
+              <span class="badge-avanzados-conteo" id="badge-avanzados-conteo" hidden>0</span>
+
+              <svg class="icono-flecha" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
+
+                <polyline points="6 9 12 15 18 9" />
+
+              </svg>
+
+            </button>
+
+            <button type="button" id="btn-limpiar-filtros" class="btn-limpiar" title="Restablecer todos los filtros">
+
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+
+              </svg>
+
+              <span>Limpiar filtros</span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- 2. Panel Desplegable de Filtros Avanzados -->
+
+        <div class="panel-filtros-avanzados" id="panel-filtros-avanzados" hidden>
+
+          <div class="avanzados-cab">
+
+            <span>Dimensiones complementarias</span>
+
+            <small>Filtra por estrato, sector universitario, nivel de formación y destino del crédito</small>
+
+          </div>
+
+          <div class="avanzados-grid" id="avanzados-grid"></div>
+
+        </div>
+
+
+
+        <!-- 3. Barra de Chips Activos con eliminación individual -->
+
+        <div id="chips-activos" class="chips-barra" hidden></div>
+
+      </section>
+
+
+
+      <div id="estado">Cargando datos…</div>
+
+
+
+      <div id="panel-vista" hidden>
+
+        <div class="kpis" id="kpis"></div>
+
+
+
+        <h3 class="seccion">Evolución histórica · ¿Cómo ha variado la asignación de créditos en el tiempo?</h3>
+
+        <div class="cuadricula-tendencia">
+
+          <div class="panel" id="panel-grafico-tendencia">
+
+            <div class="panel-cab">
+
+              <div>
+
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+
+                  <h2 id="h-tendencia"></h2><span class="panel-tag-alcance tag-multianual"
+                    title="Esta gráfica muestra la serie multianual completa. Responde a filtros poblacionales y territoriales (ignora año/periodo puntual)">Serie
+
+                    Histórica</span>
+
+                </div>
+
+                <p class="sub" id="s-tendencia"></p>
+
+              </div>
+
+              <div class="toggle-serie" id="toggle-tendencia">
+
+                <button type="button" class="btn-toggle activa" data-modo="total">Total</button>
+
+                <button type="button" class="btn-toggle" data-modo="sexo">Por sexo</button>
+
+              </div>
+
+            </div>
+
+            <div class="grafico" style="height:320px;"><canvas id="g-tendencia"></canvas></div>
+
+          </div>
+
+
+
+          <div class="panel panel-hitos" id="panel-hitos-tendencia">
+
+            <div class="panel-cab" style="margin-bottom:12px;">
+
+              <div>
+
+                <h2 style="font-size:15px; margin:0 0 2px;">¿Cuáles son los hitos y promedios históricos clave?</h2>
+
+                <p class="sub" style="margin:0;">Síntesis analítica de la serie · Unidad: créditos y variación (%)</p>
+
+              </div>
+
+              <span class="panel-tag-alcance tag-multianual">Serie Completa</span>
+
+            </div>
+
+            <div class="hitos-grid">
+
+              <div class="hito-card">
+
+                <div class="hito-contenido">
+
+                  <span class="hito-label">Año récord histórico</span>
+
+                  <div class="hito-valor-fila">
+
+                    <span class="hito-valor" id="hito-record-val">—</span>
+
+                    <span class="hito-badge" id="hito-record-anio">—</span>
+
+                  </div>
+
+                  <small class="hito-sub" id="hito-record-sub">Mayor colocación de la serie</small>
+
+                </div>
+
+              </div>
+
+              <div class="hito-card">
+
+                <div class="hito-contenido">
+
+                  <span class="hito-label">Promedio anual</span>
+
+                  <div class="hito-valor-fila">
+
+                    <span class="hito-valor" id="hito-promedio-val">—</span>
+
+                    <span class="hito-unidad">créditos/año</span>
+
+                  </div>
+
+                  <small class="hito-sub" id="hito-promedio-sub">Media en el periodo observado</small>
+
+                </div>
+
+              </div>
+
+              <div class="hito-card">
+
+                <div class="hito-contenido">
+
+                  <span class="hito-label">Trayectoria multianual</span>
+
+                  <div class="hito-valor-fila">
+
+                    <span class="hito-valor" id="hito-crecimiento-val">—</span>
+
+                    <span class="hito-tag" id="hito-crecimiento-tag">—</span>
+
+                  </div>
+
+                  <small class="hito-sub" id="hito-crecimiento-sub">Evolución de inicio a cierre</small>
+
+                </div>
+
+              </div>
+
+              <div class="hito-card hito-destacado">
+
+                <div class="hito-contenido">
+
+                  <span class="hito-label" id="hito-participacion-label">Participación año activo</span>
+
+                  <div class="hito-valor-fila">
+
+                    <span class="hito-valor" id="hito-participacion-val">—</span>
+
+                    <span class="hito-unidad">% del histórico</span>
+
+                  </div>
+
+                  <small class="hito-sub" id="hito-participacion-sub">Peso sobre el total acumulado</small>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <div id="seccion-social">
+
+          <h3 class="seccion">Perfil socioeconómico · ¿A qué poblaciones y entornos llegan los recursos? <span
+              class="panel-tag-alcance tag-reactivo" title="Responde al año, periodo y territorio activo">Responde a
+
+              filtros activos</span></h3>
+
+          <div class="cuadricula-social">
+
+            <div class="panel">
+
+              <h2 id="h-estrato"></h2>
+
+              <p class="sub" id="s-estrato"></p>
+
+              <div class="grafico">
+
+                <canvas id="g-estrato"></canvas>
+
+              </div>
+
+            </div>
+
+            <div class="panel">
+
+              <h2 id="h-ruralidad"></h2>
+
+              <p class="sub" id="s-ruralidad"></p>
+
+              <div class="grafico"><canvas id="g-ruralidad"></canvas></div>
+
+            </div>
+
+            <div class="panel">
+
+              <h2 id="h-sector"></h2>
+
+              <p class="sub" id="s-sector"></p>
+
+              <div class="grafico"><canvas id="g-sector"></canvas></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- Sección 3.5: Trayectoria Socioeconómica y Destino Académico (Diagrama de Sankey) -->
+
+        <div class="panel-contenedor-sankey" style="margin-bottom: 26px;">
+
+          <div class="panel" style="padding: 22px;">
+
+            <div class="panel-cab" style="margin-bottom: 16px;">
+
+              <div>
+
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
+
+                  <h2 id="h-sankey" style="font-size:16px; font-weight:700; color:var(--marino); margin:0;">Trayectoria
+                    Socioeconómica: ¿Hacia dónde fluyen los créditos?</h2>
+
+                  <span class="panel-tag-alcance"
+                    style="background:#EBF5FF; color:#004E98; font-weight:700; border:1px solid #BFDBFE;">Diagrama de
+                    Flujo Sankey</span>
+
+                </div>
+
+                <p class="sub" id="s-sankey" style="margin:0; font-size:12.5px; color:var(--suave); line-height:1.45;">
+
+                  Mapeo continuo de equidad: Estrato de origen ➔ Sector de la IES (Privada vs Oficial) ➔ Nivel de
+                  formación alcanzado · Pasa el cursor o haz clic en cualquier cinta o nodo para resaltar su trayectoria
+                  completa.
+
+                </p>
+
+                <div class="sankey-hint-movil">
+
+                  <span>↔ Desliza horizontalmente para explorar las 3 etapas del flujo completo</span>
+
+                </div>
+
+              </div>
+
+              <div id="badge-sankey-total"
+                style="font-size:12.5px; font-weight:600; color:#004E98; background:#F8FAFC; border:1px solid #E2E8F0; padding:6px 12px; border-radius:6px; white-space:nowrap; align-self:flex-start;">
+
+                57.252 créditos
+
+              </div>
+
+            </div>
+
+            <div class="sankey-scroll-wrapper">
+
+              <div id="g-sankey-socioeconomico" class="grafico sankey-grafico-inner"></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+
+
+        <h3 class="seccion">Distribución territorial · ¿En qué regiones se concentra la demanda de crédito?</h3>
+
+        <div class="panel panel-contenedor-territorial">
+
+
+
+          <!-- Ficha de Síntesis Territorial cuando se selecciona un departamento -->
+
+          <div class="ficha-territorial-activa" id="ficha-territorial-activa" hidden>
+
+            <div class="ficha-territorial-cab">
+
+              <div class="ficha-territorial-info">
+
+                <span class="ficha-tag">Territorio seleccionado</span>
+
+                <h3 id="ficha-dpto-nombre" class="ficha-nombre">—</h3>
+
+                <span class="ficha-ranking-badge" id="ficha-dpto-ranking">Puesto #— nacional</span>
+
+              </div>
+
+              <button type="button" id="btn-cerrar-ficha-dpto" class="btn-quitar-ficha"
+                title="Restablecer vista a todos los departamentos">
+
+                Restablecer vista nacional ×
+
+              </button>
+
+            </div>
+
+            <div class="ficha-metricas-grid">
+
+              <div class="ficha-metrica-card">
+
+                <span class="ficha-metrica-label">Créditos otorgados</span>
+
+                <div class="ficha-metrica-num-fila">
+
+                  <span class="ficha-metrica-val" id="ficha-creditos-val">—</span>
+
+                  <span class="ficha-metrica-unit">créditos</span>
+
+                </div>
+
+                <small class="ficha-metrica-sub" id="ficha-creditos-sub">Volumen asignado en el periodo</small>
+
+              </div>
+
+              <div class="ficha-metrica-card ficha-destacada">
+
+                <span class="ficha-metrica-label">% del total nacional</span>
+
+                <div class="ficha-metrica-num-fila">
+
+                  <span class="ficha-metrica-val acento" id="ficha-share-val">—</span>
+
+                  <span class="ficha-metrica-unit">% nacional</span>
+
+                </div>
+
+                <small class="ficha-metrica-sub" id="ficha-share-sub">Concentración sobre el total</small>
+
+              </div>
+
+              <div class="ficha-metrica-card">
+
+                <span class="ficha-metrica-label">Mujeres beneficiarias</span>
+
+                <div class="ficha-metrica-num-fila">
+
+                  <span class="ficha-metrica-val" id="ficha-mujeres-val">—</span>
+
+                  <span class="ficha-metrica-badge fem" id="ficha-mujeres-pct">—%</span>
+
+                </div>
+
+                <small class="ficha-metrica-sub" id="ficha-mujeres-sub">De la colocación en este territorio</small>
+
+              </div>
+
+              <div class="ficha-metrica-card">
+
+                <span class="ficha-metrica-label">Hombres beneficiarios</span>
+
+                <div class="ficha-metrica-num-fila">
+
+                  <span class="ficha-metrica-val" id="ficha-hombres-val">—</span>
+
+                  <span class="ficha-metrica-badge masc" id="ficha-hombres-pct">—%</span>
+
+                </div>
+
+                <small class="ficha-metrica-sub" id="ficha-hombres-sub">De la colocación en este territorio</small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="cuadricula-territorial">
+
+
+
+            <!-- Columna 1: Ranking Top 10 (Visualización Principal) -->
+
+            <div class="mapa-ranking-wrapper">
+
+              <div class="panel-cab" style="margin-bottom:8px;">
+
+                <div>
+
+                  <h2 id="h-deptos" style="font-size:15px; margin:0 0 2px;">Top 10 departamentos con mayor colocación
+
+                  </h2>
+
+                  <p class="sub" id="s-deptos" style="margin:0 0 6px;">Ranking comparativo por volumen y concentración
+
+                    nacional · Clic en una barra para filtrar</p>
+
+                </div>
+
+              </div>
+
+              <div class="grafico" style="height:380px;"><canvas id="g-deptos"></canvas></div>
+
+            </div>
+
+
+
+            <!-- Columna 2: Mapa Geográfico Complementario (ECharts Continuo CADIT) -->
+
+            <div class="mapa-colombia-columna">
+
+              <div class="panel-cab" style="margin-bottom:8px;">
+
+                <div>
+
+                  <h2 id="h-mapa" style="font-size:14px; margin:0 0 2px;">Localizador geográfico complementario</h2>
+
+                  <p class="sub" id="s-mapa" style="margin:0 0 6px;">Concentración territorial · Clic en un departamento
+                    para filtrar</p>
+
+                </div>
+
+              </div>
+
+              <div id="g-mapa-colombia" style="width:100%;height:480px;background:#FFFFFF;border-radius:8px;"></div>
+
+            </div>
+
+
+
+          </div>
+
+        </div>
+
+
+
+        <h3 class="seccion">Distribución académica y financiera · ¿Qué niveles educativos y qué rubros se financian?
+
+          <span class="panel-tag-alcance tag-reactivo" title="Responde a todos los filtros seleccionados">Responde a
+
+            filtros activos</span>
+        </h3>
+
+        <div class="cuadricula-academica">
+
+          <div class="panel">
+
+            <h2 id="h-nivel"></h2>
+
+            <p class="sub" id="s-nivel"></p>
+
+            <div class="grafico" style="height:340px;"><canvas id="g-nivel"></canvas></div>
+
+          </div>
+
+          <div class="panel">
+
+            <h2 id="h-modalidad-cred"></h2>
+
+            <p class="sub" id="s-modalidad-cred"></p>
+
+            <div class="grafico"><canvas id="g-modalidad-cred"></canvas></div>
+
+          </div>
+
+        </div>
+
+
+
+
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+
+  <script>
+
+    Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+
+    Chart.defaults.color = "#374151";
+
+
+
+    // Un tablero por conjunto de ICETEX: cada uno tiene su propia medida y sus dimensiones.
+
+    const VISTAS = {
+
+      otorgados: {
+
+        nombre: "Créditos otorgados", plural: "créditos otorgados", archivo: "icetex_otorgados",
+
+        segmento: { k: "modalidad_credito", t: "Destino del crédito" },
+
+        filtros: [
+
+          { k: "anio", t: "Año" }, { k: "periodo", t: "Periodo" },
+
+          { k: "departamento", t: "Departamento de origen" }, { k: "sexo", t: "Sexo al nacer" },
+
+          { k: "estrato", t: "Estrato socioeconómico" },
+
+          { k: "sector_ies", t: "Sector de la IES" },
+
+          { k: "ruralidad", t: "Entorno territorial DANE" },
+
+          { k: "nivel", t: "Nivel de formación" }, { k: "modalidad", t: "Modalidad de línea" },
+
+          { k: "modalidad_credito", t: "Destino del crédito" }],
+
+        nota: "La fuente cuenta beneficiarios nuevos de crédito (numero_de_nuevos_beneficiarios_de_credito). No se suma con renovados ni con beneficiarios: son medidas distintas."
+
+      },
+
+      renovados: {
+
+        nombre: "Créditos renovados", plural: "renovaciones", archivo: "icetex_renovados",
+
+        segmento: { k: "modalidad_credito", t: "Destino del crédito" },
+
+        filtros: [
+
+          { k: "anio", t: "Año" }, { k: "periodo", t: "Periodo" },
+
+          { k: "departamento", t: "Departamento de origen" }, { k: "sexo", t: "Sexo al nacer" },
+
+          { k: "estrato", t: "Estrato socioeconómico" },
+
+          { k: "sector_ies", t: "Sector de la IES" },
+
+          { k: "ruralidad", t: "Entorno territorial DANE" },
+
+          { k: "nivel", t: "Nivel de formación" }, { k: "modalidad", t: "Modalidad de línea" },
+
+          { k: "modalidad_credito", t: "Destino del crédito" }],
+
+        nota: "La fuente cuenta renovaciones (numero_de_renovaciones). No se suma con otorgados ni con beneficiarios: son medidas distintas."
+
+      },
+
+      beneficiarios: {
+
+        nombre: "Nuevos beneficiarios", plural: "nuevos beneficiarios", archivo: "icetex_beneficiarios",
+
+        segmento: { k: "origen", t: "Origen de los recursos" },
+
+        filtros: [
+
+          { k: "anio", t: "Año" }, { k: "periodo", t: "Periodo" },
+
+          { k: "departamento", t: "Departamento de origen" }, { k: "sexo", t: "Sexo al nacer" },
+
+          { k: "nivel", t: "Nivel de formación" }, { k: "origen", t: "Origen de los recursos" },
+
+          { k: "grupo", t: "Grupo de sublínea" }, { k: "modalidad_credito", t: "Modalidad del crédito" }],
+
+        nota: "La fuente cuenta beneficiarios nuevos propios (numero_de_nuevos_beneficiarios). No se suma con otorgados ni con renovados: son medidas distintas."
+
+      }
+
+    };
+
+
+
+    // Nombres para mostrar; el filtro siempre usa el valor original de la fuente.
+
+    const ETIQUETAS = {
+
+      "PREGRADO": "Pregrado", "POSGRADO PAÍS": "Posgrado país", "CRÉDITO EXTERIOR": "Crédito exterior",
+
+      "MATRICULA": "Matrícula", "SOSTENIMIENTO": "Sostenimiento", "MI PC": "Mi PC",
+
+      "FONDOS": "Fondos", "PROPIOS": "Propios",
+
+      "CONDONABLE": "Condonable", "REEMBOLSABLE": "Reembolsable", "SUBSIDIO": "Subsidio", "MIXTO": "Mixto",
+
+      "OFICIAL": "Oficial (Pública)", "PRIVADO": "Privada", "N/A": "Exterior / No aplica",
+
+      "CIUDADES Y AGLOMERACIONES": "Ciudades y aglomeraciones", "INTERMEDIO": "Municipios intermedios",
+
+      "RURAL": "Rural", "RURAL DISPERSO": "Rural disperso",
+
+      "1": "Estrato 1", "2": "Estrato 2", "3": "Estrato 3", "4": "Estrato 4", "5": "Estrato 5", "6": "Estrato 6"
+
+    };
+
+    const etiqueta = v => ETIQUETAS[v] ?? v;
+
+    const SERIES = ["#004E98", "#2A70B8", "#FFCC00", "#283044", "#6B7280"];
+
+    const corto = new Intl.NumberFormat("es-CO", { notation: "compact" });
+
+    const fmt = n => (n == null ? "—" : Number(n).toLocaleString("es-CO", { maximumFractionDigits: 1 }));
+
+    const pct = n => n.toLocaleString("es-CO", { maximumFractionDigits: 1 }) + " %";
+
+    const $ = id => document.getElementById(id);
+
+    const suma = filas => filas.reduce((s, r) => s + Number(r.valor), 0);
+
+    const sumarPor = (filas, clave, valor) => {
+
+      const m = new Map();
+
+      for (const r of filas) { const k = typeof clave === "function" ? clave(r) : r[clave]; m.set(k, (m.get(k) || 0) + Number(valor(r))); }
+
+      return [...m.entries()];
+
+    };
+
+    const unicos = (filas, k) => [...new Set(filas.map(r => r[k]).filter(v => v != null && v !== ""))].sort((a, b) => String(a).localeCompare(String(b), "es"));
+
+    const orden = pares => pares.sort((a, b) => b[1] - a[1]);
+
+
+
+    let vista = "otorgados";
+
+    let modoTendencia = "total";
+
+    const DATOS = {}, DERIVADOS = {}, ESTADO = {};
+
+    const graficos = {};
+
+    const detalle = { filas: [], cols: [], kpis: [] };
+
+    let logoPdf = null;
+
+
+
+    // En localhost:8080 (Nginx + PostgREST) lee la API; en local (puerto 8000) o publicado lee los JSON locales (igual que index.html)
+    const LOCAL = location.port === "8080";
+    const ORIGEN_ESTADO = {};
+
+    function actualizarBadgeOrigen() {
+      const el = $("badge-origen-datos");
+      if (!el) return;
+      const valores = Object.values(ORIGEN_ESTADO);
+      if (valores.includes("api-duckdb")) {
+        el.style.background = "#ECFDF5";
+        el.style.color = "#065F46";
+        el.style.borderColor = "#A7F3D0";
+        el.innerHTML = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10B981;"></span> Fuente: API en vivo (/api/ · DuckDB)';
+        el.title = "Los datos se consultan en tiempo real contra la base de datos DuckDB mediante el endpoint /api/";
+      } else if (valores.includes("api-postgrest")) {
+        el.style.background = "#ECFDF5";
+        el.style.color = "#065F46";
+        el.style.borderColor = "#A7F3D0";
+        el.innerHTML = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10B981;"></span> Fuente: API en vivo (PostgREST)';
+        el.title = "Los datos provienen directamente del backend PostgREST";
+      } else {
+        el.style.background = "#FEF3C7";
+        el.style.color = "#92400E";
+        el.style.borderColor = "#FDE68A";
+        el.innerHTML = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#F59E0B;"></span> Fuente: Datos locales (JSON)';
+        el.title = "Los datos se leen desde archivos locales precalculados";
+      }
+    }
+
+    async function cargar(v) {
+      const archivo = VISTAS[v].archivo;
+      const url = LOCAL ? `/api/${archivo}` : `datos/${archivo}.json`;
+      try {
+        const r = await fetch(url);
+        if (!r.ok) {
+          if (LOCAL) {
+            console.warn(`[CADIT] No respondió /api/${archivo} (${r.status}). Aplicando fallback a datos/${archivo}.json`);
+            const fb = await fetch(`datos/${archivo}.json`);
+            if (fb.ok) {
+              ORIGEN_ESTADO[v] = "local";
+              actualizarBadgeOrigen();
+              const fbData = await fb.json();
+              return Array.isArray(fbData) ? { generado: new Date().toISOString(), filas: fbData } : fbData;
+            }
+          }
+          throw new Error(`${archivo}: ${r.status}`);
+        }
+        const data = await r.json();
+        ORIGEN_ESTADO[v] = data.origen ? "api-duckdb" : (LOCAL ? "api-postgrest" : "local");
+        actualizarBadgeOrigen();
+        return Array.isArray(data) ? { generado: new Date().toISOString(), filas: data } : data;
+      } catch (err) {
+        if (LOCAL) {
+          try {
+            console.warn(`[CADIT] Error al conectar /api/${archivo}: ${err.message}. Intentando fallback local.`);
+            const fb = await fetch(`datos/${archivo}.json`);
+            if (fb.ok) {
+              ORIGEN_ESTADO[v] = "local";
+              actualizarBadgeOrigen();
+              const fbData = await fb.json();
+              return Array.isArray(fbData) ? { generado: new Date().toISOString(), filas: fbData } : fbData;
+            }
+          } catch (_) {}
+        }
+        throw err;
+      }
+    }
+
+
+
+    // El último año se trata como parcial si queda muy por debajo de un año típico (D42).
+
+    // Solo cambia el año de las tarjetas, rankings y detalle; la tendencia muestra todo lo publicado.
+
+    function preparar(v) {
+
+      const filas = DATOS[v].filas;
+
+      const totales = new Map(sumarPor(filas, "anio", r => r.valor));
+
+      const anios = [...totales.keys()].sort((a, b) => a - b);
+
+      const ultimo = anios.at(-1);
+
+      const previos = anios.slice(0, -1).slice(-3).map(a => totales.get(a) ?? 0).sort((a, b) => a - b);
+
+      const mediana = previos.length ? previos[Math.floor(previos.length / 2)] : null;
+
+      const parcial = mediana && totales.get(ultimo) < mediana * 0.5 ? ultimo : null;
+
+      const anioKpi = parcial ? anios.at(-2) : ultimo;
+
+      DERIVADOS[v] = { anios, ultimo, parcial, anioKpi, generado: DATOS[v].generado };
+
+      ESTADO[v] = { anio: String(anioKpi), periodo: "" };
+
+    }
+
+
+
+    function opciones(id, valores, texto = v => v, seleccion = "", vacio = "Todos") {
+
+      const sel = $(id), actual = seleccion ?? "";
+
+      sel.replaceChildren(new Option(vacio, ""));
+
+      for (const v of valores) sel.add(new Option(texto(v), v));
+
+      sel.value = valores.map(String).includes(String(actual)) ? String(actual) : "";
+
+    }
+
+
+
+    function llenarPeriodos() {
+
+      const st = ESTADO[vista], anio = st.anio;
+
+      const valores = [...new Set(DATOS[vista].filas
+
+        .filter(r => !anio || String(r.anio) === anio)
+
+        .map(r => r.periodo))].sort();
+
+      const sel = $("f-periodo");
+
+      const actual = sel.value;
+
+      sel.replaceChildren(new Option("Todos", ""));
+
+      for (const v of valores) sel.add(new Option(v, v));
+
+      sel.value = valores.includes(actual) ? actual : "";
+
+      st.periodo = sel.value;
+
+    }
+
+
+
+    const FILTROS_PRIORITARIOS = ["anio", "periodo", "departamento"];
+
+
+
+    function construirFiltros() {
+
+      const gridAvanzados = $("avanzados-grid");
+
+      if (!gridAvanzados) return;
+
+      gridAvanzados.replaceChildren();
+
+
+
+      // Los filtros avanzados son aquellos fuera de los 3 prioritarios
+
+      const avanzados = VISTAS[vista].filtros.filter(f => !FILTROS_PRIORITARIOS.includes(f.k));
+
+      for (const f of avanzados) {
+
+        const campo = document.createElement("div");
+
+        campo.className = "filtro-campo";
+
+        const label = document.createElement("label");
+
+        label.htmlFor = "f-" + f.k;
+
+        label.textContent = f.t;
+
+        const sel = document.createElement("select");
+
+        sel.id = "f-" + f.k;
+
+        campo.append(label, sel);
+
+        gridAvanzados.append(campo);
+
+      }
+
+    }
+
+
+
+    function llenarFiltros() {
+
+      const st = ESTADO[vista], filas = DATOS[vista].filas, info = DERIVADOS[vista];
+
+      opciones("f-anio", info.anios.map(String), v => v, st.anio, "Todos los años");
+
+      llenarPeriodos();
+
+      for (const f of VISTAS[vista].filtros) {
+
+        if (f.k === "anio" || f.k === "periodo") continue;
+
+        opciones("f-" + f.k, unicos(filas, f.k), etiqueta, st[f.k]);
+
+      }
+
+      actualizarContadorAvanzados();
+
+    }
+
+
+
+    function actualizarContadorAvanzados() {
+
+      const st = ESTADO[vista] || {};
+
+      let avanzadosActivos = 0;
+
+      for (const [k, v] of Object.entries(st)) {
+
+        if (!FILTROS_PRIORITARIOS.includes(k) && v != null && v !== "") {
+
+          avanzadosActivos++;
+
+        }
+
+      }
+
+      const badge = $("badge-avanzados-conteo");
+
+      const btn = $("btn-toggle-avanzados");
+
+      if (badge) {
+
+        badge.textContent = String(avanzadosActivos);
+
+        badge.hidden = avanzadosActivos === 0;
+
+      }
+
+      if (btn) {
+
+        btn.classList.toggle("con-filtros", avanzadosActivos > 0);
+
+      }
+
+    }
+
+
+
+    function limpiarTodosFiltros() {
+
+      ESTADO[vista] = { anio: String(DERIVADOS[vista].anioKpi), periodo: "" };
+
+      for (const f of VISTAS[vista].filtros) {
+
+        if (f.k !== "anio" && f.k !== "periodo") {
+
+          ESTADO[vista][f.k] = "";
+
+        }
+
+      }
+
+      if ($("buscar")) $("buscar").value = "";
+
+      if ($("resultados")) $("resultados").hidden = true;
+
+      llenarFiltros();
+
+      pintarChips();
+
+      pintar();
+
+    }
+
+
+
+    function filtrosActivos(excepto = []) {
+
+      const f = {};
+
+      for (const [k, v] of Object.entries(ESTADO[vista])) if (v !== "" && !excepto.includes(k)) f[k] = String(v);
+
+      return f;
+
+    }
+
+
+
+    function filtrar(filas, excepto = []) {
+
+      const f = filtrosActivos(excepto);
+
+      return filas.filter(r => Object.entries(f).every(([k, v]) => String(r[k]) === v));
+
+    }
+
+
+
+    // Reactividad: un clic en una barra, línea o fila fija ese filtro y repinta todo.
+
+    function fijarFiltro(k, valor) {
+
+      const sel = $("f-" + k);
+
+      if (!sel || ![...sel.options].some(o => o.value === String(valor))) return;
+
+      sel.value = String(valor);
+
+      ESTADO[vista][k] = sel.value;
+
+      if (k === "anio") llenarPeriodos();
+
+      actualizarContadorAvanzados();
+
+      pintarChips();
+
+      pintar();
+
+    }
+
+
+
+    function quitarFiltro(k) {
+
+      if (k === "anio") {
+
+        ESTADO[vista].anio = "";
+
+        const sel = $("f-anio");
+
+        if (sel) sel.value = "";
+
+        llenarPeriodos();
+
+      } else {
+
+        ESTADO[vista][k] = "";
+
+        const sel = $("f-" + k);
+
+        if (sel) sel.value = "";
+
+      }
+
+      actualizarContadorAvanzados();
+
+      pintarChips();
+
+      pintar();
+
+    }
+
+
+
+    function pintarChips() {
+
+      const cont = $("chips-activos");
+
+      if (!cont) return;
+
+      cont.replaceChildren();
+
+
+
+      const nombres = Object.fromEntries(VISTAS[vista].filtros.map(f => [f.k, f.t]));
+
+      const activos = Object.entries(ESTADO[vista]).filter(([, v]) => v != null && v !== "");
+
+
+
+      if (!activos.length) {
+
+        cont.hidden = true;
+
+        return;
+
+      }
+
+      cont.hidden = false;
+
+
+
+      const rotulo = document.createElement("span");
+
+      rotulo.className = "chips-label";
+
+      rotulo.textContent = `Filtros activos (${activos.length}):`;
+
+      cont.append(rotulo);
+
+
+
+      for (const [k, v] of activos) {
+
+        const chip = document.createElement("div");
+
+        chip.className = "chip";
+
+        const valorTxt = k === "anio" || k === "periodo" ? v : etiqueta(v);
+
+        chip.innerHTML = `<span>${nombres[k] ?? k}: <b>${valorTxt}</b></span><button type="button" title="Quitar filtro ${nombres[k] ?? k}" aria-label="Quitar">×</button>`;
+
+        chip.querySelector("button").onclick = (e) => {
+
+          e.stopPropagation();
+
+          quitarFiltro(k);
+
+        };
+
+        cont.append(chip);
+
+      }
+
+
+
+      const btnLimpiar = document.createElement("button");
+
+      btnLimpiar.type = "button";
+
+      btnLimpiar.className = "btn-limpiar";
+
+      btnLimpiar.style.padding = "2px 8px";
+
+      btnLimpiar.style.fontSize = "11.5px";
+
+      btnLimpiar.style.marginLeft = "4px";
+
+      btnLimpiar.textContent = "Limpiar todo";
+
+      btnLimpiar.onclick = limpiarTodosFiltros;
+
+      cont.append(btnLimpiar);
+
+    }
+
+
+
+    let resultadosBusqueda = [];
+
+    const normalizar = t => String(t ?? "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").trim();
+
+
+
+    function buscarFiltros(texto) {
+
+      const palabras = normalizar(texto).split(/\s+/).filter(Boolean);
+
+      const caja = $("resultados");
+
+      if (!palabras.length) {
+
+        caja.hidden = true;
+
+        resultadosBusqueda = [];
+
+        return;
+
+      }
+
+
+
+      const opciones = [];
+
+      for (const f of VISTAS[vista].filtros) {
+
+        const sel = $("f-" + f.k);
+
+        if (!sel) continue;
+
+        for (const opt of sel.options) {
+
+          if (!opt.value) continue;
+
+          const textoCompleto = normalizar(opt.text + " " + f.t);
+
+          if (palabras.every(w => textoCompleto.includes(w))) {
+
+            opciones.push({
+
+              clave: f.k,
+
+              valor: opt.value,
+
+              texto: opt.text,
+
+              categoria: f.t,
+
+              activo: ESTADO[vista][f.k] === opt.value
+
+            });
+
+          }
+
+        }
+
+      }
+
+
+
+      resultadosBusqueda = opciones.slice(0, 15);
+
+
+
+      if (!resultadosBusqueda.length) {
+
+        caja.innerHTML = '<p>No se encontraron filtros que coincidan con la búsqueda.</p>';
+
+      } else {
+
+        caja.replaceChildren(...resultadosBusqueda.map(it => {
+
+          const b = document.createElement("button");
+
+          b.type = "button";
+
+          b.innerHTML = `<b>${it.texto}</b>${it.activo ? ' <span style="font-size:11px;color:var(--azul);font-weight:600;">(activo)</span>' : ''}<small>${it.categoria}</small>`;
+
+          b.onclick = () => elegirFiltro(it.clave, it.valor);
+
+          return b;
+
+        }));
+
+      }
+
+      caja.hidden = false;
+
+    }
+
+
+
+    function elegirFiltro(clave, valor) {
+
+      $("resultados").hidden = true;
+
+      $("buscar").value = "";
+
+      resultadosBusqueda = [];
+
+      fijarFiltro(clave, valor);
+
+    }
+
+
+
+    const pluginEtiquetasBarras = {
+
+      id: "etiquetasBarras",
+
+      afterDatasetsDraw(chart) {
+
+        const { ctx } = chart;
+
+        const meta = chart.getDatasetMeta(0);
+
+        if (!meta || !meta.data.length) return;
+
+        ctx.save();
+
+        ctx.font = '600 11px "IBM Plex Sans", system-ui, sans-serif';
+
+        ctx.textBaseline = 'middle';
+
+
+
+        const dataVals = chart.data.datasets[0].data || [];
+
+        const rightLimit = chart.chartArea.right;
+
+
+
+        meta.data.forEach((bar, i) => {
+
+          const val = Number(dataVals[i]);
+
+          if (val == null || val === 0 || isNaN(val)) return;
+
+
+
+          const txt = fmt(val);
+
+          const textWidth = ctx.measureText(txt).width;
+
+          const barLength = Math.abs(bar.x - bar.base);
+
+          const cabeAdentro = barLength > (textWidth + 20);
+
+          const desbordaAfuera = (bar.x + textWidth + 8) > rightLimit;
+
+
+
+          // Colocación inteligente de etiquetas:
+
+          // 1. Barras largas que tocarían el borde derecho: se escriben dentro de la barra en blanco.
+
+          // 2. Barras cortas y medias: se ubican SIEMPRE afuera en gris oscuro (#374151) con separación constante (bar.x + 6),
+
+          //    evitando que se amontonen contra la base o la barra contigua.
+
+          if (cabeAdentro && desbordaAfuera) {
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.textAlign = "right";
+
+            ctx.fillText(txt, bar.x - 7, bar.y);
+
+          } else {
+
+            ctx.fillStyle = "#374151";
+
+            ctx.textAlign = "left";
+
+            const xPos = bar.x + 6;
+
+            const finalX = Math.min(xPos, rightLimit - textWidth - 2);
+
+            ctx.fillText(txt, finalX, bar.y);
+
+          }
+
+        });
+
+        ctx.restore();
+
+      }
+
+    };
+
+
+
+    const pluginEtiquetasLineas = {
+
+      id: "etiquetasLineas",
+
+      afterDatasetsDraw(chart) {
+
+        const { ctx } = chart;
+
+        ctx.save();
+
+        ctx.font = '600 11px "IBM Plex Sans", system-ui, sans-serif';
+
+        ctx.textAlign = 'center';
+
+        chart.data.datasets.forEach((ds, dsIdx) => {
+
+          const meta = chart.getDatasetMeta(dsIdx);
+
+          if (!meta || meta.hidden) return;
+
+          ctx.fillStyle = ds.borderColor || SERIES[dsIdx % SERIES.length] || "#374151";
+
+          meta.data.forEach((pt, i) => {
+
+            const val = ds.data[i];
+
+            if (val == null || val === 0) return;
+
+            const txt = fmt(val);
+
+            if (chart.data.datasets.length > 1 && dsIdx === 1) {
+
+              ctx.textBaseline = 'top';
+
+              ctx.fillText(txt, pt.x, pt.y + 7);
+
+            } else {
+
+              ctx.textBaseline = 'bottom';
+
+              ctx.fillText(txt, pt.x, pt.y - 7);
+
+            }
+
+          });
+
+        });
+
+        ctx.restore();
+
+      }
+
+    };
+
+
+
+    function animarNumero(el, valorFinal, duracion = 500, formato = fmt) {
+
+      if (valorFinal == null || isNaN(valorFinal)) {
+
+        el.textContent = "—";
+
+        return;
+
+      }
+
+      const valFin = Number(valorFinal);
+
+      const valIni = Number(el.dataset.valorActual || 0);
+
+      el.dataset.valorActual = valFin;
+
+      if (valIni === valFin) {
+
+        el.textContent = formato(valFin);
+
+        return;
+
+      }
+
+      const inicio = performance.now();
+
+      function paso(ahora) {
+
+        const progreso = Math.min((ahora - inicio) / duracion, 1);
+
+        const factor = 1 - Math.pow(1 - progreso, 3);
+
+        const actual = valIni + (valFin - valIni) * factor;
+
+        el.textContent = formato(Math.round(actual));
+
+        if (progreso < 1) {
+
+          requestAnimationFrame(paso);
+
+        } else {
+
+          el.textContent = formato(valFin);
+
+        }
+
+      }
+
+      requestAnimationFrame(paso);
+
+    }
+
+
+
+
+
+    // ─── Base cromática uniforme y color de acento reservado ───
+
+    // Base: Azul primario institucional (#004E98) para todas las categorías.
+
+    // Acento: Amarillo (#FFCC00) reservado para selección activa o categoría destacada.
+
+    // Atenuado: Azul suave (#93C5FD) para elementos no seleccionados cuando existe un filtro activo.
+
+    const COLOR_BASE_UNIFORME = "#004E98";
+
+    const COLOR_ACENTO_RESERVADO = "#FFCC00";
+
+    const COLOR_ATENUADO_FILTRO = "#93C5FD";
+
+
+
+    function resolverColoresUniforme(elementos, valorActivo) {
+
+      if (valorActivo != null && valorActivo !== "") {
+
+        const actNorm = String(valorActivo).toLowerCase();
+
+        return elementos.map(item => {
+
+          const nom = Array.isArray(item) ? String(item[0]) : String(item);
+
+          return nom.toLowerCase() === actNorm ? COLOR_ACENTO_RESERVADO : COLOR_ATENUADO_FILTRO;
+
+        });
+
+      }
+
+      return COLOR_BASE_UNIFORME;
+
+    }
+
+
+
+    function barras(id, etiquetas, valores, alClic, colores, refTotal = null) {
+
+      const chart = graficos[id];
+
+      let bg = COLOR_BASE_UNIFORME;
+
+      if (Array.isArray(colores)) {
+
+        bg = colores;
+
+      } else if (typeof colores === "function") {
+
+        bg = etiquetas.map(colores);
+
+      } else if (typeof colores === "string") {
+
+        bg = colores;
+
+      }
+
+      const hoverBg = Array.isArray(bg)
+
+        ? bg.map(c => c === COLOR_ACENTO_RESERVADO ? "#FFE066" : (c === COLOR_ATENUADO_FILTRO ? "#7BAFE8" : "#1E62A6"))
+
+        : "#1E62A6";
+
+
+
+      if (chart && chart.config.type === "bar") {
+
+        chart.data.labels = etiquetas;
+
+        chart.data.datasets[0].data = valores;
+
+        chart.data.datasets[0].backgroundColor = bg;
+
+        chart.data.datasets[0].hoverBackgroundColor = hoverBg;
+
+        if (refTotal != null) chart._refTotal = refTotal;
+
+        chart.options.onClick = (e, els) => els[0] && alClic?.(els[0].index);
+
+        chart.update({ duration: 500, easing: "easeOutQuart" });
+
+        return;
+
+      }
+
+      chart?.destroy();
+
+      const nuevoChart = new Chart($(id), {
+
+        type: "bar",
+
+        data: {
+
+          labels: etiquetas,
+
+          datasets: [{
+
+            data: valores,
+
+            backgroundColor: bg,
+
+            hoverBackgroundColor: hoverBg,
+
+            borderRadius: 4,
+
+            barPercentage: 0.72,
+
+            categoryPercentage: 0.88
+
+          }]
+
+        },
+
+        plugins: [pluginEtiquetasBarras],
+
+        options: {
+
+          indexAxis: "y",
+
+          maintainAspectRatio: false,
+
+          animation: {
+
+            duration: 500,
+
+            easing: "easeOutQuart",
+
+            delay: (ctx) => (ctx.type === 'data' && ctx.mode === 'default' ? ctx.dataIndex * 25 : 0)
+
+          },
+
+          transitions: {
+
+            active: { animation: { duration: 160 } }
+
+          },
+
+          onClick: (e, els) => els[0] && alClic?.(els[0].index),
+
+          onHover: (e, els) => { e.native.target.style.cursor = els.length && alClic ? "pointer" : "default"; },
+
+          plugins: {
+
+            legend: { display: false },
+
+            tooltip: {
+
+              animation: { duration: 150 },
+
+              backgroundColor: "rgba(40,48,68,0.98)",
+
+              titleColor: "#FFCC00",
+
+              bodyColor: "#ffffff",
+
+              borderColor: "#E5E7EB",
+
+              borderWidth: 1,
+
+              padding: 10,
+
+              cornerRadius: 6,
+
+              callbacks: {
+
+                label(c) {
+
+                  const dptoNombre = c.label;
+
+                  const cid = normalizarDptoAId(dptoNombre);
+
+                  const info = c.chart._infoDeptos?.get(cid);
+
+                  if (info) {
+
+                    return [
+
+                      `Créditos otorgados: ${fmt(info.val)} créditos`,
+
+                      `% total nacional: ${pct(info.share)}`,
+
+                      `Mujeres: ${fmt(info.mujeres)} (${pct(info.pctMujeres)})`,
+
+                      `Hombres: ${fmt(info.hombres)} (${pct(info.pctHombres)})`
+
+                    ];
+
+                  }
+
+                  const val = Number(c.raw) || 0;
+
+                  const ds = c.dataset.data || [];
+
+                  const totalBase = c.chart._refTotal || ds.reduce((a, b) => a + (Number(b) || 0), 0);
+
+                  const p = totalBase > 0 ? (val / totalBase * 100) : 0;
+
+                  const sufijo = c.chart._refTotal ? "del total nacional" : "de esta dimensión";
+
+                  return [
+
+                    `Valor exacto: ${fmt(val)} créditos`,
+
+                    `Participación: ${pct(p)} ${sufijo}`
+
+                  ];
+
+                }
+
+              }
+
+            }
+
+          },
+
+          scales: {
+
+            x: {
+
+              grace: "18%",
+
+              ticks: {
+
+                callback: v => corto.format(v)
+
+              },
+
+              title: {
+
+                display: true,
+
+                text: "Unidad: número de créditos",
+
+                color: "#6B7280",
+
+                font: { size: 10.5, weight: 500, family: '"IBM Plex Sans", sans-serif' },
+
+                padding: { top: 6, bottom: 0 }
+
+              }
+
+            },
+
+            y: {
+
+              ticks: {
+
+                autoSkip: false,
+
+                font: { size: 11.5, weight: 500 },
+
+                callback(v) {
+
+                  const t = this.getLabelForValue(v);
+
+                  return t.length > 28 ? t.slice(0, 27) + "…" : t;
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      });
+
+      if (refTotal != null) nuevoChart._refTotal = refTotal;
+
+      graficos[id] = nuevoChart;
+
+    }
+
+
+
+    function lineas(id, etiquetas, series, alClic) {
+
+      const chart = graficos[id];
+
+      const nuevosDatasets = series.map(([nombre, valores], i) => {
+
+        const esMujeres = nombre.toLowerCase().includes("mujer");
+
+        const esHombres = nombre.toLowerCase().includes("hombre");
+
+        const color = esMujeres ? "#FFCC00" : (esHombres ? "#004E98" : (SERIES[i % SERIES.length] || "#004E98"));
+
+        return {
+
+          label: nombre,
+
+          data: valores,
+
+          borderColor: color,
+
+          backgroundColor: color,
+
+          tension: .28,
+
+          pointRadius: 4,
+
+          pointHoverRadius: 7,
+
+          pointBackgroundColor: color,
+
+          pointBorderColor: "#fff",
+
+          pointBorderWidth: 1.5,
+
+          borderWidth: 2.6
+
+        };
+
+      });
+
+
+
+      if (chart && chart.config.type === "line") {
+
+        chart.data.labels = etiquetas;
+
+        chart.data.datasets = nuevosDatasets;
+
+        chart.options.plugins.legend.display = series.length > 1;
+
+        chart.options.onClick = (e, els, ch) => {
+
+          const p = ch.getElementsAtEventForMode(e, "nearest", { intersect: false }, true)[0];
+
+          if (p && alClic) alClic(p.index);
+
+        };
+
+        chart.update({ duration: 550, easing: "easeInOutCubic" });
+
+        return;
+
+      }
+
+
+
+      chart?.destroy();
+
+      graficos[id] = new Chart($(id), {
+
+        type: "line",
+
+        data: { labels: etiquetas, datasets: nuevosDatasets },
+
+        plugins: [pluginEtiquetasLineas],
+
+        options: {
+
+          maintainAspectRatio: false,
+
+          animation: {
+
+            duration: 550,
+
+            easing: "easeInOutCubic"
+
+          },
+
+          transitions: {
+
+            active: { animation: { duration: 180 } }
+
+          },
+
+          interaction: { mode: "index", intersect: false },
+
+          onClick: (e, els, ch) => { const p = ch.getElementsAtEventForMode(e, "nearest", { intersect: false }, true)[0]; if (p && alClic) alClic(p.index); },
+
+          onHover: e => { e.native.target.style.cursor = alClic ? "pointer" : "default"; },
+
+          plugins: {
+
+            legend: { display: series.length > 1, position: "bottom" },
+
+            tooltip: {
+
+              animation: { duration: 150 },
+
+              backgroundColor: "rgba(40,48,68,0.98)",
+
+              titleColor: "#FFCC00",
+
+              bodyColor: "#ffffff",
+
+              borderColor: "#E5E7EB",
+
+              borderWidth: 1,
+
+              padding: 10,
+
+              cornerRadius: 6,
+
+              callbacks: {
+
+                label: c => `${c.dataset.label}: ${fmt(c.raw)} créditos asignados`
+
+              }
+
+            }
+
+          },
+
+          scales: {
+
+            x: {
+
+              title: {
+
+                display: true,
+
+                text: "Año de asignación",
+
+                color: "#6B7280",
+
+                font: { size: 10.5, weight: 500 }
+
+              }
+
+            },
+
+            y: {
+
+              beginAtZero: true,
+
+              grace: "14%",
+
+              ticks: { callback: v => corto.format(v) },
+
+              title: {
+
+                display: true,
+
+                text: "Unidad: número de créditos",
+
+                color: "#6B7280",
+
+                font: { size: 10.5, weight: 500 }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      });
+
+    }
+
+
+
+    function spark(vals, color = "#004E98") {
+
+      if (vals.length < 2) return "";
+
+      const w = 90, h = 28, max = Math.max(...vals), min = Math.min(...vals), r = max - min || 1;
+
+      const pts = vals.map((v, i) => [i * w / (vals.length - 1), h - 3 - (v - min) / r * (h - 7)].map(n => Number(n).toFixed(1)));
+
+      const areaD = `M ${pts[0][0]},${h} L ${pts.map(p => p.join(",")).join(" L ")} L ${pts.at(-1)[0]},${h} Z`;
+
+      const idGrad = "spkGrad_" + Math.random().toString(36).substr(2, 6);
+
+      return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true">
+
+        <defs>
+
+          <linearGradient id="${idGrad}" x1="0" y1="0" x2="0" y2="1">
+
+            <stop offset="0%" stop-color="${color}" stop-opacity="0.18"/>
+
+            <stop offset="100%" stop-color="${color}" stop-opacity="0.0"/>
+
+          </linearGradient>
+
+        </defs>
+
+        <path d="${areaD}" fill="url(#${idGrad})"/>
+
+        <polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="${color}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <circle cx="${pts.at(-1)[0]}" cy="${pts.at(-1)[1]}" r="2.5" fill="#FFFFFF" stroke="${color}" stroke-width="1.75"/>
+
+      </svg>`;
+
+    }
+
+
+
+    // ─── Componente de Tarjetas KPI Ejecutivas (Human UX/UI) ───
+
+    function tarjeta({
+
+      kicker,
+
+      t,
+
+      v,
+
+      texto = null,
+
+      nota = null,
+
+      esHero = false,
+
+      badge = null,
+
+      badgeClass = "badge-neutral",
+
+      progreso = null,
+
+      progresoColor = "#004E98",
+
+      delta = null,
+
+      deltaClass = "delta-neutral",
+
+      popupData = null,
+
+      alClic = null
+
+    }) {
+
+      const el = document.createElement("div");
+
+      el.className = "kpi-card" + (alClic ? " kpi-interactive" : "");
+
+      if (alClic) {
+
+        el.style.cursor = "pointer";
+
+        el.onclick = (e) => {
+
+          if (e.target.closest(".kpi-info-btn") || e.target.closest(".popup-info-kpi")) return;
+
+          alClic(e);
+
+        };
+
+      }
+
+
+
+      let popupHtml = "";
+
+      if (popupData) {
+
+        popupHtml = `
+
+          <div class="popup-info-kpi">
+
+            <div class="popup-info-header">${popupData.titulo || t}</div>
+
+            <p style="margin:0 0 5px 0;">${popupData.mide}</p>
+
+            ${popupData.calculo ? `<p style="margin:4px 0 0 0;font-size:10.5px;color:#004E98;"><b>Cálculo:</b> ${popupData.calculo}</p>` : ""}
+
+            <div class="popup-info-meta">Fuente: ${popupData.fuente || "ICETEX · Datos Abiertos"}</div>
+
+          </div>
+
+        `;
+
+      }
+
+
+
+      const badgeHtml = badge ? `<span class="kpi-badge ${badgeClass}">${badge}</span>` : "";
+
+      const infoBtnHtml = popupData ? `<button type="button" class="kpi-info-btn" aria-label="Información">ⓘ</button>${popupHtml}` : "";
+
+
+
+      const barHtml = progreso != null ? `
+
+        <div class="kpi-card-track" title="${Number(progreso).toFixed(1)}%">
+
+          <div class="kpi-card-track-fill" style="width: ${Math.min(100, Math.max(0, progreso))}%; background: ${progresoColor};"></div>
+
+        </div>` : "";
+
+
+
+      const deltaHtml = delta ? `<span class="kpi-delta ${deltaClass}">${delta}</span>` : "";
+
+
+
+      el.innerHTML = `
+
+        <div class="kpi-card-header">
+
+          <div class="kpi-card-meta">
+
+            ${kicker ? `<span class="kpi-card-kicker">${kicker}</span>` : ""}
+
+            <h4 class="kpi-card-title" title="${t}">${t}</h4>
+
+          </div>
+
+          <div class="kpi-card-aside">
+
+            ${badgeHtml}
+
+            ${infoBtnHtml}
+
+          </div>
+
+        </div>
+
+        <div class="kpi-card-body">
+
+          <b class="kpi-card-val ${esHero ? "val-hero" : ""}"></b>
+
+        </div>
+
+        ${barHtml}
+
+        <div class="kpi-card-footer">
+
+          <p class="kpi-card-sub">${nota || "Datos consolidados"}</p>
+
+          ${deltaHtml}
+
+        </div>
+
+      `;
+
+
+
+      const bEl = el.querySelector(".kpi-card-val");
+
+      if (texto != null) {
+
+        bEl.className = "kpi-card-val val-text";
+
+        bEl.textContent = texto;
+
+      } else {
+
+        animarNumero(bEl, v, 500, fmt);
+
+      }
+
+
+
+      return el;
+
+    }
+
+
+
+    function tabla(id, columnas, filas, alClic, max = 200) {
+
+      const t = document.createElement("table"), cab = t.createTHead().insertRow();
+
+      for (const [, titulo, num] of columnas) { const th = document.createElement("th"); th.textContent = titulo; if (num) th.className = "n"; cab.append(th); }
+
+      const cuerpo = t.createTBody();
+
+      for (const r of filas.slice(0, max)) {
+
+        const tr = cuerpo.insertRow();
+
+        if (alClic) { tr.className = "clic"; tr.onclick = () => alClic(r); }
+
+        for (const [k, , num, formato] of columnas) {
+
+          const td = tr.insertCell();
+
+          td.textContent = formato ? formato(r[k]) : (num ? fmt(r[k]) : (r[k] ?? ""));
+
+          if (num) td.className = "n";
+
+        }
+
+      }
+
+      $(id).replaceChildren(t);
+
+    }
+
+
+
+    // ─── Componente Mapa Geográfico de Colombia ───
+
+    let svgMapaColombia = null;
+
+    let mapaInyectado = false;
+
+
+
+    const MAPA_DPTOS_ID = {
+
+      "AMAZONAS": "CO-AMA", "ANTIOQUIA": "CO-ANT", "ARAUCA": "CO-ARA", "ATLANTICO": "CO-ATL",
+
+      "BOLIVAR": "CO-BOL", "BOYACA": "CO-BOY", "CALDAS": "CO-CAL", "CAQUETA": "CO-CAQ",
+
+      "CASANARE": "CO-CAS", "CAUCA": "CO-CAU", "CESAR": "CO-CES", "CHOCO": "CO-CHO",
+
+      "CORDOBA": "CO-COR", "CUNDINAMARCA": "CO-CUN", "GUAINIA": "CO-GUA", "GUAVIARE": "CO-GUV",
+
+      "HUILA": "CO-HUI", "MAGDALENA": "CO-MAG", "META": "CO-MET", "NARINO": "CO-NAR",
+
+      "PUTUMAYO": "CO-PUT", "QUINDIO": "CO-QUI", "RISARALDA": "CO-RIS", "SANTANDER": "CO-SAN",
+
+      "SUCRE": "CO-SUC", "TOLIMA": "CO-TOL", "VAUPES": "CO-VAU", "VICHADA": "CO-VID"
+
+    };
+
+
+
+    function normalizarDptoAId(dpto) {
+
+      if (!dpto) return null;
+
+      const t = String(dpto).normalize("NFD").replace(/\p{M}/gu, "").toUpperCase().replace(/[^A-Z0-9 ]/g, " ").trim();
+
+      const w = t.replace(/\s+/g, " ");
+
+      if (w.includes("BOGOTA")) return "CO-DC";
+
+      if (w.includes("SAN ANDRES")) return "CO-SAP";
+
+      if (w.includes("NORTE DE SANTANDER")) return "CO-NSA";
+
+      if (w.includes("VALLE")) return "CO-VAC";
+
+      if (w.includes("GUAJIRA")) return "CO-LAG";
+
+      return MAPA_DPTOS_ID[w] || null;
+
+    }
+
+
+
+    const TRAMOS_MAPA = [
+
+      { min: 0, color: "#E2E8F0", label: "< 1 %" },
+
+      { min: 1, color: "#93C5FD", label: "1% – 3%" },
+
+      { min: 3, color: "#3B82F6", label: "3% – 6%" },
+
+      { min: 6, color: "#004E98", label: "6% – 12%" },
+
+      { min: 12, color: "#172554", label: "> 12 %" }
+
+    ];
+
+
+
+    function colorTramo(share) {
+
+      if (share <= 0) return "#F4F6F9";
+
+      for (let i = TRAMOS_MAPA.length - 1; i >= 0; i--) {
+
+        if (share >= TRAMOS_MAPA[i].min) return TRAMOS_MAPA[i].color;
+
+      }
+
+      return TRAMOS_MAPA[0].color;
+
+    }
+
+
+
+
+
+    // ─── Componente Mapa Geográfico de Colombia (ECharts Continuo CADIT) ───
+
+    let chartMapaEcharts = null;
+
+    let mapaSvgRegistrado = false;
+
+
+
+    async function inicializarMapaColombiaEcharts() {
+
+      if (mapaSvgRegistrado) return;
+
+      try {
+
+        const svgRes = await fetch("colombia.svg");
+
+        if (!svgRes.ok) return;
+
+        const svgText = await svgRes.text();
+
+        echarts.registerMap("colombia_svg", { svg: svgText });
+
+        mapaSvgRegistrado = true;
+
+
+
+        const dom = $("g-mapa-colombia");
+
+        if (!dom) return;
+
+        chartMapaEcharts = echarts.init(dom);
+
+        setTimeout(() => chartMapaEcharts?.resize(), 100);
+
+
+
+        chartMapaEcharts.on("click", params => {
+
+          if (params.data && params.data.dpto) {
+
+            const dpto = params.data.dpto;
+
+            if (st.departamento && st.departamento.toLowerCase() === dpto.toLowerCase()) {
+
+              quitarFiltro("departamento");
+
+            } else {
+
+              fijarFiltro("departamento", dpto);
+
+            }
+
+          }
+
+        });
+
+
+
+        window.addEventListener("resize", () => {
+
+          chartMapaEcharts?.resize();
+
+        });
+
+      } catch (e) {
+
+        console.warn("No se pudo registrar colombia.svg en ECharts:", e);
+
+      }
+
+    }
+
+
+
+    const MAPA_ID_A_SVG_NAME = {
+
+      "CO-AMA": "Amazonas", "CO-ANT": "Antioquia", "CO-ARA": "Arauca", "CO-ATL": "Atlántico",
+
+      "CO-BOL": "Bolívar", "CO-BOY": "Boyacá", "CO-CAL": "Caldas", "CO-CAQ": "Caquetá",
+
+      "CO-CAS": "Casanare", "CO-CAU": "Cauca", "CO-CES": "Cesar", "CO-CHO": "Chocó",
+
+      "CO-COR": "Córdoba", "CO-CUN": "Cundinamarca", "CO-GUA": "Guainia", "CO-GUV": "Guaviare",
+
+      "CO-HUI": "Huila", "CO-MAG": "Magdalena", "CO-MET": "Meta", "CO-NAR": "Nariño",
+
+      "CO-NSA": "Norde de Santander", "CO-PUT": "Putumayo", "CO-QUI": "Quindio",
+
+      "CO-RIS": "Risaralda", "CO-SAN": "Santander", "CO-SUC": "Sucre", "CO-TOL": "Tolima",
+
+      "CO-VAU": "Vaupés", "CO-VID": "Vichada", "CO-DC": "Distrito Capital de Bogotá",
+
+      "CO-LAG": "La Guajira", "CO-SAP": "San Andrés, Providencia y Santa Catalina"
+
+    };
+
+
+
+    function pintarMapaColombia(baseTerritorial, totalNacional, dptoActivo, mapaIdDptoInfo) {
+
+      if (!chartMapaEcharts) return;
+
+      try { chartMapaEcharts.resize(); } catch (_) { }
+
+
+
+      const seriesData = [];
+
+      mapaIdDptoInfo.forEach((info, cid) => {
+
+        const svgName = MAPA_ID_A_SVG_NAME[cid] || info.dpto;
+
+        const estaSeleccionado = dptoActivo && (dptoActivo.toLowerCase() === info.dpto.toLowerCase() || normalizarDptoAId(dptoActivo) === cid);
+
+        seriesData.push({
+
+          name: svgName,
+
+          value: info.val,
+
+          dpto: info.dpto,
+
+          share: info.share,
+
+          mujeres: info.mujeres,
+
+          pctMujeres: info.pctMujeres,
+
+          hombres: info.hombres,
+
+          pctHombres: info.pctHombres,
+
+          puesto: info.puesto,
+
+          selected: estaSeleccionado
+
+        });
+
+      });
+
+
+
+      const maxVal = Math.max(...seriesData.map(d => d.value), 100);
+
+
+
+      chartMapaEcharts.setOption({
+
+        tooltip: {
+
+          trigger: "item",
+
+          backgroundColor: "rgba(40, 48, 68, 0.96)",
+
+          borderColor: "#283044",
+
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif" },
+
+          formatter: p => {
+
+            const d = p.data;
+
+            if (!d) return p.name;
+
+            return `
+
+              <strong style="color:#FFCC00;font-size:13px;">${d.dpto}</strong><br/>
+
+              ${d.puesto ? `<span style="font-size:11px;color:#CBD5E1;">Puesto #${d.puesto} a nivel nacional</span><br/>` : ""}
+
+              Créditos: <b>${fmt(d.value)}</b> (${pct(d.share)})<br/>
+
+              Mujeres: <b>${fmt(d.mujeres)}</b> (${pct(d.pctMujeres)}) · Hombres: <b>${fmt(d.hombres)}</b> (${pct(d.pctHombres)})<br/>
+
+              <span style="font-size:10.5px;color:#94A3B8;">${d.selected ? 'Filtro activo · Clic para quitar' : 'Clic para filtrar este departamento'}</span>
+
+            `;
+
+          }
+
+        },
+
+        visualMap: {
+
+          min: 0,
+
+          max: maxVal,
+
+          left: 10,
+
+          bottom: 10,
+
+          text: ["Alto", "Bajo"],
+
+          calculable: true,
+
+          inRange: {
+
+            color: ["#F0FDF4", "#86EFAC", "#22C55E", "#15803D", "#004E98", "#1E1B4B"]
+
+          },
+
+          textStyle: { color: "#64748B", fontSize: 11, fontFamily: "'IBM Plex Sans'" }
+
+        },
+
+        series: [{
+
+          name: "Créditos ICETEX",
+
+          type: "map",
+
+          map: "colombia_svg",
+
+          roam: true,
+
+          zoom: 1.1,
+
+          scaleLimit: { min: 0.9, max: 4.5 },
+
+          emphasis: {
+
+            itemStyle: {
+
+              areaColor: "#FFCC00",
+
+              borderColor: "#283044",
+
+              borderWidth: 1.5
+
+            },
+
+            label: { show: false }
+
+          },
+
+          select: {
+
+            itemStyle: {
+
+              areaColor: "#FFCC00",
+
+              borderColor: "#283044",
+
+              borderWidth: 2
+
+            },
+
+            label: { show: false }
+
+          },
+
+          itemStyle: {
+
+            borderColor: "#FFFFFF",
+
+            borderWidth: 0.75
+
+          },
+
+          data: seriesData
+
+        }]
+
+      });
+
+    }
+
+
+
+    // ==========================================================
+
+    // DIAGRAMA DE SANKEY: TRAYECTORIA SOCIOECONÓMICA
+
+    // ==========================================================
+
+    let chartSankey = null;
+
+
+
+    function renderizarSankeySocioeconomico(filas, total) {
+
+      const dom = $("g-sankey-socioeconomico");
+
+      if (!dom || typeof echarts === "undefined") return;
+
+
+
+      if (!chartSankey) {
+
+        chartSankey = echarts.init(dom);
+
+      }
+
+
+
+      if (!filas || filas.length === 0 || total === 0) {
+
+        chartSankey.clear();
+
+        dom.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#64748B;font-size:13px;">Sin datos con los filtros seleccionados</div>';
+
+        return;
+
+      }
+
+
+
+      const normEstrato = e => {
+
+        if (!e || String(e).trim() === "" || String(e).trim() === "N/A") return "Sin estrato";
+
+        return "Estrato " + String(e).trim();
+
+      };
+
+
+
+      const normSector = s => {
+
+        if (!s || s === "N/A") return "Ext. / Internacional";
+
+        const su = String(s).toUpperCase();
+
+        if (su === "PRIVADO") return "Universidad Privada";
+
+        if (su === "OFICIAL") return "Universidad Pública";
+
+        return String(s);
+
+      };
+
+
+
+      const normNivel = n => {
+
+        if (!n || n === "N/A" || n === "Exterior") return "Exterior / Otros";
+
+        const nl = String(n).toLowerCase();
+
+        if (nl.includes("universitario") && !nl.includes("especializ")) return "Pregrado Universitario";
+
+        if (nl.includes("tecnol") || nl.includes("tecnic") || nl.includes("tcnic")) return "Técnico / Tecnológico";
+
+        if (nl.includes("especializ") || nl.includes("maestr") || nl.includes("doctor") || nl.includes("medico") || nl.includes("médico")) return "Posgrados";
+
+        return "Otros Niveles";
+
+      };
+
+
+
+      const l1 = new Map();
+
+      const l2 = new Map();
+
+
+
+      for (const r of filas) {
+
+        const v = Number(r.valor) || 0;
+
+        if (v <= 0) continue;
+
+        const e = normEstrato(r.estrato);
+
+        const s = normSector(r.sector_ies);
+
+        const n = normNivel(r.nivel);
+
+
+
+        const k1 = `${e}__$$__${s}`;
+
+        const k2 = `${s}__$$__${n}`;
+
+        l1.set(k1, (l1.get(k1) || 0) + v);
+
+        l2.set(k2, (l2.get(k2) || 0) + v);
+
+      }
+
+
+
+      const nodesSet = new Set();
+
+      const links = [];
+
+
+
+      for (const [k, v] of l1.entries()) {
+
+        if (v > 0) {
+
+          const [src, tgt] = k.split("__$$__");
+
+          nodesSet.add(src);
+
+          nodesSet.add(tgt);
+
+          links.push({ source: src, target: tgt, value: v });
+
+        }
+
+      }
+
+
+
+      for (const [k, v] of l2.entries()) {
+
+        if (v > 0) {
+
+          const [src, tgt] = k.split("__$$__");
+
+          nodesSet.add(src);
+
+          nodesSet.add(tgt);
+
+          links.push({ source: src, target: tgt, value: v });
+
+        }
+
+      }
+
+
+
+      const coloresNodos = {
+
+        "Estrato 1": "#004E98",
+
+        "Estrato 2": "#1E6BB8",
+
+        "Estrato 3": "#3B82F6",
+
+        "Estrato 4": "#60A5FA",
+
+        "Estrato 5": "#93C5FD",
+
+        "Estrato 6": "#BAE6FD",
+
+        "Sin estrato": "#94A3B8",
+
+        "Universidad Privada": "#004E98",
+
+        "Universidad Pública": "#10B981",
+
+        "Ext. / Internacional": "#64748B",
+
+        "Pregrado Universitario": "#1B3556",
+
+        "Posgrados": "#FFCC00",
+
+        "Técnico / Tecnológico": "#0EA5E9",
+
+        "Exterior / Otros": "#94A3B8",
+
+        "Otros Niveles": "#CBD5E1"
+
+      };
+
+
+
+      const nodes = [...nodesSet].map(name => ({
+
+        name,
+
+        itemStyle: {
+
+          color: coloresNodos[name] || "#004E98",
+
+          borderColor: "#FFFFFF",
+
+          borderWidth: 2
+
+        }
+
+      }));
+
+
+
+      const orden = [
+
+        "Estrato 1", "Estrato 2", "Estrato 3", "Estrato 4", "Estrato 5", "Estrato 6", "Sin estrato",
+
+        "Universidad Privada", "Universidad Pública", "Ext. / Internacional",
+
+        "Pregrado Universitario", "Posgrados", "Técnico / Tecnológico", "Exterior / Otros", "Otros Niveles"
+
+      ];
+
+      nodes.sort((a, b) => {
+
+        const ia = orden.indexOf(a.name);
+
+        const ib = orden.indexOf(b.name);
+
+        return (ia !== -1 ? ia : 99) - (ib !== -1 ? ib : 99);
+
+      });
+
+
+
+      const option = {
+
+        tooltip: {
+
+          trigger: "item",
+
+          triggerOn: "mousemove",
+
+          backgroundColor: "#1E293B",
+
+          borderColor: "#004E98",
+
+          borderWidth: 1,
+
+          textStyle: { color: "#FFFFFF", fontFamily: "'IBM Plex Sans', sans-serif", fontSize: 12 },
+
+          formatter: params => {
+
+            if (params.dataType === "edge") {
+
+              const p = total > 0 ? (params.value / total * 100).toFixed(1) : 0;
+
+              return `
+
+                <div style="font-weight:700; color:#FFCC00; margin-bottom:4px;">Flujo de Trayectoria</div>
+
+                <div style="margin-bottom:2px;"><b>${params.data.source}</b> ➔ <b>${params.data.target}</b></div>
+
+                <div style="display:flex; justify-content:space-between; gap:16px;">
+
+                  <span>Volumen:</span>
+
+                  <b>${params.value.toLocaleString("es-CO")} créditos</b>
+
+                </div>
+
+                <div style="display:flex; justify-content:space-between; gap:16px;">
+
+                  <span>Participación:</span>
+
+                  <b>${p}% del total</b>
+
+                </div>
+
+              `;
+
+            } else {
+
+              const v = params.value || 0;
+
+              const p = total > 0 ? (v / total * 100).toFixed(1) : 0;
+
+              return `
+
+                <div style="font-weight:700; color:#FFCC00; margin-bottom:4px;">${params.name}</div>
+
+                <div style="display:flex; justify-content:space-between; gap:16px;">
+
+                  <span>Créditos asociados:</span>
+
+                  <b>${v.toLocaleString("es-CO")}</b>
+
+                </div>
+
+                <div style="display:flex; justify-content:space-between; gap:16px;">
+
+                  <span>Participación:</span>
+
+                  <b>${p}%</b>
+
+                </div>
+
+              `;
+
+            }
+
+          }
+
+        },
+
+        series: [
+
+          {
+
+            type: "sankey",
+
+            layout: "none",
+
+            emphasis: { focus: "adjacency" },
+
+            nodeAlign: "justify",
+
+            orient: "horizontal",
+
+            left: 110,
+
+            top: 25,
+
+            right: 195,
+
+            bottom: 25,
+
+            nodeWidth: 16,
+
+            nodeGap: 12,
+
+            draggable: false,
+
+            data: nodes,
+
+            links: links,
+
+            levels: [
+
+              {
+
+                depth: 0,
+
+                label: {
+
+                  position: "left",
+
+                  distance: 8,
+
+                  color: "#1E293B",
+
+                  fontFamily: "'IBM Plex Sans', sans-serif",
+
+                  fontSize: 11.5,
+
+                  fontWeight: 600
+
+                }
+
+              },
+
+              {
+
+                depth: 1,
+
+                label: {
+
+                  position: "right",
+
+                  distance: 8,
+
+                  color: "#1E293B",
+
+                  fontFamily: "'IBM Plex Sans', sans-serif",
+
+                  fontSize: 11.5,
+
+                  fontWeight: 600
+
+                }
+
+              },
+
+              {
+
+                depth: 2,
+
+                label: {
+
+                  position: "right",
+
+                  distance: 8,
+
+                  color: "#1E293B",
+
+                  fontFamily: "'IBM Plex Sans', sans-serif",
+
+                  fontSize: 11.5,
+
+                  fontWeight: 600
+
+                }
+
+              }
+
+            ],
+
+            label: {
+
+              color: "#1E293B",
+
+              fontFamily: "'IBM Plex Sans', sans-serif",
+
+              fontSize: 11.5,
+
+              fontWeight: 600,
+
+              formatter: params => {
+
+                const v = params.value || 0;
+
+                return total > 0 ? `${params.name} (${(v / total * 100).toFixed(1)}%)` : params.name;
+
+              }
+
+            },
+
+            lineStyle: {
+
+              color: "gradient",
+
+              curveness: 0.5,
+
+              opacity: 0.35
+
+            }
+
+          }
+
+        ]
+
+      };
+
+
+
+      chartSankey.setOption(option, true);
+
+      const badgeTotal = $("badge-sankey-total");
+
+      if (badgeTotal) {
+
+        badgeTotal.textContent = `${total.toLocaleString("es-CO")} créditos analizados`;
+
+      }
+
+    }
+
+
+
+
+
+
+
+    // ─── Plugin de Centro para Gráfico de Dona (Torta Ejecutiva) ───
+
+    const pluginCentroDona = {
+
+      id: "centroDona",
+
+      afterDraw(chart) {
+
+        if (chart.config.type !== "doughnut") return;
+
+        const { ctx, chartArea } = chart;
+
+        if (!chartArea) return;
+
+        const centerX = (chartArea.left + chartArea.right) / 2;
+
+        const centerY = (chartArea.top + chartArea.bottom) / 2;
+
+        const dataArr = chart.data.datasets[0].data || [];
+
+        const total = chart._refTotal || dataArr.reduce((a, b) => a + Number(b || 0), 0);
+
+        const val0 = Number(dataArr[0] || 0);
+
+        const pct0 = total > 0 ? (val0 / total * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+
+        const label0 = chart.data.labels[0] || "";
+
+
+
+        ctx.save();
+
+        ctx.textAlign = "center";
+
+        ctx.textBaseline = "middle";
+
+
+
+        // Cifra principal (% dominante)
+
+        ctx.font = "800 24px 'IBM Plex Sans', system-ui, sans-serif";
+
+        ctx.fillStyle = "#004E98";
+
+        ctx.fillText(pct0, centerX, centerY - 9);
+
+
+
+        // Subtítulo indicador
+
+        ctx.font = "600 11px 'IBM Plex Sans', system-ui, sans-serif";
+
+        ctx.fillStyle = "#64748B";
+
+        ctx.fillText(label0, centerX, centerY + 13);
+
+
+
+        ctx.restore();
+
+      }
+
+    };
+
+
+
+    function dona(id, etiquetas, valores, alClic, colores, refTotal = null) {
+
+      const chart = graficos[id];
+
+      const total = refTotal || valores.reduce((a, b) => a + Number(b || 0), 0);
+
+      const bg = Array.isArray(colores) ? colores : ["#004E98", "#10B981", "#94A3B8"];
+
+      const hoverBg = bg.map(c => c === "#004E98" ? "#003870" : (c === "#10B981" ? "#059669" : "#64748B"));
+
+
+
+      if (chart && chart.config.type === "doughnut") {
+
+        chart.data.labels = etiquetas;
+
+        chart.data.datasets[0].data = valores;
+
+        chart.data.datasets[0].backgroundColor = bg;
+
+        chart.data.datasets[0].hoverBackgroundColor = hoverBg;
+
+        chart._refTotal = total;
+
+        chart.options.onClick = (e, els) => els[0] && alClic?.(els[0].index);
+
+        chart.update({ duration: 500, easing: "easeOutQuart" });
+
+        return;
+
+      }
+
+
+
+      chart?.destroy();
+
+      const nuevoChart = new Chart($(id), {
+
+        type: "doughnut",
+
+        plugins: [pluginCentroDona],
+
+        data: {
+
+          labels: etiquetas,
+
+          datasets: [{
+
+            data: valores,
+
+            backgroundColor: bg,
+
+            hoverBackgroundColor: hoverBg,
+
+            borderWidth: 2.5,
+
+            borderColor: "#FFFFFF",
+
+            hoverOffset: 6
+
+          }]
+
+        },
+
+        options: {
+
+          maintainAspectRatio: false,
+
+          cutout: "68%",
+
+          onClick: (e, els) => els[0] && alClic?.(els[0].index),
+
+          plugins: {
+
+            legend: {
+
+              display: true,
+
+              position: "bottom",
+
+              labels: {
+
+                boxWidth: 10,
+
+                boxHeight: 10,
+
+                usePointStyle: true,
+
+                pointStyle: "circle",
+
+                padding: 12,
+
+                font: {
+
+                  family: "'IBM Plex Sans', sans-serif",
+
+                  size: 11.5,
+
+                  weight: 600
+
+                },
+
+                color: "#374151",
+
+                generateLabels: ch => {
+
+                  const ds = ch.data.datasets[0];
+
+                  const t = ch._refTotal || ds.data.reduce((a, b) => a + Number(b || 0), 0);
+
+                  return ch.data.labels.map((l, i) => {
+
+                    const v = Number(ds.data[i] || 0);
+
+                    const p = t > 0 ? (v / t * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+
+                    return {
+
+                      text: `${l}: ${p}`,
+
+                      fillStyle: ds.backgroundColor[i],
+
+                      strokeStyle: ds.borderColor,
+
+                      lineWidth: 0,
+
+                      hidden: false,
+
+                      index: i
+
+                    };
+
+                  });
+
+                }
+
+              }
+
+            },
+
+            tooltip: {
+
+              backgroundColor: "rgba(40,48,68,0.98)",
+
+              titleColor: "#FFCC00",
+
+              bodyColor: "#FFFFFF",
+
+              borderColor: "#004E98",
+
+              borderWidth: 1,
+
+              padding: 10,
+
+              cornerRadius: 6,
+
+              callbacks: {
+
+                label: c => {
+
+                  const v = Number(c.raw || 0);
+
+                  const t = c.chart._refTotal || c.dataset.data.reduce((a, b) => a + Number(b || 0), 0);
+
+                  const p = t > 0 ? (v / t * 100).toFixed(1).replace(".", ",") + " %" : "0 %";
+
+                  return ` ${fmt(v)} créditos (${p} del total)`;
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      });
+
+      nuevoChart._refTotal = total;
+
+      graficos[id] = nuevoChart;
+
+    }
+
+
+
+    function pintar() {
+
+      const cfg = VISTAS[vista], filas = DATOS[vista].filas, st = ESTADO[vista], info = DERIVADOS[vista];
+
+      const base = filtrar(filas);
+
+      const total = suma(base);
+
+      const anioTexto = st.anio || `${info.anios[0]}–${info.anios.at(-1)}`;
+
+
+
+      // La tendencia ignora año y periodo: siempre muestra todo lo publicado, con los demás filtros.
+
+      const totalesAnio = new Map(sumarPor(filtrar(filas, ["anio", "periodo"]), "anio", r => r.valor));
+
+      const serie = info.anios.map(a => totalesAnio.get(a) ?? 0);
+
+      const prev = st.anio && !st.periodo ? totalesAnio.get(Number(st.anio) - 1) : null;
+
+
+
+      const parcial = info.parcial ? ` El año ${info.parcial} registra solo ${pct(totalesAnio.get(info.parcial) / (totalesAnio.get(info.anioKpi) || 1) * 100)} de un año típico; se trata como parcial y las tarjetas usan ${info.anioKpi}.` : "";
+
+      $("titulo").textContent = `${cfg.nombre} · ICETEX`;
+
+      $("subtitulo").textContent = `${cfg.nombre} de ICETEX entre ${info.anios[0]} y ${info.anios.at(-1)}. `
+
+        + `Tarjetas, rankings y detalle en ${anioTexto}; la tendencia cubre todos los años.${parcial}`;
+
+      $("corte").textContent = `Datos generados: ${info.generado.slice(0, 10)} · Último año: ${info.ultimo}`;
+
+
+
+      // ─── Tarjetas KPI Agrupadas por Categoría ───
+
+      // ─── Estadísticas territoriales completas (Total, Mujeres, Hombres y Participación Nacional) ───
+
+      const baseTerritorial = filtrar(filas, ["departamento"]);
+
+      const totalNacional = suma(baseTerritorial);
+
+
+
+      const mapaDptoStats = new Map();
+
+      for (const r of baseTerritorial) {
+
+        let d = mapaDptoStats.get(r.departamento);
+
+        if (!d) {
+
+          d = { dpto: r.departamento, val: 0, mujeres: 0, hombres: 0 };
+
+          mapaDptoStats.set(r.departamento, d);
+
+        }
+
+        const v = Number(r.valor) || 0;
+
+        d.val += v;
+
+        if (r.sexo === "Femenino") d.mujeres += v;
+
+        else if (r.sexo === "Masculino") d.hombres += v;
+
+      }
+
+      const rankingNacionalDeptos = [...mapaDptoStats.values()].sort((a, b) => b.val - a.val);
+
+      const topDepto = rankingNacionalDeptos[0] || null;
+
+
+
+      const mapaIdDptoInfo = new Map();
+
+      rankingNacionalDeptos.forEach((d, idx) => {
+
+        const cid = normalizarDptoAId(d.dpto);
+
+        if (cid) {
+
+          const share = totalNacional > 0 ? (d.val / totalNacional) * 100 : 0;
+
+          const pctMujeres = d.val > 0 ? (d.mujeres / d.val) * 100 : 0;
+
+          const pctHombres = d.val > 0 ? (d.hombres / d.val) * 100 : 0;
+
+          mapaIdDptoInfo.set(cid, {
+
+            dpto: d.dpto,
+
+            val: d.val,
+
+            share,
+
+            mujeres: d.mujeres,
+
+            pctMujeres,
+
+            hombres: d.hombres,
+
+            pctHombres,
+
+            puesto: idx + 1
+
+          });
+
+        }
+
+      });
+
+
+
+      // ─── 6 Indicadores Ejecutivos Independientes (High-Fidelity Executive Dashboard) ───
+
+      const totalAcumulado = suma(filtrar(filas, ["anio", "periodo"]));
+
+      const shareAnualAcum = totalAcumulado > 0 ? (total / totalAcumulado * 100) : null;
+
+
+
+      const mujeresVal = suma(base.filter(r => r.sexo === "Femenino"));
+
+      const tieneEstrato = Boolean(DATOS[vista].filas[0]?.estrato);
+
+      const estratos123 = tieneEstrato ? suma(base.filter(r => ["1", "2", "3"].includes(String(r.estrato)))) : null;
+
+      const hombresVal = suma(base.filter(r => r.sexo === "Masculino"));
+
+
+
+      const pctMujeresVal = total > 0 ? (mujeresVal / total * 100) : 0;
+
+      const pctEstratosVal = (tieneEstrato && total > 0) ? (estratos123 / total * 100) : null;
+
+      const pctHombresVal = total > 0 ? (hombresVal / total * 100) : 0;
+
+
+
+      const numDeptos = unicos(base, "departamento").length;
+
+      const pctCobertura = Math.min(100, (numDeptos / 33) * 100);
+
+
+
+      // Card 1: Volumen Año Activo (Hero)
+
+      let c1Delta = "+57K créditos", c1DeltaCls = "delta-neutral";
+
+      if (prev != null) {
+
+        const dPct = (total - prev) / prev * 100;
+
+        c1Delta = (dPct >= 0 ? "+" : "−") + pct(Math.abs(dPct)) + " vs año ant.";
+
+        c1DeltaCls = dPct >= 0 ? "delta-up" : "delta-down";
+
+      } else if (st.periodo) {
+
+        c1Delta = `Periodo ${st.periodo}`;
+
+      }
+
+
+
+      const c1_volumen = tarjeta({
+
+        kicker: "VOLUMEN TOTAL",
+
+        t: cfg.nombre,
+
+        v: total,
+
+        esHero: true,
+
+        badge: st.periodo ? `Periodo ${st.periodo}` : (st.anio ? `Año ${st.anio}` : "Histórico"),
+
+        badgeClass: "badge-gold",
+
+        progreso: 100,
+
+        progresoColor: "#004E98",
+
+        nota: st.periodo ? `Periodo ${st.periodo}` : (!st.anio ? "Todos los años activos" : (prev == null ? "Primer año de la serie" : `Comparativo vs ${st.anio ? Number(st.anio) - 1 : "anterior"}`)),
+
+        delta: c1Delta,
+
+        deltaClass: c1DeltaCls,
+
+        popupData: {
+
+          titulo: "Volumen Anual de Créditos",
+
+          mide: "Total de nuevos beneficiarios y colocaciones otorgadas en el periodo seleccionado.",
+
+          calculo: "Sumatoria de registros de créditos otorgados",
+
+          fuente: "ICETEX · Datos Abiertos"
+
+        }
+
+      });
+
+
+
+      // Card 2: Participación Femenina
+
+      const c2_mujeres = tarjeta({
+
+        kicker: "ENFOQUE DE GÉNERO",
+
+        t: st.departamento ? `Mujeres en ${st.departamento}` : "Mujeres Beneficiarias",
+
+        v: mujeresVal,
+
+        badge: total ? `${pct(pctMujeresVal)}` : "Sin datos",
+
+        badgeClass: pctMujeresVal >= 50 ? "badge-success" : "badge-primary",
+
+        progreso: pctMujeresVal,
+
+        progresoColor: "#004E98",
+
+        nota: st.departamento ? `${fmt(mujeresVal)} de ${fmt(total)} créditos en territorio` : `${fmt(mujeresVal)} de ${fmt(total)} créditos nacionales`,
+
+        delta: pct(pctMujeresVal) + " mujeres",
+
+        deltaClass: "delta-up",
+
+        alClic: () => fijarFiltro("sexo", "Femenino"),
+
+        popupData: {
+
+          titulo: "Participación Femenina",
+
+          mide: "Proporción de mujeres beneficiarias sobre el total de colocaciones activas.",
+
+          calculo: "(Créditos a mujeres / Total créditos) × 100",
+
+          fuente: "ICETEX · Caracterización de Género"
+
+        }
+
+      });
+
+
+
+      // Card 3: Cobertura Territorial
+
+      const c3_cobertura = tarjeta({
+
+        kicker: "COBERTURA TERRITORIAL",
+
+        t: "Cobertura Departamental",
+
+        v: numDeptos,
+
+        badge: numDeptos >= 33 ? "100% Cobertura" : `${numDeptos} / 33 deptos`,
+
+        badgeClass: "badge-success",
+
+        progreso: pctCobertura,
+
+        progresoColor: "#15803D",
+
+        nota: st.departamento ? `Presencia activa en ${st.departamento}` : `Presencia nacional en ${anioTexto}`,
+
+        delta: `${numDeptos} de 33 deptos`,
+
+        deltaClass: numDeptos >= 32 ? "delta-up" : "delta-neutral",
+
+        popupData: {
+
+          titulo: "Cobertura Departamental",
+
+          mide: "Departamentos con al menos una colocación activa en el periodo frente a los 33 territorios nacionales.",
+
+          calculo: "(Departamentos con colocación / 33 territorios) × 100",
+
+          fuente: "ICETEX · Localización Geográfica"
+
+        }
+
+      });
+
+
+
+      // Card 4: Serie Histórica Acumulada
+
+      const c4_acumulado = tarjeta({
+
+        kicker: "SERIE HISTÓRICA",
+
+        t: "Colocación Acumulada",
+
+        v: totalAcumulado,
+
+        badge: `${info.anios.length} años registrados`,
+
+        badgeClass: "badge-neutral",
+
+        progreso: shareAnualAcum,
+
+        progresoColor: "#283044",
+
+        nota: `Serie histórica${info.parcial ? ` · ${info.parcial} parcial` : ""}`,
+
+        delta: `${pct(shareAnualAcum)} este año`,
+
+        deltaClass: "delta-neutral",
+
+        popupData: {
+
+          titulo: "Colocación Acumulada Multianual",
+
+          mide: "Volumen total consolidado de créditos colocados a lo largo de toda la serie histórica registrada.",
+
+          calculo: "Sumatoria histórica multianual continua",
+
+          fuente: "ICETEX · Serie Histórica CADIT"
+
+        }
+
+      });
+
+
+
+      // Card 5: Inclusión Social (Estratos 1, 2 y 3)
+
+      const c5_estratos = tieneEstrato
+
+        ? tarjeta({
+
+          kicker: "FOCALIZACIÓN SOCIAL",
+
+          t: "Estratos 1, 2 y 3",
+
+          v: estratos123,
+
+          badge: pctEstratosVal ? `${pct(pctEstratosVal)} del total` : "Sin datos",
+
+          badgeClass: "badge-primary",
+
+          progreso: pctEstratosVal,
+
+          progresoColor: "#004E98",
+
+          nota: "Población focalizada prioritaria",
+
+          delta: `${pct(pctEstratosVal)} del total`,
+
+          deltaClass: "delta-up",
+
+          alClic: () => fijarFiltro("estrato", "1"),
+
+          popupData: {
+
+            titulo: "Focalización Social (Estratos 1, 2 y 3)",
+
+            mide: "Porcentaje de créditos otorgados a población de estratos socioeconómicos de menores ingresos.",
+
+            calculo: "(Créditos Estratos 1 + 2 + 3 / Total créditos) × 100",
+
+            fuente: "ICETEX · Focalización Socioeconómica"
+
+          }
+
+        })
+
+        : tarjeta({
+
+          kicker: "ENFOQUE DE GÉNERO",
+
+          t: st.departamento ? `Hombres en ${st.departamento}` : "Hombres Beneficiarios",
+
+          v: hombresVal,
+
+          badge: total ? `${pct(pctHombresVal)}` : "Sin datos",
+
+          badgeClass: "badge-neutral",
+
+          progreso: pctHombresVal,
+
+          progresoColor: "#64748B",
+
+          nota: st.departamento ? `${fmt(hombresVal)} de ${fmt(total)} en territorio` : `${fmt(hombresVal)} de ${fmt(total)} créditos nacionales`,
+
+          delta: `${pct(pctHombresVal)} hombres`,
+
+          deltaClass: "delta-neutral",
+
+          alClic: () => fijarFiltro("sexo", "Masculino"),
+
+          popupData: {
+
+            titulo: "Participación Masculina",
+
+            mide: "Proporción de hombres beneficiarios de créditos en el periodo seleccionado.",
+
+            calculo: "(Créditos a hombres / Total créditos) × 100",
+
+            fuente: "ICETEX · Caracterización de Género"
+
+          }
+
+        });
+
+
+
+      // Card 6: Territorio Líder o Seleccionado
+
+      const shareDpto = totalNacional > 0 ? (total / totalNacional * 100) : 0;
+
+      const posDpto = st.departamento ? (rankingNacionalDeptos.findIndex(d => d.dpto.toLowerCase() === st.departamento.toLowerCase()) + 1) : null;
+
+      const topDptoVal = topDepto ? topDepto.val : 0;
+
+      const shareTopDpto = (topDepto && totalNacional > 0) ? (topDptoVal / totalNacional * 100) : 0;
+
+
+
+      const c6_territorio = st.departamento
+
+        ? tarjeta({
+
+          kicker: "TERRITORIO ACTIVO",
+
+          t: "Departamento Seleccionado",
+
+          texto: st.departamento,
+
+          badge: posDpto ? `Puesto #${posDpto}` : "Filtro activo",
+
+          badgeClass: "badge-gold",
+
+          progreso: shareDpto,
+
+          progresoColor: "#FFCC00",
+
+          nota: `${fmt(total)} créditos (${pct(shareDpto)} del país)`,
+
+          delta: `${pct(shareDpto)} del país`,
+
+          deltaClass: "delta-neutral",
+
+          alClic: () => quitarFiltro("departamento"),
+
+          popupData: {
+
+            titulo: "Concentración Territorial",
+
+            mide: "Peso porcentual del departamento seleccionado respecto al total nacional del periodo.",
+
+            calculo: "(Créditos en territorio / Total nacional) × 100",
+
+            fuente: "ICETEX · Concentración Territorial"
+
+          }
+
+        })
+
+        : tarjeta({
+
+          kicker: "CONCENTRACIÓN REGIONAL",
+
+          t: "Departamento Líder",
+
+          texto: topDepto ? topDepto.dpto : "Sin datos",
+
+          badge: "Líder nacional",
+
+          badgeClass: "badge-gold",
+
+          progreso: shareTopDpto,
+
+          progresoColor: "#FFCC00",
+
+          nota: topDepto && totalNacional ? `${fmt(topDptoVal)} créditos (${pct(shareTopDpto)} del país)` : "Sin datos",
+
+          delta: `${pct(shareTopDpto)} del país`,
+
+          deltaClass: "delta-neutral",
+
+          alClic: topDepto ? () => fijarFiltro("departamento", topDepto.dpto) : null,
+
+          popupData: {
+
+            titulo: "Departamento Líder Nacional",
+
+            mide: "Participación del departamento con mayor colocación de créditos en el periodo.",
+
+            calculo: "(Créditos departamento líder / Total nacional) × 100",
+
+            fuente: "ICETEX · Concentración Territorial"
+
+          }
+
+        });
+
+
+
+      const seisTarjetas = [c1_volumen, c2_mujeres, c3_cobertura, c4_acumulado, c5_estratos, c6_territorio];
+
+      $("kpis").replaceChildren(...seisTarjetas);
+
+
+
+      detalle.kpis = [
+
+        [`${cfg.nombre} ${anioTexto}`, total],
+
+        [`Acumulado ${info.anios[0]}–${info.anios.at(-1)}`, suma(filtrar(filas, ["anio", "periodo"]))],
+
+        ["Departamentos de origen", unicos(base, "departamento").length],
+
+        ["Mujeres", suma(base.filter(r => r.sexo === "Femenino"))],
+
+        ["Departamento líder", topDepto ? topDepto.dpto : "—"]
+
+      ];
+
+
+
+      // Tendencia anual (Pregunta analítica y unidad de medida)
+
+      let seriesGrafico;
+
+      if (modoTendencia === "sexo") {
+
+        const baseTendenciaSexo = filtrar(filas, ["anio", "periodo", "sexo"]);
+
+        const femTotales = new Map(sumarPor(baseTendenciaSexo.filter(r => r.sexo === "Femenino"), "anio", r => r.valor));
+
+        const mascTotales = new Map(sumarPor(baseTendenciaSexo.filter(r => r.sexo === "Masculino"), "anio", r => r.valor));
+
+        seriesGrafico = [
+
+          ["Mujeres", info.anios.map(a => femTotales.get(a) ?? 0)],
+
+          ["Hombres", info.anios.map(a => mascTotales.get(a) ?? 0)]
+
+        ];
+
+        $("h-tendencia").textContent = `¿Cómo evoluciona la colocación por sexo entre ${info.anios[0]} y ${info.anios.at(-1)}?`;
+
+      } else {
+
+        seriesGrafico = [[cfg.nombre, serie]];
+
+        const c = serie[0] ? (serie.at(-1) - serie[0]) / serie[0] * 100 : null;
+
+        $("h-tendencia").textContent = c == null
+
+          ? `¿Cómo ha evolucionado la colocación anual de ${cfg.nombre}?`
+
+          : `¿Cuál es la tendencia histórica? ${c >= 0 ? "+" : "−"}${pct(Math.abs(c))} entre ${info.anios[0]} y ${info.anios.at(-1)}`;
+
+      }
+
+      lineas("g-tendencia", info.anios.map(String), seriesGrafico, i => fijarFiltro("anio", info.anios[i]));
+
+      $("s-tendencia").textContent = `Evolución multianual completa de ${cfg.nombre} · Clic en un año para filtrar · Unidad: créditos asignados por año${info.parcial ? ` · ${info.parcial} parcial` : ""}`;
+
+
+
+      // ─── Síntesis de la Serie Multianual (Hitos y Métricas Analíticas) ───
+
+      let maxVal = -1, maxAnio = null;
+
+      let totalHistoricoSerie = 0;
+
+      for (const a of info.anios) {
+
+        const val = totalesAnio.get(a) || 0;
+
+        totalHistoricoSerie += val;
+
+        if (val > maxVal) {
+
+          maxVal = val;
+
+          maxAnio = a;
+
+        }
+
+      }
+
+
+
+      // 1. Récord histórico
+
+      if ($("hito-record-val")) animarNumero($("hito-record-val"), maxVal);
+
+      if ($("hito-record-anio")) $("hito-record-anio").textContent = maxAnio ? String(maxAnio) : "—";
+
+      if ($("hito-record-sub")) $("hito-record-sub").textContent = maxAnio ? `Pico histórico en ${maxAnio}` : "Mayor colocación";
+
+
+
+      // 2. Promedio anual
+
+      const nAnios = info.anios.length || 1;
+
+      const promAnual = Math.round(totalHistoricoSerie / nAnios);
+
+      if ($("hito-promedio-val")) animarNumero($("hito-promedio-val"), promAnual);
+
+      if ($("hito-promedio-sub")) $("hito-promedio-sub").textContent = `Media anual (${nAnios} años observados)`;
+
+
+
+      // 3. Trayectoria multianual (inicio vs cierre)
+
+      const primVal = serie[0] || 0;
+
+      const ultVal = serie[serie.length - 1] || 0;
+
+      if ($("hito-crecimiento-val") && $("hito-crecimiento-tag")) {
+
+        if (primVal > 0) {
+
+          const varPct = ((ultVal - primVal) / primVal) * 100;
+
+          const esPositivo = varPct >= 0;
+
+          $("hito-crecimiento-val").textContent = `${esPositivo ? "+" : ""}${pct(varPct)}`;
+
+          const tag = $("hito-crecimiento-tag");
+
+          tag.textContent = esPositivo ? "Crecimiento" : "Descenso";
+
+          tag.className = "hito-tag " + (esPositivo ? "sube" : "baja");
+
+        } else {
+
+          $("hito-crecimiento-val").textContent = "—";
+
+          $("hito-crecimiento-tag").textContent = "Estable";
+
+          $("hito-crecimiento-tag").className = "hito-tag";
+
+        }
+
+        if ($("hito-crecimiento-sub")) $("hito-crecimiento-sub").textContent = `Variación neta ${info.anios[0]} vs ${info.anios.at(-1)}`;
+
+      }
+
+
+
+      // 4. Participación del año activo
+
+      const anioActivoNum = st.anio ? Number(st.anio) : info.anioKpi;
+
+      const valAnioActivo = totalesAnio.get(anioActivoNum) || 0;
+
+      const partPct = totalHistoricoSerie > 0 ? (valAnioActivo / totalHistoricoSerie * 100) : 0;
+
+      if ($("hito-participacion-label")) $("hito-participacion-label").textContent = st.anio ? `Año filtrado (${st.anio})` : `Año de referencia (${info.anioKpi})`;
+
+      if ($("hito-participacion-val")) $("hito-participacion-val").textContent = pct(partPct);
+
+      if ($("hito-participacion-sub")) $("hito-participacion-sub").textContent = `${fmt(valAnioActivo)} de ${fmt(totalHistoricoSerie)} en la serie`;
+
+
+
+      // Impacto social y territorial (Preguntas analíticas, base uniforme y unidades explícitas)
+
+      const tieneSocial = Boolean(DATOS[vista].filas[0]?.estrato);
+
+      $("seccion-social").hidden = !tieneSocial;
+
+      if (tieneSocial) {
+
+        // 1. Estrato socioeconómico (1 al 6)
+
+        const estratos = sumarPor(base, "estrato", r => r.valor).sort((a, b) => String(a[0]).localeCompare(String(b[0])));
+
+        const coloresEstrato = resolverColoresUniforme(estratos.map(p => p[0]), st.estrato);
+
+        barras("g-estrato", estratos.map(p => etiqueta(p[0])), estratos.map(p => p[1]), i => fijarFiltro("estrato", estratos[i][0]), coloresEstrato, total);
+
+        const e123 = estratos.filter(p => ["1", "2", "3"].includes(String(p[0]))).reduce((s, p) => s + p[1], 0);
+
+        $("h-estrato").textContent = total
+
+          ? `¿En qué estratos se focaliza el crédito? Estratos 1, 2 y 3 concentran ${pct(e123 / total * 100)}`
+
+          : "¿En qué estratos se focaliza el beneficio del crédito?";
+
+        $("s-estrato").textContent = "Distribución por estrato socioeconómico del beneficiario (1 al 6) · Clic para filtrar · Unidad: créditos (% del total)";
+
+
+
+        // 2. Ruralidad DANE
+
+        const ruralidades = sumarPor(base, "ruralidad", r => r.valor).sort((a, b) => b[1] - a[1]);
+
+        const coloresRuralidad = resolverColoresUniforme(ruralidades.map(p => p[0]), st.ruralidad);
+
+        barras("g-ruralidad", ruralidades.map(p => etiqueta(p[0])), ruralidades.map(p => p[1]), i => fijarFiltro("ruralidad", ruralidades[i][0]), coloresRuralidad, total);
+
+        $("h-ruralidad").textContent = ruralidades.length && total
+
+          ? `¿Cuál es el entorno territorial? ${etiqueta(ruralidades[0][0])} concentra el ${pct(ruralidades[0][1] / total * 100)}`
+
+          : "¿Cuál es el entorno territorial de procedencia según el DANE?";
+
+        $("s-ruralidad").textContent = "Clasificación territorial según categorización DANE · Clic para filtrar · Unidad: créditos (% del total)";
+
+
+
+        // 3. Sector de la IES (Gráfico de Torta / Dona ejecutiva)
+
+        const sectores = sumarPor(base, "sector_ies", r => r.valor).sort((a, b) => b[1] - a[1]);
+
+        const coloresSectorDona = sectores.map(p => {
+
+          const nom = String(p[0]).toLowerCase();
+
+          if (nom.includes("privad")) return "#004E98";
+
+          if (nom.includes("oficial") || nom.includes("públic") || nom.includes("public")) return "#10B981";
+
+          return "#94A3B8";
+
+        });
+
+        dona("g-sector", sectores.map(p => etiqueta(p[0])), sectores.map(p => p[1]), i => {
+
+          const valClave = sectores[i][0];
+
+          if (st.sector_ies === valClave) quitarFiltro("sector_ies");
+
+          else fijarFiltro("sector_ies", valClave);
+
+        }, coloresSectorDona, total);
+
+        $("h-sector").textContent = sectores.length && total
+
+          ? `¿Qué sector educativo predomina? ${etiqueta(sectores[0][0])} reúne el ${pct(sectores[0][1] / total * 100)}`
+
+          : "¿Qué proporción estudia en universidades privadas frente a oficiales?";
+
+        $("s-sector").textContent = "Participación según naturaleza jurídica de la IES (Oficial vs Privada) · Clic para filtrar · Unidad: créditos (% del total)";
+
+
+
+        // Renderizar Diagrama de Sankey Socioeconómico reactivo
+
+        renderizarSankeySocioeconomico(base, total);
+
+
+
+      }
+
+
+
+      // ─── Ficha de Síntesis Territorial cuando se selecciona un departamento ───
+
+      const fichaTerritorial = $("ficha-territorial-activa");
+
+      if (fichaTerritorial) {
+
+        if (st.departamento) {
+
+          const cidActivo = normalizarDptoAId(st.departamento);
+
+          const infoDpto = mapaIdDptoInfo.get(cidActivo) || {
+
+            dpto: st.departamento,
+
+            val: total,
+
+            share: totalNacional > 0 ? (total / totalNacional * 100) : 0,
+
+            mujeres: mujeresVal,
+
+            pctMujeres: total > 0 ? (mujeresVal / total * 100) : 0,
+
+            hombres: hombresVal,
+
+            pctHombres: total > 0 ? (hombresVal / total * 100) : 0,
+
+            puesto: rankingNacionalDeptos.findIndex(d => d.dpto.toLowerCase() === st.departamento.toLowerCase()) + 1 || null
+
+          };
+
+
+
+          $("ficha-dpto-nombre").textContent = infoDpto.dpto;
+
+          $("ficha-dpto-ranking").textContent = infoDpto.puesto ? `Puesto #${infoDpto.puesto} a nivel nacional` : "Territorio filtrado";
+
+          animarNumero($("ficha-creditos-val"), infoDpto.val);
+
+          $("ficha-share-val").textContent = pct(infoDpto.share);
+
+          $("ficha-share-sub").textContent = `${fmt(infoDpto.val)} de ${fmt(totalNacional)} créditos nacionales`;
+
+          animarNumero($("ficha-mujeres-val"), infoDpto.mujeres);
+
+          $("ficha-mujeres-pct").textContent = pct(infoDpto.pctMujeres);
+
+          animarNumero($("ficha-hombres-val"), infoDpto.hombres);
+
+          $("ficha-hombres-pct").textContent = pct(infoDpto.pctHombres);
+
+
+
+          $("btn-cerrar-ficha-dpto").onclick = () => quitarFiltro("departamento");
+
+          fichaTerritorial.hidden = false;
+
+          fichaTerritorial.classList.remove("popup-activa");
+
+          void fichaTerritorial.offsetWidth; // Forzar reflow para reiniciar la animación suavemente
+
+          fichaTerritorial.classList.add("popup-activa");
+
+        } else {
+
+          fichaTerritorial.hidden = true;
+
+          fichaTerritorial.classList.remove("popup-activa");
+
+        }
+      }
+
+
+
+      // Ranking departamental (visualización principal) y mapa interactivo complementario
+
+      pintarMapaColombia(baseTerritorial, totalNacional, st.departamento, mapaIdDptoInfo);
+
+      $("h-mapa").textContent = st.departamento
+
+        ? `¿Cómo se ubica ${st.departamento}? Filtro geográfico activo`
+
+        : "¿Cómo se distribuye la cobertura geográfica en el territorio nacional?";
+
+      $("s-mapa").textContent = "Concentración departamental sobre el total nacional · Clic para filtrar · Unidad: % del total nacional";
+
+
+
+      const deptosRanking = rankingNacionalDeptos.slice(0, 10);
+
+      const dptoActivoNombre = st.departamento;
+
+      const coloresDeptos = resolverColoresUniforme(deptosRanking.map(p => p.dpto), dptoActivoNombre);
+
+
+
+      barras("g-deptos", deptosRanking.map(p => p.dpto), deptosRanking.map(p => p.val), i => fijarFiltro("departamento", deptosRanking[i].dpto), coloresDeptos, totalNacional);
+
+      if (graficos["g-deptos"]) {
+
+        graficos["g-deptos"]._infoDeptos = mapaIdDptoInfo;
+
+      }
+
+
+
+      $("h-deptos").textContent = !deptosRanking.length ? "¿Cuáles departamentos lideran la colocación de créditos?" :
+
+        (dptoActivoNombre
+
+          ? `Top 10 departamentos · Seleccionado: ${dptoActivoNombre}`
+
+          : `¿Cuáles departamentos lideran? ${deptosRanking[0].dpto} encabeza con ${pct(deptosRanking[0].val / totalNacional * 100)} del total nacional`);
+
+      $("s-deptos").textContent = "Top 10 departamentos de origen ordenados por volumen · Clic para filtrar · Unidad: créditos (% del total nacional)";
+
+
+
+      // Nivel de formación académica
+
+      const niveles = sumarPor(base, "nivel", r => r.valor).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+      const coloresNivel = resolverColoresUniforme(niveles.map(p => p[0]), st.nivel);
+
+      barras("g-nivel", niveles.map(p => p[0]), niveles.map(p => p[1]), i => fijarFiltro("nivel", niveles[i][0]), coloresNivel, total);
+
+      $("h-nivel").textContent = !niveles.length ? "¿A qué niveles académicos se dirigen los créditos?" :
+
+        `¿Qué nivel académico predomina? ${niveles[0][0]} reúne el ${pct(niveles[0][1] / total * 100)} de ${cfg.plural}`;
+
+      $("s-nivel").textContent = `Participación por nivel de formación en ${cfg.plural} · Clic para filtrar · Unidad: créditos (% del total)`;
+
+
+
+      // Destino del crédito / Modalidad
+
+      const modCreds = sumarPor(base, "modalidad_credito", r => r.valor).sort((a, b) => b[1] - a[1]);
+
+      const coloresMod = resolverColoresUniforme(modCreds.map(p => p[0]), st.modalidad_credito);
+
+      barras("g-modalidad-cred", modCreds.map(p => etiqueta(p[0])), modCreds.map(p => p[1]), i => fijarFiltro("modalidad_credito", modCreds[i][0]), coloresMod, total);
+
+      const txtTituloMod = vista === "beneficiarios" ? "Modalidad de la sublínea" : "Destino del crédito";
+
+      $("h-modalidad-cred").textContent = modCreds.length && total ?
+
+        `¿Para qué rubros educativos específicos se otorgan los recursos? ${etiqueta(modCreds[0][0])} concentra el ${pct(modCreds[0][1] / total * 100)}` : "¿Para qué rubros educativos específicos se otorgan los recursos?";
+
+      $("s-modalidad-cred").textContent = `${txtTituloMod} · Clic para filtrar · Unidad: créditos (% del total)`;
+
+
+
+      // Detalle por departamento.
+
+      const mapa = new Map();
+
+      for (const r of base) {
+
+        const d = mapa.get(r.departamento) || { departamento: r.departamento, valor: 0, mujeres: 0, hombres: 0 };
+
+        d.valor += r.valor;
+
+        if (r.sexo === "Femenino") d.mujeres += r.valor;
+
+        if (r.sexo === "Masculino") d.hombres += r.valor;
+
+        mapa.set(r.departamento, d);
+
+      }
+
+      detalle.filas = [...mapa.values()].sort((a, b) => b.valor - a.valor).map(d => ({ ...d, share: total ? d.valor / total * 100 : 0 }));
+
+      detalle.cols = [["departamento", "Departamento de origen"], ["valor", cfg.nombre, true], ["share", "% del total", true, v => pct(v)],
+
+      ["mujeres", "Mujeres", true], ["hombres", "Hombres", true]];
+
+      if ($("d-detalle")) tabla("d-detalle", detalle.cols, detalle.filas, r => fijarFiltro("departamento", r.departamento));
+
+      if ($("h-detalle")) $("h-detalle").textContent = `Detalle por departamento de origen · ${anioTexto} · ${fmt(detalle.filas.length)} ${detalle.filas.length === 1 ? "departamento" : "departamentos"}`;
+
+      if ($("nota-detalle")) $("nota-detalle").textContent = `Clic en una fila para filtrar por ese departamento. Mujeres y hombres cuentan solo los registros con ese sexo; si no suman el total, el resto es "Sin información" u otro. ${cfg.nota} Fuente: ICETEX · datos.gov.co.`;
+
+      pintarChips();
+
+    }
+
+
+
+    function irA(v) {
+
+      if (v === "snies") { location.href = "index.html"; return; }
+
+      if (v === "sena") { location.href = "sena.html"; return; }
+
+      if (v === "latam") { location.href = "latam.html"; return; }
+
+      if (v === "minciencias") { location.href = "minciencias.html"; return; }
+
+      if (v === "idic") { location.href = "idic.html"; return; }
+
+      if (v === "rues") { location.href = "rues.html"; return; }
+
+      vista = v;
+
+      if ($("buscar")) $("buscar").value = "";
+
+      if ($("resultados")) $("resultados").hidden = true;
+
+      if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
+
+      document.querySelectorAll("#menu button").forEach(b => b.classList.toggle("activa", b.dataset.v === v));
+
+      construirFiltros();
+
+      llenarFiltros();
+
+      $("panel-vista").hidden = false;
+
+      pintar();
+
+      window.scrollTo({ top: 0 });
+
+    }
+
+
+
+    function textoFiltros() {
+
+      const nombres = Object.fromEntries(VISTAS[vista].filtros.map(f => [f.k, f.t]));
+
+      const filas = Object.entries(ESTADO[vista]).filter(([, v]) => v !== "").map(([k, v]) => [nombres[k] ?? k, k === "anio" || k === "periodo" ? v : etiqueta(v)]);
+
+      return filas.length ? filas : [["Filtros", "Ninguno (todos los datos)"]];
+
+    }
+
+
+
+    function nombreArchivo(ext) { return `icetex_${vista}_${new Date().toISOString().slice(0, 10)}.${ext}`; }
+
+
+
+    function descargarXlsx() {
+
+      const libro = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet([
+
+        ["Filtro", "Valor"], ...textoFiltros(), [],
+
+        ["Generado", new Date().toLocaleString("es-CO")], ["Fuente", "ICETEX · datos.gov.co · Base Externa CADIT"]]), "Filtros");
+
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet([["Indicador", "Valor"], ...detalle.kpis]), "Indicadores");
+
+      XLSX.utils.book_append_sheet(libro, XLSX.utils.aoa_to_sheet([detalle.cols.map(c => c[1]), ...detalle.filas.map(r => detalle.cols.map(([k]) => r[k] ?? null))]), "Detalle");
+
+      XLSX.writeFile(libro, nombreArchivo("xlsx"));
+
+    }
+
+
+
+    function descargarPdf() {
+
+      const { jsPDF } = window.jspdf, doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+      const ancho = doc.internal.pageSize.getWidth(), alto = doc.internal.pageSize.getHeight(); let y = 40;
+
+      const linea = (t, tam = 10, negrita = false) => { if (y > alto - 40) { doc.addPage(); y = 40; } doc.setFont("helvetica", negrita ? "bold" : "normal"); doc.setFontSize(tam); doc.text(String(t), 40, y); y += tam + 6; };
+
+      // Encabezado de marca: banda azul marino, logo negativo (proporción 1232x464) y la línea amarilla donde se posa el búho.
+
+      doc.setFillColor(33, 40, 68); doc.rect(0, 0, ancho, 60, "F");
+
+      doc.setFillColor(255, 211, 0); doc.rect(0, 60, ancho, 4, "F");
+
+      if (logoPdf) doc.addImage(logoPdf, "PNG", 40, 12, 96, 36);
+
+      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(16);
+
+      doc.text(`Base Externa · ICETEX · ${VISTAS[vista].nombre}`, 156, 37);
+
+      doc.setTextColor(33, 40, 68); y = 92;
+
+      linea($("titulo").textContent, 14, true);
+
+      linea(`Generado: ${new Date().toLocaleString("es-CO")} · Fuente: ICETEX · datos.gov.co`, 9);
+
+      y += 4; linea("Filtros", 12, true); for (const [k, v] of textoFiltros()) linea(`${k}: ${v}`);
+
+      y += 4; linea("Indicadores", 12, true); for (const [t, v] of detalle.kpis) linea(`${t}: ${typeof v === "number" ? fmt(v) : v}`);
+
+      const ids = ["g-tendencia", "g-estrato", "g-sector", "g-ruralidad", "g-deptos", "g-nivel", "g-modalidad-cred"]
+
+        .filter(id => $(id) && !$(id).closest("[hidden]"));
+
+      doc.addPage(); y = 40; const w = (ancho - 100) / 2;
+
+      ids.forEach((id, i) => {
+
+        if (i > 0 && i % 4 === 0) { doc.addPage(); y = 40; }
+
+        const c = $(id);
+
+        if (!c) return;
+
+        const h = Math.min(w * c.height / c.width, (alto - 140) / 2), wi = h * c.width / c.height;
+
+        const slot = i % 4;
+
+        const col = slot % 2, filaIdx = Math.floor(slot / 2);
+
+        const x = 40 + col * (w + 20), yi = 40 + filaIdx * (h + 40);
+
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+
+        doc.text(doc.splitTextToSize(c.closest(".panel").querySelector("h2").textContent, w)[0], x, yi);
+
+        doc.addImage(c.toDataURL("image/png"), "PNG", x, yi + 8, wi, h);
+
+      });
+
+      doc.addPage(); y = 40; linea("Detalle (primeras 40 filas; el XLSX trae todas)", 12, true);
+
+      const paso = (ancho - 80) / detalle.cols.length;
+
+      const fila = (vals, negrita) => { if (y > alto - 30) { doc.addPage(); y = 40; } doc.setFont("helvetica", negrita ? "bold" : "normal"); doc.setFontSize(7); vals.forEach((v, i) => doc.text(doc.splitTextToSize(String(v ?? ""), paso - 4)[0] || "", 40 + i * paso, y)); y += 12; };
+
+      fila(detalle.cols.map(c => c[1]), true);
+
+      for (const r of detalle.filas.slice(0, 40)) fila(detalle.cols.map(([k, , num, formato]) => formato ? formato(r[k]) : (num ? fmt(r[k]) : r[k])));
+
+      doc.save(nombreArchivo("pdf"));
+
+    }
+
+
+
+    $("menu").addEventListener("click", e => { const b = e.target.closest("button[data-v]"); if (b) irA(b.dataset.v); });
+
+    $("btn-toggle-avanzados")?.addEventListener("click", () => {
+
+      const panel = $("panel-filtros-avanzados");
+
+      const btn = $("btn-toggle-avanzados");
+
+      if (!panel || !btn) return;
+
+      const estaAbierto = !panel.hidden;
+
+      panel.hidden = estaAbierto;
+
+      btn.setAttribute("aria-expanded", String(!estaAbierto));
+
+    });
+
+
+
+    $("btn-limpiar-filtros")?.addEventListener("click", limpiarTodosFiltros);
+
+
+
+    $("area-filtros")?.addEventListener("change", e => {
+
+      if (!e.target.matches("select")) return;
+
+      const k = e.target.id.slice(2);
+
+      ESTADO[vista][k] = e.target.value;
+
+      if (k === "anio") llenarPeriodos();
+
+      actualizarContadorAvanzados();
+
+      pintarChips();
+
+      pintar();
+
+    });
+
+    $("buscar")?.addEventListener("input", e => buscarFiltros(e.target.value));
+
+    $("buscar")?.addEventListener("keydown", e => {
+
+      if (e.key === "Enter" && resultadosBusqueda[0]) {
+
+        e.preventDefault();
+
+        elegirFiltro(resultadosBusqueda[0].clave, resultadosBusqueda[0].valor);
+
+      }
+
+      if (e.key === "Escape") $("resultados").hidden = true;
+
+      if (e.key === "ArrowDown") {
+
+        e.preventDefault();
+
+        $("resultados").querySelector("button")?.focus();
+
+      }
+
+    });
+
+    $("resultados")?.addEventListener("keydown", e => {
+
+      if (e.key === "ArrowDown") {
+
+        e.preventDefault();
+
+        e.target.nextElementSibling?.focus();
+
+      }
+
+      if (e.key === "ArrowUp") {
+
+        e.preventDefault();
+
+        (e.target.previousElementSibling ?? $("buscar")).focus();
+
+      }
+
+      if (e.key === "Escape") {
+
+        $("resultados").hidden = true;
+
+        $("buscar").focus();
+
+      }
+
+    });
+
+    document.addEventListener("click", e => {
+
+      if (!e.target.closest(".buscar")) $("resultados").hidden = true;
+
+    });
+
+    $("toggle-tendencia")?.addEventListener("click", e => {
+
+      const b = e.target.closest("button[data-modo]");
+
+      if (!b || b.dataset.modo === modoTendencia) return;
+
+      modoTendencia = b.dataset.modo;
+
+      document.querySelectorAll("#toggle-tendencia .btn-toggle").forEach(btn => btn.classList.toggle("activa", btn.dataset.modo === modoTendencia));
+
+      pintar();
+
+    });
+
+    $("xlsx").addEventListener("click", descargarXlsx);
+
+    $("pdf").addEventListener("click", descargarPdf);
+
+    window.addEventListener("hashchange", () => { const v = location.hash.slice(1); if (VISTAS[v] && v !== vista) irA(v); });
+
+
+
+    (async () => {
+
+      try {
+
+        const nombres = Object.keys(VISTAS);
+
+        const respuestas = await Promise.all(nombres.map(cargar));
+
+        nombres.forEach((v, i) => { DATOS[v] = respuestas[i]; preparar(v); });
+
+        logoPdf = await fetch("manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.png").then(r => r.ok ? r.blob() : null)
+
+          .then(b => b && new Promise(ok => { const f = new FileReader(); f.onload = () => ok(f.result); f.readAsDataURL(b); })).catch(() => null);
+
+        // mapa inlined
+
+        if ($("estado")) $("estado").hidden = true;
+
+        $("pdf").disabled = $("xlsx").disabled = false;
+
+        await inicializarMapaColombiaEcharts();
+
+        const inicial = location.hash.slice(1);
+
+        irA(VISTAS[inicial] ? inicial : "otorgados");
+
+      } catch (e) {
+
+        console.error("ORIGINAL ERROR MSG:", e.message, "\nSTACK:", e.stack);
+
+        const est = $("estado");
+
+        if (est) {
+
+          est.hidden = false;
+
+          if (location.protocol === "file:") {
+
+            est.innerHTML = 'El tablero está abierto como archivo y así no puede leer los datos. Ábralo en <a href="http://localhost:8080/icetex.html">http://localhost:8080/icetex.html</a>.';
+
+          } else {
+
+            est.textContent = LOCAL
+
+              ? "No se pudieron cargar los datos de /api/ (" + e.message + "). ¿Está encendido docker compose?"
+
+              : "No se pudieron cargar los datos del tablero (" + e.message + ").";
+
+          }
+
+        }
+
+      }
+
+    })();
+
+  </script>
+
+  <script>
+
+    // Manejador universal de navegación móvil CADIT
+
+    document.addEventListener("click", e => {
+
+      const btn = e.target.closest("#btn-menu-movil");
+
+      const lateral = document.querySelector(".lateral");
+
+      if (btn && lateral) {
+
+        const abierto = lateral.classList.toggle("menu-abierto");
+
+        btn.setAttribute("aria-expanded", String(abierto));
+
+        const h = btn.querySelector(".icono-hamburguesa");
+
+        const c = btn.querySelector(".icono-cerrar");
+
+        if (h) h.style.display = abierto ? "none" : "block";
+
+        if (c) c.style.display = abierto ? "block" : "none";
+
+        return;
+
+      }
+
+      const item = e.target.closest(".lateral nav button");
+
+      if (item && lateral && window.innerWidth <= 1024) {
+
+        lateral.classList.remove("menu-abierto");
+
+        const b = document.getElementById("btn-menu-movil");
+
+        if (b) {
+
+          b.setAttribute("aria-expanded", "false");
+
+          const h = b.querySelector(".icono-hamburguesa");
+
+          const c = b.querySelector(".icono-cerrar");
+
+          if (h) h.style.display = "block";
+
+          if (c) c.style.display = "none";
+
+        }
+
+        return;
+
+      }
+
+      if (!e.target.closest(".lateral") && lateral && lateral.classList.contains("menu-abierto") && window.innerWidth <= 1024) {
+
+        lateral.classList.remove("menu-abierto");
+
+        const b = document.getElementById("btn-menu-movil");
+
+        if (b) {
+
+          b.setAttribute("aria-expanded", "false");
+
+          const h = b.querySelector(".icono-hamburguesa");
+
+          const c = b.querySelector(".icono-cerrar");
+
+          if (h) h.style.display = "block";
+
+          if (c) c.style.display = "none";
+
+        }
+
+      }
+
+    });
+
+
+
+    // Observador de redimensionamiento fluido para gráficas y mapa CADIT
+
+    (() => {
+
+      let resizeTimer;
+
+      const sincronizarDimensiones = () => {
+
+        if (typeof graficos === "object" && graficos !== null) {
+
+          Object.values(graficos).forEach(chart => {
+
+            if (chart && typeof chart.resize === "function") {
+
+              try { chart.resize(); } catch (_) { }
+
+            }
+
+          });
+
+        }
+
+        if (typeof chartMapaEcharts !== "undefined" && chartMapaEcharts) {
+
+          try { chartMapaEcharts.resize(); } catch (_) { }
+
+        }
+
+        if (false) {
+
+          try { aplicarTransformMapa(false); } catch (_) { }
+
+        }
+
+      };
+
+
+
+      window.addEventListener("resize", () => {
+
+        clearTimeout(resizeTimer);
+
+        resizeTimer = setTimeout(sincronizarDimensiones, 60);
+
+      });
+
+
+
+      if (typeof ResizeObserver !== "undefined") {
+
+        const ro = new ResizeObserver(() => {
+
+          clearTimeout(resizeTimer);
+
+          resizeTimer = setTimeout(sincronizarDimensiones, 60);
+
+        });
+
+        document.querySelectorAll(".cuadricula-tendencia, .cuadricula-social, .cuadricula-territorial, .cuadricula-academica, .mapa-colombia-wrapper, .panel").forEach(el => {
+
+          ro.observe(el);
+
+        });
+
+      }
+
+    })();
+
+  </script>
+
+</body>
+
+
+
+</html>

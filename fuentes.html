@@ -1,0 +1,1749 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro y Avance de Fuentes · CADIT</title>
+  <link rel="icon" href="manual%20de%20marca/files/02-Buho/CADIT-icono-cabeza.svg">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Serif:wght@600&display=swap">
+  <script src="vendor/chart.umd.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="estilo-cadit.css">
+  <style>
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1360px) {
+      .kpis {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kpi-card {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .kpi-card.activa {
+      border-color: #004E98;
+      box-shadow: inset 0 -3.5px 0 #FFCC00, 0 4px 14px rgba(0, 78, 152, 0.1);
+    }
+
+    .kpi-card-aside {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .kpi-info-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 2px;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    .kpi-info-btn:hover {
+      color: #004E98;
+    }
+
+    .popup-info-kpi {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 240px;
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      border-top: 3px solid #004E98;
+      border-radius: 8px;
+      padding: 10px 12px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+      z-index: 60;
+      text-align: left;
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #334155;
+      pointer-events: none;
+    }
+
+    .kpi-card-aside:hover .popup-info-kpi {
+      display: block;
+    }
+
+    .popup-info-header {
+      font-weight: 700;
+      color: #004E98;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .popup-info-meta {
+      margin-top: 6px;
+      padding-top: 5px;
+      border-top: 1px dashed #E2E8F0;
+      font-size: 10px;
+      color: #64748B;
+    }
+
+    /* Botonera y acciones del catálogo */
+    .barra-acciones-fuentes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .grupo-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-cadit {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid #CBD5E1;
+      background: #FFFFFF;
+      color: #1E293B;
+      transition: all .15s ease;
+    }
+
+    .btn-cadit:hover {
+      border-color: #004E98;
+      color: #004E98;
+      background: #F8FAFC;
+    }
+
+    .btn-cadit.primario {
+      background: #004E98;
+      color: #FFFFFF;
+      border-color: #004E98;
+    }
+
+    .btn-cadit.primario:hover {
+      background: #003A73;
+    }
+
+    .btn-cadit.oro {
+      background: #FFCC00;
+      color: #1E293B;
+      border-color: #E0A800;
+    }
+
+    .btn-cadit.oro:hover {
+      background: #F5C400;
+    }
+
+    .btn-cadit.peligro {
+      color: #B91C1C;
+      border-color: #FECACA;
+      background: #FEF2F2;
+    }
+
+    .btn-cadit.peligro:hover {
+      background: #FEE2E2;
+    }
+
+    /* Badges de estado_fuente */
+    .estado-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .estado-en-fuentes {
+      background: #DCFCE7;
+      color: #166534;
+      border: 1px solid #BBF7D0;
+    }
+
+    .estado-candidata {
+      background: #FEF9C3;
+      color: #854D0E;
+      border: 1px solid #FDE047;
+    }
+
+    .estado-descartada {
+      background: #F1F5F9;
+      color: #475569;
+      border: 1px solid #CBD5E1;
+    }
+
+    .dp-si {
+      background: #FEE2E2;
+      color: #991B1B;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .dp-no {
+      background: #E0F2FE;
+      color: #075985;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Tabla de 17 columnas con scroll interno sin desbordar página */
+    .tabla-scroll-17 {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      background: #FFFFFF;
+    }
+
+    .tabla-fuentes {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 1950px;
+    }
+
+    .tabla-fuentes thead th {
+      position: sticky;
+      top: 0;
+      background: #283044;
+      color: #FFFFFF;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 11px;
+      white-space: nowrap;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      user-select: none;
+      font-size: 11.5px;
+    }
+
+    .tabla-fuentes thead th:hover {
+      background: #1E2536;
+    }
+
+    .tabla-fuentes tbody td {
+      padding: 9px 11px;
+      border-bottom: 1px solid #E2E8F0;
+      border-right: 1px solid #F1F5F9;
+      vertical-align: top;
+      color: #1E293B;
+      max-width: 240px;
+      line-height: 1.4;
+    }
+
+    .tabla-fuentes tbody tr:hover {
+      background: #F8FAFC;
+    }
+
+    .col-fija-izq {
+      position: sticky;
+      left: 0;
+      background: #FFFFFF;
+      z-index: 2;
+      box-shadow: 2px 0 6px rgba(15, 23, 42, 0.06);
+      font-weight: 700;
+      color: #004E98 !important;
+      min-width: 165px;
+    }
+
+    .tabla-fuentes thead th.col-fija-izq {
+      z-index: 4;
+      background: #1E2536;
+      color: #FFFFFF !important;
+    }
+
+    .tabla-fuentes tbody tr:hover td.col-fija-izq {
+      background: #F1F5F9;
+    }
+
+    .col-acciones {
+      white-space: nowrap;
+      min-width: 120px;
+    }
+
+    .btn-mini {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 5px;
+      border: 1px solid #CBD5E1;
+      background: #FFFFFF;
+      color: #334155;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+
+    .btn-mini:hover {
+      border-color: #004E98;
+      color: #004E98;
+      background: #EFF6FF;
+    }
+
+    .btn-mini.del:hover {
+      border-color: #DC2626;
+      color: #DC2626;
+      background: #FEF2F2;
+    }
+
+    .mono-celda {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+      color: #334155;
+      word-break: break-word;
+    }
+
+    .url-link {
+      color: #004E98;
+      text-decoration: underline;
+      word-break: break-all;
+      font-size: 11px;
+    }
+
+    .avance-bar {
+      width: 72px;
+      height: 6px;
+      background: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .avance-fill {
+      height: 100%;
+      background: #004E98;
+      border-radius: 999px;
+    }
+
+    /* Modal de registro / edición */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 16px;
+    }
+
+    .modal-backdrop.abierto {
+      display: flex;
+    }
+
+    .modal-caja {
+      background: #FFFFFF;
+      border-radius: 14px;
+      width: min(960px, 100%);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border-top: 4px solid #004E98;
+      overflow: hidden;
+    }
+
+    .modal-cab {
+      padding: 16px 22px;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-cab h2 {
+      margin: 0;
+      font-size: 17px;
+      color: #0F172A;
+    }
+
+    .modal-cuerpo {
+      padding: 18px 22px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .modal-cuerpo {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .campo-form {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .campo-form.ancho {
+      grid-column: 1 / -1;
+    }
+
+    .campo-form label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .campo-form label span {
+      font-weight: 400;
+      color: #64748B;
+      font-size: 10.5px;
+    }
+
+    .campo-form input,
+    .campo-form select,
+    .campo-form textarea {
+      padding: 8px 10px;
+      border: 1px solid #CBD5E1;
+      border-radius: 7px;
+      font-family: inherit;
+      font-size: 12.5px;
+      color: #0F172A;
+      background: #FFFFFF;
+    }
+
+    .campo-form input:focus,
+    .campo-form select:focus,
+    .campo-form textarea:focus {
+      outline: none;
+      border-color: #004E98;
+      box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.12);
+    }
+
+    .modal-pie {
+      padding: 14px 22px;
+      border-top: 1px solid #E2E8F0;
+      background: #F8FAFC;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <aside class="lateral">
+    <div class="marca">
+      <div class="marca-info">
+        <img src="manual%20de%20marca/files/01-Logo/CADIT-logo-horizontal-negativo.svg" alt="CADIT">
+        <p class="contexto">Vicerrectoría Académica · UNIMINUTO</p>
+      </div>
+      <button type="button" class="btn-menu-movil" id="btn-menu-movil" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="icono-hamburguesa" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg class="icono-cerrar" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" style="display:none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>Menú</span>
+      </button>
+    </div>
+    <nav id="menu" aria-label="Secciones del tablero">
+      <h3>Gobierno de Fuentes</h3>
+      <button data-v="catalogo" class="activa">Catálogo y Avance</button>
+      <button data-v="brechas">Brechas de Campos</button>
+      <h3>Otros tableros</h3>
+      <button data-href="index.html">SNIES · Base Externa</button>
+      <button data-href="icetex.html">ICETEX · Créditos</button>
+      <button data-href="sena.html">SENA · Formación</button>
+      <button data-href="servicioempleo.html">Servicio de Empleo</button>
+      <button data-href="latam.html">Educación Superior · LATAM</button>
+      <button data-href="minciencias.html">MinCiencias · Grupos</button>
+      <button data-href="idic.html">IDIC · Innovación</button>
+      <button data-href="rues.html">RUES · Empresas</button>
+    </nav>
+  </aside>
+
+  <div class="contenido">
+    <div class="barra">
+      <div class="buscar">
+        <input id="buscar" type="search" placeholder="Buscar por fuente, entidad, llave de cruce, uso actual…"
+          autocomplete="off" aria-label="Buscar fuente">
+      </div>
+      <div class="barra-subfila">
+        <span class="corte" id="corte">Guardado local automático</span>
+        <div class="acciones">
+          <button id="btn-csv" type="button">CSV</button>
+          <button id="xlsx" type="button">XLSX</button>
+          <button id="pdf" type="button">PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <div class="encabezado">
+        <h1 id="titulo">Registro y Avance de Fuentes Externas · CADIT</h1>
+        <p id="subtitulo">Control de las 17 variables de gobierno por fuente: bases ya integradas en FUENTES y fuentes candidatas propuestas para Motor, Antena y analítica institucional.</p>
+      </div>
+
+      <!-- Filtros -->
+      <div class="area-filtros">
+        <div class="filtros-prioritarios">
+          <div class="filtro-campo">
+            <label for="f-estado">Estado de fuente</label>
+            <select id="f-estado">
+              <option value="">Todos los estados</option>
+              <option value="en FUENTES">en FUENTES</option>
+              <option value="candidata">candidata</option>
+              <option value="descartada">descartada</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-formato">Formato</label>
+            <select id="f-formato">
+              <option value="">Todos los formatos</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-llave">Llave de cruce</label>
+            <select id="f-llave">
+              <option value="">Todas las llaves</option>
+              <option value="DIVIPOLA">DIVIPOLA</option>
+              <option value="SNIES">SNIES</option>
+              <option value="CIIU">CIIU</option>
+              <option value="CUOC">CUOC</option>
+              <option value="NIT">NIT</option>
+            </select>
+          </div>
+          <div class="filtro-campo">
+            <label for="f-dp">Datos personales</label>
+            <select id="f-dp">
+              <option value="">Todos</option>
+              <option value="Sí">Sí</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="filtros-acciones">
+            <button id="limpiar" class="btn-limpiar" type="button">Limpiar filtros</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista principal: Catálogo y Avance -->
+      <div id="p-catalogo" class="pagina">
+        <div class="kpis" id="kpis-fuentes"></div>
+
+        <div class="rejilla">
+          <div class="panel">
+            <h2 id="h-estado">¿Cómo avanza la incorporación de fuentes?</h2>
+            <p class="sub">Distribución por estado_fuente · Clic en un segmento para filtrar</p>
+            <div class="grafico"><canvas id="g-estado"></canvas></div>
+          </div>
+          <div class="panel">
+            <h2 id="h-entidades">¿Qué entidades concentran más fuentes?</h2>
+            <p class="sub">Top entidades publicadoras según el filtro activo · Clic para filtrar</p>
+            <div class="grafico"><canvas id="g-entidades"></canvas></div>
+          </div>
+        </div>
+
+        <div class="barra-acciones-fuentes">
+          <div class="grupo-btns">
+            <button type="button" class="btn-cadit primario" id="btn-nueva-fuente">+ Registrar nueva fuente</button>
+            <button type="button" class="btn-cadit" id="btn-exportar-json">Exportar JSON</button>
+            <label class="btn-cadit" style="cursor:pointer;">
+              Importar JSON
+              <input type="file" id="input-importar-json" accept=".json" hidden>
+            </label>
+          </div>
+          <div class="grupo-btns">
+            <button type="button" class="btn-cadit peligro" id="btn-restaurar">Restaurar catálogo base</button>
+          </div>
+        </div>
+
+        <div class="panel" style="min-width:0; max-width:100%;">
+          <h2 id="h-tabla-fuentes">Matriz de Seguimiento (17 columnas)</h2>
+          <p class="sub" id="s-tabla-fuentes">Haz clic en cualquier encabezado para ordenar · Usa "Editar" para actualizar fechas, archivos o estado</p>
+          <div class="tabla-scroll-17">
+            <table class="tabla-fuentes" id="tabla-fuentes">
+              <thead>
+                <tr>
+                  <th class="col-fija-izq" data-col="fuente">fuente</th>
+                  <th data-col="estado_fuente">estado_fuente</th>
+                  <th data-col="avance_tablero">Avance Tablero</th>
+                  <th data-col="_avance">% Dilig.</th>
+                  <th data-col="carpeta">carpeta</th>
+                  <th data-col="publica">publica</th>
+                  <th data-col="contenido">contenido</th>
+                  <th data-col="url_descarga">url_descarga</th>
+                  <th data-col="frecuencia">frecuencia</th>
+                  <th data-col="fecha_corte">fecha_corte</th>
+                  <th data-col="fecha_disponible">fecha_disponible</th>
+                  <th data-col="ultimo_archivo">ultimo_archivo</th>
+                  <th data-col="cobertura">cobertura</th>
+                  <th data-col="desagregacion">desagregacion</th>
+                  <th data-col="llaves_cruce">llaves_cruce</th>
+                  <th data-col="formato">formato</th>
+                  <th data-col="datos_personales">datos_personales</th>
+                  <th data-col="uso_actual">uso_actual</th>
+                  <th data-col="calidad">calidad</th>
+                  <th class="col-acciones">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-fuentes"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista secundaria: Brechas de Diligenciamiento -->
+      <div id="p-brechas" class="pagina" hidden>
+        <div class="panel">
+          <h2>¿Qué columnas tienen mayor vacío de información?</h2>
+          <p class="sub">Porcentaje de diligenciamiento sobre el total de fuentes filtradas en las 17 variables</p>
+          <div class="grafico" style="height:440px;"><canvas id="g-brechas"></canvas></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Crear / Editar Fuente -->
+  <div class="modal-backdrop" id="modal-fuente" aria-hidden="true">
+    <div class="modal-caja" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+      <div class="modal-cab">
+        <h2 id="modal-titulo">Registrar Fuente</h2>
+        <button type="button" class="btn-mini" id="btn-cerrar-modal">✕ Cerrar</button>
+      </div>
+      <form id="form-fuente">
+        <input type="hidden" id="edit-index" value="-1">
+        <div class="modal-cuerpo">
+          <div class="campo-form">
+            <label for="c-fuente">fuente * <span>Nombre de la base</span></label>
+            <input id="c-fuente" required placeholder="Ej. OLE · Observatorio Laboral">
+          </div>
+          <div class="campo-form">
+            <label for="c-estado_fuente">estado_fuente * <span>Estado actual</span></label>
+            <select id="c-estado_fuente" required>
+              <option value="candidata">candidata</option>
+              <option value="en FUENTES">en FUENTES</option>
+              <option value="descartada">descartada</option>
+            </select>
+          </div>
+          <div class="campo-form">
+            <label for="c-avance_tablero">Avance Tablero (%) <span>0 a 100</span></label>
+            <input id="c-avance_tablero" type="number" min="0" max="100" step="5" value="0" placeholder="0, 50, 90, 100">
+          </div>
+          <div class="campo-form">
+            <label for="c-carpeta">carpeta <span>Carpeta en FUENTES</span></label>
+            <input id="c-carpeta" placeholder="Ej. educacion/snies/ole">
+          </div>
+          <div class="campo-form">
+            <label for="c-publica">publica <span>Entidad que la publica</span></label>
+            <input id="c-publica" placeholder="Ej. Ministerio de Educación Nacional (MEN)">
+          </div>
+          <div class="campo-form ancho">
+            <label for="c-contenido">contenido <span>Qué contiene, en una frase</span></label>
+            <input id="c-contenido" placeholder="Ej. Vinculación laboral e ingreso base de cotización de graduados">
+          </div>
+          <div class="campo-form ancho">
+            <label for="c-url_descarga">url_descarga <span>Dirección exacta de descarga</span></label>
+            <input id="c-url_descarga" placeholder="https://...">
+          </div>
+          <div class="campo-form">
+            <label for="c-frecuencia">frecuencia <span>Cada cuánto se actualiza</span></label>
+            <input id="c-frecuencia" placeholder="Anual, Semestral, Trimestral, Mensual...">
+          </div>
+          <div class="campo-form">
+            <label for="c-formato">formato <span>CSV, Excel, PDF, API, parquet</span></label>
+            <input id="c-formato" placeholder="Ej. Excel, CSV, API">
+          </div>
+          <div class="campo-form">
+            <label for="c-fecha_corte">fecha_corte <span>Última versión publicada</span></label>
+            <input id="c-fecha_corte" placeholder="Ej. 2024-12-31 o 2024-2">
+          </div>
+          <div class="campo-form">
+            <label for="c-fecha_disponible">fecha_disponible <span>Cuando quedó disponible</span></label>
+            <input id="c-fecha_disponible" placeholder="Ej. 2025-06-15">
+          </div>
+          <div class="campo-form">
+            <label for="c-ultimo_archivo">ultimo_archivo <span>Último archivo en FUENTES y fecha</span></label>
+            <input id="c-ultimo_archivo" placeholder="Ej. matriculados_2024.xlsx (2026-10-15)">
+          </div>
+          <div class="campo-form">
+            <label for="c-cobertura">cobertura <span>Periodo que cubre</span></label>
+            <input id="c-cobertura" placeholder="Ej. 2015 - 2024">
+          </div>
+          <div class="campo-form">
+            <label for="c-desagregacion">desagregacion <span>Nacional, dpto, municipio, IES, programa, empresa</span></label>
+            <input id="c-desagregacion" placeholder="Ej. Departamento, Municipio, IES, Programa">
+          </div>
+          <div class="campo-form">
+            <label for="c-llaves_cruce">llaves_cruce <span>DIVIPOLA, SNIES, CIIU, CUOC, NIT u otra</span></label>
+            <input id="c-llaves_cruce" placeholder="Ej. DIVIPOLA, codigo_snies">
+          </div>
+          <div class="campo-form">
+            <label for="c-datos_personales">datos_personales <span>Sí o no, y cuáles</span></label>
+            <input id="c-datos_personales" placeholder="Ej. No / Sí (cédula, nombre)">
+          </div>
+          <div class="campo-form">
+            <label for="c-uso_actual">uso_actual <span>Eje e indicador del Motor, Antena u otro</span></label>
+            <input id="c-uso_actual" placeholder="Ej. Motor · Oferta y pertinencia">
+          </div>
+          <div class="campo-form ancho">
+            <label for="c-calidad">calidad <span>Vacíos, cambios de definición, rezagos</span></label>
+            <textarea id="c-calidad" rows="2" placeholder="Observaciones de calidad, rezagos o cambios de esquema..."></textarea>
+          </div>
+        </div>
+        <div class="modal-pie">
+          <button type="button" class="btn-cadit" id="btn-cancelar-modal">Cancelar</button>
+          <button type="submit" class="btn-cadit primario">Guardar fuente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    Chart.defaults.font.family = '"IBM Plex Sans", system-ui, sans-serif';
+    Chart.defaults.color = "#212844";
+
+    const STORAGE_KEY = "cadit_registro_fuentes_v2";
+    const COLUMNAS_17 = [
+      "fuente", "carpeta", "publica", "contenido", "url_descarga", "frecuencia",
+      "fecha_corte", "fecha_disponible", "ultimo_archivo", "cobertura",
+      "desagregacion", "llaves_cruce", "formato", "datos_personales",
+      "uso_actual", "estado_fuente", "calidad"
+    ];
+
+    const CATALOGO_BASE = [
+      // ── FUENTES YA INTEGRADAS (en FUENTES) ──
+      {
+        fuente: "SNIES",
+        carpeta: "landing/educacion/snies/snies",
+        publica: "Ministerio de Educación Nacional (MEN)",
+        contenido: "Históricos de matriculados, inscritos, admitidos, graduados, primer curso, docentes y oferta de programas.",
+        url_descarga: "https://snies.mineducacion.gov.co/portal/ESTADISTICAS/Bases-consolidadas/",
+        frecuencia: "Semestral / Anual",
+        fecha_corte: "2024-2",
+        fecha_disponible: "2025-07-01",
+        ultimo_archivo: "snies_conteos.json / bases consolidadas",
+        cobertura: "2014 - 2024",
+        desagregacion: "Nacional, departamento, municipio, IES, programa",
+        llaves_cruce: "DIVIPOLA, codigo_snies, codigo_ies",
+        formato: "Excel, CSV",
+        datos_personales: "No",
+        uso_actual: "Tablero SNIES · Motor de Oferta Académica",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "Cambios de nombres de columna entre años (mapeados con seeds dbt)."
+      },
+      {
+        fuente: "SPADIES",
+        carpeta: "landing/educacion/snies/spadies",
+        publica: "Ministerio de Educación Nacional (MEN)",
+        contenido: "Indicadores de deserción estudiantil por cohorte, IES, programa y nivel de formación.",
+        url_descarga: "https://spadies3.mineducacion.gov.co/spadiesWeb/#/page/publico",
+        frecuencia: "Anual",
+        fecha_corte: "2024",
+        fecha_disponible: "2025-08-01",
+        ultimo_archivo: "spadies_programas.json",
+        cobertura: "2018 - 2024",
+        desagregacion: "Nacional, IES, programa",
+        llaves_cruce: "codigo_ies, codigo_snies",
+        formato: "Excel, CSV",
+        datos_personales: "No",
+        uso_actual: "Tablero SNIES · Permanencia y Deserción",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "Rezago de 1 año en consolidación de cohortes."
+      },
+      {
+        fuente: "Acreditación (CNA)",
+        carpeta: "landing/educacion/snies/acreditacion",
+        publica: "MEN / Consejo Nacional de Acreditación (CNA)",
+        contenido: "Registro de programas e instituciones de educación superior con acreditación de alta calidad.",
+        url_descarga: "https://hecaa.mineducacion.gov.co/consultaspublicas/programas",
+        frecuencia: "Continua / Mensual",
+        fecha_corte: "2025",
+        fecha_disponible: "2025-09-01",
+        ultimo_archivo: "snies_acreditacion.json",
+        cobertura: "Vigente 2025",
+        desagregacion: "IES, programa, municipio",
+        llaves_cruce: "codigo_snies, codigo_ies, DIVIPOLA",
+        formato: "Excel",
+        datos_personales: "No",
+        uso_actual: "Tablero SNIES · Calidad",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "Requiere cruce con SNIES programas para vigencia."
+      },
+      {
+        fuente: "ICETEX",
+        carpeta: "landing/educacion/ICETEX",
+        publica: "ICETEX",
+        contenido: "Créditos otorgados, créditos renovados y nuevos beneficiarios por modalidad, estrato e IES.",
+        url_descarga: "https://www.datos.gov.co/d/26bn-e42j",
+        frecuencia: "Semestral",
+        fecha_corte: "2025-02-01",
+        fecha_disponible: "2026-05-20",
+        ultimo_archivo: "creditos_renovados_20261019.csv (2026-10-19)",
+        cobertura: "2015-01-01 a 2025-02-01",
+        desagregacion: "Departamento, municipio, IES",
+        llaves_cruce: "DIVIPOLA, codigo_ies",
+        formato: "Excel, CSV",
+        datos_personales: "No",
+        uso_actual: "Tablero ICETEX · Financiación estudiantil",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "En Gold (337.080 filas); nombres de municipios requieren normalización DIVIPOLA."
+      },
+      {
+        fuente: "SENA",
+        carpeta: "landing/educacion/sena",
+        publica: "Servicio Nacional de Aprendizaje (SENA)",
+        contenido: "Georreferenciación de centros de formación y programación de cursos por regional y modalidad.",
+        url_descarga: "https://www.datos.gov.co/d/8cnh-7asj",
+        frecuencia: "Trimestral",
+        fecha_corte: "2026-10-05",
+        fecha_disponible: "2026-10-05",
+        ultimo_archivo: "sena_cursos_programacion_20261005.csv (2026-10-05)",
+        cobertura: "2024 - 2026",
+        desagregacion: "Departamento, municipio, centro de formación",
+        llaves_cruce: "DIVIPOLA",
+        formato: "CSV",
+        datos_personales: "No",
+        uso_actual: "Tablero SENA · Competencia y oferta técnica/tecnológica",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "Sin microdatos de aprendices; consolidado por curso/regional."
+      },
+      {
+        fuente: "ServicioEmpleo",
+        carpeta: "landing/ServicioEmpleo",
+        publica: "Unidad del Servicio Público de Empleo",
+        contenido: "Vacantes laborales registradas, perfiles requeridos y demanda ocupacional territorial.",
+        url_descarga: "https://www.serviciodeempleo.gov.co/",
+        frecuencia: "Mensual / Trimestral",
+        fecha_corte: "2026",
+        fecha_disponible: "2026-11-12",
+        ultimo_archivo: "servicioempleo_datos.json (2026-11-12)",
+        cobertura: "2024 - 2026",
+        desagregacion: "Nacional, departamento, municipio",
+        llaves_cruce: "DIVIPOLA, CUOC",
+        formato: "Excel, CSV",
+        datos_personales: "No",
+        uso_actual: "Tablero Servicio de Empleo · Antena de Demanda Laboral",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "Estandarización CUOC heterogénea entre prestadores."
+      },
+      {
+        fuente: "RUES",
+        carpeta: "landing/RUES",
+        publica: "Confecámaras / Datos Abiertos",
+        contenido: "Registro Único Empresarial y Social de empresas activas, cámaras de comercio y actividad económica.",
+        url_descarga: "https://www.datos.gov.co/d/c82u-588k",
+        frecuencia: "Anual / Semestral",
+        fecha_corte: "2025",
+        fecha_disponible: "2026-10-01",
+        ultimo_archivo: "c82u-588k.csv / nb3d-v3n7.csv",
+        cobertura: "2024 - 2025",
+        desagregacion: "Departamento, municipio, empresa",
+        llaves_cruce: "NIT, CIIU, DIVIPOLA",
+        formato: "CSV",
+        datos_personales: "Sí (razón social / matrícula mercantil pública)",
+        uso_actual: "Tablero RUES · Tejido Empresarial",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 50,
+        calidad: "Registros duplicados entre renovaciones si no se filtra último año."
+      },
+      {
+        fuente: "IDIC",
+        carpeta: "landing/IDIC",
+        publica: "DNP y Observatorio Colombiano de Ciencia y Tecnología (OCyT)",
+        contenido: "Índice Departamental de Innovación para Colombia y contribuciones por pilar e indicador.",
+        url_descarga: "https://www.dnp.gov.co/",
+        frecuencia: "Anual",
+        fecha_corte: "2024",
+        fecha_disponible: "2025-11-01",
+        ultimo_archivo: "Anexo 1. Base de datos IDIC 2024.xlsx",
+        cobertura: "2021 - 2024",
+        desagregacion: "Departamento",
+        llaves_cruce: "DIVIPOLA",
+        formato: "Excel",
+        datos_personales: "No",
+        uso_actual: "Tablero IDIC · Antena Regional de Innovación",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 50,
+        calidad: "Cambia ponderación o disponibilidad de subindicadores entre ediciones."
+      },
+      {
+        fuente: "MinCiencias",
+        carpeta: "landing/MINCIENCIAS",
+        publica: "Ministerio de Ciencia, Tecnología e Innovación",
+        contenido: "Grupos de investigación reconocidos, categorías, áreas OCDE y vinculación con IES.",
+        url_descarga: "https://www.datos.gov.co/",
+        frecuencia: "Convocatoria (cada 2 años)",
+        fecha_corte: "2026-01-29",
+        fecha_disponible: "2026-01-29",
+        ultimo_archivo: "Grupos_de_Investigación_Reconocidos_20260129.csv",
+        cobertura: "Histórico convocatorias",
+        desagregacion: "Departamento, municipio, IES",
+        llaves_cruce: "DIVIPOLA, codigo_ies",
+        formato: "CSV",
+        datos_personales: "No",
+        uso_actual: "Tablero MinCiencias · Capacidades I+D+i",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "Nombres de instituciones requieren homologación con SNIES."
+      },
+      {
+        fuente: "Educación Superior · LATAM",
+        carpeta: "tablero/datos/latam_datos.json",
+        publica: "Fuentes regionales / UNESCO-IESALC / Ministerios LATAM",
+        contenido: "Indicadores comparativos de educación superior en América Latina (matrícula, cobertura, IES).",
+        url_descarga: "https://datos.uis.unesco.org/",
+        frecuencia: "Anual",
+        fecha_corte: "2024",
+        fecha_disponible: "2025-11-05",
+        ultimo_archivo: "latam_datos.json (2025-11-05)",
+        cobertura: "2015 - 2024",
+        desagregacion: "País, región",
+        llaves_cruce: "ISO_PAIS",
+        formato: "JSON, CSV",
+        datos_personales: "No",
+        uso_actual: "Tablero LATAM · Benchmarking regional",
+        estado_fuente: "en FUENTES",
+        avance_tablero: 90,
+        calidad: "Diferencias metodológicas entre definiciones nacionales de matrícula."
+      },
+      {
+        fuente: "ICFES",
+        carpeta: "FUENTES/ICFES",
+        publica: "ICFES",
+        contenido: "Microdatos de pruebas Saber 11, Saber Pro, Saber TyT y Saber 3-5-9.",
+        url_descarga: "https://www.icfes.gov.co/data-icfes/",
+        frecuencia: "Semestral",
+        fecha_corte: "2025",
+        fecha_disponible: "2025-12-01",
+        ultimo_archivo: "530+ archivos .txt (Saber 11 / Pro / TyT)",
+        cobertura: "2000 - 2025",
+        desagregacion: "Nacional, departamento, municipio, IES, estudiante (anonimizado)",
+        llaves_cruce: "DIVIPOLA, codigo_ies, codigo_snies",
+        formato: "CSV / TXT",
+        datos_personales: "No (anonimizado)",
+        uso_actual: "Motor · Calidad académica y valor agregado",
+        estado_fuente: "en FUENTES",
+        calidad: "Archivos muy pesados; cambios de escala en Saber 11 (2014)."
+      },
+      {
+        fuente: "SINEB",
+        carpeta: "FUENTES/SINEB",
+        publica: "Ministerio de Educación Nacional (MEN)",
+        contenido: "Indicadores de educación preescolar, básica y media, sedes educativas, PAE y bachilleres.",
+        url_descarga: "https://www.datos.gov.co/Educaci-n",
+        frecuencia: "Anual",
+        fecha_corte: "2024",
+        fecha_disponible: "2025-06-01",
+        ultimo_archivo: "36 archivos Excel/CSV y shapefiles",
+        cobertura: "2018 - 2024",
+        desagregacion: "Departamento, municipio, sede educativa",
+        llaves_cruce: "DIVIPOLA, codigo_dane_sede",
+        formato: "Excel, CSV, Shapefile",
+        datos_personales: "No",
+        uso_actual: "Motor · Potencial de bachilleres por territorio",
+        estado_fuente: "en FUENTES",
+        calidad: "Pendiente ingesta a Bronze/Silver."
+      },
+
+      // ── FUENTES CANDIDATAS PROPUESTAS (candidata) ──
+      {
+        fuente: "OLE (Observatorio Laboral para la Educación)",
+        carpeta: "landing/educacion/ole",
+        publica: "Ministerio de Educación Nacional (MEN)",
+        contenido: "Tasa de vinculación laboral e ingreso base de cotización (IBC) de recién graduados por programa e IES.",
+        url_descarga: "https://ole.mineducacion.gov.co/",
+        frecuencia: "Anual",
+        fecha_corte: "2023",
+        fecha_disponible: "2025-05-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2014 - 2023",
+        desagregacion: "Nacional, departamento, IES, programa",
+        llaves_cruce: "codigo_snies, codigo_ies, DIVIPOLA",
+        formato: "Excel, CSV",
+        datos_personales: "No",
+        uso_actual: "Motor · Pertinencia y empleabilidad de graduados",
+        estado_fuente: "candidata",
+        calidad: "Rezago típico de 18-24 meses frente a corte de graduados."
+      },
+      {
+        fuente: "GEIH (Gran Encuesta Integrada de Hogares)",
+        carpeta: "landing/dane/geih",
+        publica: "DANE",
+        contenido: "Mercado laboral colombiano: ocupación, desempleo, informalidad, rama económica e ingresos.",
+        url_descarga: "https://microdatos.dane.gov.co/",
+        frecuencia: "Mensual / Trimestral",
+        fecha_corte: "2026-09",
+        fecha_disponible: "2026-10-31",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2018 - 2026",
+        desagregacion: "Nacional, 23 ciudades y áreas metropolitanas, departamento",
+        llaves_cruce: "DIVIPOLA, CIIU, CUOC",
+        formato: "CSV, Parquet",
+        datos_personales: "No (anonimizado)",
+        uso_actual: "Antena · Contexto laboral y brechas salariales",
+        estado_fuente: "candidata",
+        calidad: "Marco muestral actualizado a Censo 2018; representatividad solo en dominios definidos."
+      },
+      {
+        fuente: "PILA (Estadísticas agregadas de cotizantes)",
+        carpeta: "landing/mintrabajo/pila",
+        publica: "MinSalud / MinTrabajo (SISPRO)",
+        contenido: "Cotizantes dependientes e independientes al sistema de seguridad social por sector y municipio.",
+        url_descarga: "https://www.sispro.gov.co/",
+        frecuencia: "Mensual",
+        fecha_corte: "2025",
+        fecha_disponible: "2026-02-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2019 - 2025",
+        desagregacion: "Departamento, municipio, CIIU",
+        llaves_cruce: "DIVIPOLA, CIIU",
+        formato: "Excel, CSV, API",
+        datos_personales: "No (agregado)",
+        uso_actual: "Antena · Dinámica de empleo formal territorial",
+        estado_fuente: "candidata",
+        calidad: "Acceso por cubos SISPRO requiere exportación manual."
+      },
+      {
+        fuente: "TerriData",
+        carpeta: "landing/dnp/terridata",
+        publica: "Departamento Nacional de Planeación (DNP)",
+        contenido: "Batería estandarizada de indicadores municipales y departamentales (educación, economía, salud, finanzas).",
+        url_descarga: "https://terridata.dnp.gov.co/",
+        frecuencia: "Anual / Continua",
+        fecha_corte: "2024",
+        fecha_disponible: "2025-09-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2005 - 2024",
+        desagregacion: "Departamento, municipio",
+        llaves_cruce: "DIVIPOLA",
+        formato: "Excel, CSV",
+        datos_personales: "No",
+        uso_actual: "Motor / Antena · Contexto socioeconómico municipal",
+        estado_fuente: "candidata",
+        calidad: "Cada indicador hereda el rezago de su entidad fuente."
+      },
+      {
+        fuente: "Proyecciones de Población DANE",
+        carpeta: "landing/dane/poblacion",
+        publica: "DANE",
+        contenido: "Series de población proyectada por departamento, municipio, área, sexo y edad simple.",
+        url_descarga: "https://www.dane.gov.co/index.php/estadisticas-por-tema/demografia-y-poblacion/proyecciones-de-poblacion",
+        frecuencia: "Por actualización censal",
+        fecha_corte: "2018-2050",
+        fecha_disponible: "2023-03-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2018 - 2050",
+        desagregacion: "Nacional, departamento, municipio",
+        llaves_cruce: "DIVIPOLA",
+        formato: "Excel",
+        datos_personales: "No",
+        uso_actual: "Motor · Denominador de tasas de cobertura (17-21 años)",
+        estado_fuente: "candidata",
+        calidad: "Alta confiabilidad; indispensable para tasas netas/brutas de cobertura."
+      },
+      {
+        fuente: "Cuentas Departamentales (PIB)",
+        carpeta: "landing/dane/pib",
+        publica: "DANE",
+        contenido: "Producto Interno Bruto departamental a precios corrientes y constantes por grandes ramas de actividad.",
+        url_descarga: "https://www.dane.gov.co/index.php/estadisticas-por-tema/cuentas-nacionales/cuentas-nacionales-departamentales",
+        frecuencia: "Anual",
+        fecha_corte: "2024p",
+        fecha_disponible: "2025-06-30",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2005 - 2024",
+        desagregacion: "Departamento",
+        llaves_cruce: "DIVIPOLA, CIIU",
+        formato: "Excel",
+        datos_personales: "No",
+        uso_actual: "Antena · Vocación productiva departamental",
+        estado_fuente: "candidata",
+        calidad: "Último año publicado suele ser preliminar (p)."
+      },
+      {
+        fuente: "SIMO (Empleo Público)",
+        carpeta: "landing/cnsc/simo",
+        publica: "Comisión Nacional del Servicio Civil (CNSC)",
+        contenido: "Convocatorias y vacantes de carrera administrativa con requisitos de formación y salarios.",
+        url_descarga: "https://simo.cnsc.gov.co/",
+        frecuencia: "Continua",
+        fecha_corte: "2026",
+        fecha_disponible: "2026-10-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2022 - 2026",
+        desagregacion: "Nacional, departamento, municipio, entidad",
+        llaves_cruce: "DIVIPOLA, NBC_SNIES",
+        formato: "API, CSV",
+        datos_personales: "No",
+        uso_actual: "Antena · Demanda de perfiles profesionales en el sector público",
+        estado_fuente: "candidata",
+        calidad: "Campos de requisitos de título no siempre usan código SNIES exacto."
+      },
+      {
+        fuente: "SECOP II (Contratación Pública)",
+        carpeta: "landing/secop",
+        publica: "Colombia Compra Eficiente / Datos Abiertos",
+        contenido: "Procesos y contratos electrónicos del Estado colombiano por entidad, cuantía, objeto y proveedor.",
+        url_descarga: "https://www.datos.gov.co/d/jbjy-vk9h",
+        frecuencia: "Diaria / Mensual",
+        fecha_corte: "2026",
+        fecha_disponible: "2026-11-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2018 - 2026",
+        desagregacion: "Departamento, municipio, entidad, empresa",
+        llaves_cruce: "NIT, DIVIPOLA, UNSPSC",
+        formato: "API, CSV",
+        datos_personales: "Sí (contratistas persona natural / NIT)",
+        uso_actual: "Antena · Demanda de servicios técnicos y profesionales del Estado",
+        estado_fuente: "candidata",
+        calidad: "Alto volumen; requiere filtrar por estado del contrato y UNSPSC."
+      },
+      {
+        fuente: "IDC (Índice Departamental de Competitividad)",
+        carpeta: "landing/idc",
+        publica: "Consejo Privado de Competitividad y U. del Rosario",
+        contenido: "Medición comparativa de competitividad departamental en 13 pilares (educación superior, mercado laboral, innovación).",
+        url_descarga: "https://compite.com.co/indice-departamental-de-competitividad/",
+        frecuencia: "Anual",
+        fecha_corte: "2025",
+        fecha_disponible: "2025-07-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2019 - 2025",
+        desagregacion: "Departamento",
+        llaves_cruce: "DIVIPOLA",
+        formato: "Excel, PDF",
+        datos_personales: "No",
+        uso_actual: "Antena · Benchmarking regional de educación superior y talento",
+        estado_fuente: "candidata",
+        calidad: "Cambios metodológicos menores entre versiones."
+      },
+      {
+        fuente: "PATENTES_SIC",
+        carpeta: "landing/patentes_sic",
+        publica: "Superintendencia de Industria y Comercio (SIC)",
+        contenido: "Solicitudes y concesiones de patentes de invención, modelos de utilidad y diseños industriales.",
+        url_descarga: "https://www.datos.gov.co/",
+        frecuencia: "Trimestral / Anual",
+        fecha_corte: "2025",
+        fecha_disponible: "2026-03-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2015 - 2025",
+        desagregacion: "Departamento, municipio, solicitante",
+        llaves_cruce: "NIT, DIVIPOLA",
+        formato: "CSV, Excel",
+        datos_personales: "Sí (inventores / solicitantes persona natural)",
+        uso_actual: "Antena · Propiedad intelectual e innovación",
+        estado_fuente: "candidata",
+        calidad: "Nombres de universidades solicitantes requieren estandarización."
+      },
+      {
+        fuente: "MINTIC (Conectividad e Internet)",
+        carpeta: "landing/mintic",
+        publica: "Ministerio TIC",
+        contenido: "Accesos fijos y móviles a internet por municipio, departamento, estrato y velocidad.",
+        url_descarga: "https://colombiatic.mintic.gov.co/",
+        frecuencia: "Trimestral",
+        fecha_corte: "2025",
+        fecha_disponible: "2026-04-01",
+        ultimo_archivo: "Pendiente descarga",
+        cobertura: "2019 - 2025",
+        desagregacion: "Departamento, municipio",
+        llaves_cruce: "DIVIPOLA",
+        formato: "CSV, Excel",
+        datos_personales: "No",
+        uso_actual: "Motor · Viabilidad de oferta virtual y a distancia por territorio",
+        estado_fuente: "candidata",
+        calidad: "Buena cobertura municipal; útil para focalización virtual."
+      }
+    ];
+
+    const $ = id => document.getElementById(id);
+    let FUENTES = [];
+    let FILTRADAS = [];
+    let graficos = {};
+    let ORDEN = { col: "estado_fuente", asc: false };
+
+    function cargarDatos() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) { }
+      return JSON.parse(JSON.stringify(CATALOGO_BASE));
+    }
+
+    function guardarDatos() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(FUENTES));
+      $("corte").textContent = `Guardado local · ${new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" })}`;
+    }
+
+    function calcularAvanceFila(f) {
+      let llenas = 0;
+      for (const col of COLUMNAS_17) {
+        const val = (f[col] ?? "").toString().trim();
+        if (val !== "" && val.toLowerCase() !== "pendiente descarga") llenas++;
+      }
+      return Math.round((llenas / COLUMNAS_17.length) * 100);
+    }
+
+    function poblarFiltroFormato() {
+      const sel = $("f-formato");
+      const actual = sel.value;
+      const formatos = new Set();
+      FUENTES.forEach(f => {
+        String(f.formato || "").split(/[,/]+/).map(s => s.trim()).filter(Boolean).forEach(x => formatos.add(x));
+      });
+      sel.innerHTML = '<option value="">Todos los formatos</option>' +
+        [...formatos].sort().map(x => `<option value="${x}">${x}</option>`).join("");
+      sel.value = actual;
+    }
+
+    function aplicarFiltros() {
+      const q = $("buscar").value.trim().toLowerCase();
+      const est = $("f-estado").value;
+      const fmtVal = $("f-formato").value.toLowerCase();
+      const llave = $("f-llave").value.toLowerCase();
+      const dp = $("f-dp").value.toLowerCase();
+
+      FILTRADAS = FUENTES.filter(f => {
+        if (est && f.estado_fuente !== est) return false;
+        if (fmtVal && !String(f.formato || "").toLowerCase().includes(fmtVal)) return false;
+        if (llave && !String(f.llaves_cruce || "").toLowerCase().includes(llave)) return false;
+        if (dp) {
+          const valDp = String(f.datos_personales || "").trim().toLowerCase();
+          if (dp === "sí" && !valDp.startsWith("sí") && !valDp.startsWith("si")) return false;
+          if (dp === "no" && !valDp.startsWith("no")) return false;
+        }
+        if (q) {
+          const texto = COLUMNAS_17.map(c => f[c] || "").join(" ").toLowerCase();
+          if (!texto.includes(q)) return false;
+        }
+        return true;
+      });
+
+      FILTRADAS.sort((a, b) => {
+        let va = ORDEN.col === "_avance" ? calcularAvanceFila(a)
+          : (ORDEN.col === "avance_tablero" ? Number(a.avance_tablero || 0) : String(a[ORDEN.col] || "").toLowerCase());
+        let vb = ORDEN.col === "_avance" ? calcularAvanceFila(b)
+          : (ORDEN.col === "avance_tablero" ? Number(b.avance_tablero || 0) : String(b[ORDEN.col] || "").toLowerCase());
+        if (va < vb) return ORDEN.asc ? -1 : 1;
+        if (va > vb) return ORDEN.asc ? 1 : -1;
+        return 0;
+      });
+
+      renderKPIs();
+      renderGraficos();
+      renderTabla();
+      renderBrechas();
+    }
+
+    function renderKPIs() {
+      const total = FUENTES.length;
+      const enFuentes = FUENTES.filter(f => f.estado_fuente === "en FUENTES").length;
+      const candidatas = FUENTES.filter(f => f.estado_fuente === "candidata").length;
+      const descartadas = FUENTES.filter(f => f.estado_fuente === "descartada").length;
+      const promAvance = total ? Math.round(FUENTES.reduce((s, f) => s + calcularAvanceFila(f), 0) / total) : 0;
+
+      const cards = [
+        {
+          kicker: "INVENTARIO TOTAL",
+          titulo: "Fuentes en Seguimiento",
+          val: total,
+          badge: `${FILTRADAS.length} visibles`,
+          badgeClass: "badge-primary",
+          progreso: 100,
+          color: "#004E98",
+          nota: "Catálogo activo + candidatas",
+          filtro: ""
+        },
+        {
+          kicker: "INTEGRADAS",
+          titulo: "en FUENTES",
+          val: enFuentes,
+          badge: total ? `${Math.round(enFuentes / total * 100)} %` : "0 %",
+          badgeClass: "badge-success",
+          progreso: total ? enFuentes / total * 100 : 0,
+          color: "#10B981",
+          nota: "Clic para filtrar en FUENTES",
+          filtro: "en FUENTES"
+        },
+        {
+          kicker: "PROPUESTAS",
+          titulo: "candidata",
+          val: candidatas,
+          badge: total ? `${Math.round(candidatas / total * 100)} %` : "0 %",
+          badgeClass: "badge-gold",
+          progreso: total ? candidatas / total * 100 : 0,
+          color: "#E0A800",
+          nota: "Clic para filtrar candidatas",
+          filtro: "candidata"
+        },
+        {
+          kicker: "NO VIABLES",
+          titulo: "descartada",
+          val: descartadas,
+          badge: total ? `${Math.round(descartadas / total * 100)} %` : "0 %",
+          badgeClass: "badge-neutral",
+          progreso: total ? descartadas / total * 100 : 0,
+          color: "#64748B",
+          nota: "Clic para filtrar descartadas",
+          filtro: "descartada"
+        },
+        {
+          kicker: "COMPLETITUD",
+          titulo: "Diligenciamiento 17 cols",
+          val: promAvance + "%",
+          badge: "Meta 100%",
+          badgeClass: "badge-primary",
+          progreso: promAvance,
+          color: "#004E98",
+          nota: "Promedio de campos llenos",
+          filtro: null
+        }
+      ];
+
+      $("kpis-fuentes").innerHTML = cards.map(c => `
+        <div class="kpi-card ${c.filtro !== null && $("f-estado").value === c.filtro && c.filtro !== "" ? "activa" : ""}" data-filtro="${c.filtro ?? ""}">
+          <div class="kpi-card-header">
+            <div class="kpi-card-meta">
+              <span class="kpi-card-kicker">${c.kicker}</span>
+              <h4 class="kpi-card-title">${c.titulo}</h4>
+            </div>
+            <div class="kpi-card-aside">
+              <span class="kpi-badge ${c.badgeClass}">${c.badge}</span>
+            </div>
+          </div>
+          <div class="kpi-card-body">
+            <b class="kpi-card-val">${c.val}</b>
+          </div>
+          <div class="kpi-card-track">
+            <div class="kpi-card-track-fill" style="width:${c.progreso}%;background:${c.color};"></div>
+          </div>
+          <div class="kpi-card-footer">
+            <p class="kpi-card-sub">${c.nota}</p>
+          </div>
+        </div>
+      `).join("");
+
+      document.querySelectorAll("#kpis-fuentes .kpi-card").forEach(el => {
+        el.addEventListener("click", () => {
+          const f = el.getAttribute("data-filtro");
+          if (f === "") $("f-estado").value = "";
+          else if (f) $("f-estado").value = ($("f-estado").value === f) ? "" : f;
+          aplicarFiltros();
+        });
+      });
+    }
+
+    function renderGraficos() {
+      const estados = ["en FUENTES", "candidata", "descartada"];
+      const conteoEst = estados.map(e => FILTRADAS.filter(f => f.estado_fuente === e).length);
+
+      graficos.estado?.destroy();
+      graficos.estado = new Chart($("g-estado"), {
+        type: "doughnut",
+        data: {
+          labels: estados,
+          datasets: [{
+            data: conteoEst,
+            backgroundColor: ["#10B981", "#FFCC00", "#94A3B8"],
+            borderColor: "#FFFFFF",
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "66%",
+          plugins: { legend: { position: "bottom" } },
+          onClick: (_, els) => {
+            if (els.length) {
+              const elegido = estados[els[0].index];
+              $("f-estado").value = ($("f-estado").value === elegido) ? "" : elegido;
+              aplicarFiltros();
+            }
+          }
+        }
+      });
+
+      const porEntidad = {};
+      FILTRADAS.forEach(f => {
+        const ent = (f.publica || "Sin entidad").split("(")[0].trim();
+        porEntidad[ent] = (porEntidad[ent] || 0) + 1;
+      });
+      const topEnt = Object.entries(porEntidad).sort((a, b) => b[1] - a[1]).slice(0, 8);
+
+      graficos.entidades?.destroy();
+      graficos.entidades = new Chart($("g-entidades"), {
+        type: "bar",
+        data: {
+          labels: topEnt.map(x => x[0].length > 28 ? x[0].slice(0, 26) + "…" : x[0]),
+          datasets: [{
+            label: "Fuentes",
+            data: topEnt.map(x => x[1]),
+            backgroundColor: "#004E98",
+            borderRadius: 5
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+      });
+    }
+
+    function renderBrechas() {
+      const total = FILTRADAS.length || 1;
+      const stats = COLUMNAS_17.map(col => {
+        const llenas = FILTRADAS.filter(f => {
+          const v = (f[col] ?? "").toString().trim();
+          return v !== "" && v.toLowerCase() !== "pendiente descarga";
+        }).length;
+        return { col, pct: Math.round(llenas / total * 100) };
+      }).sort((a, b) => a.pct - b.pct);
+
+      graficos.brechas?.destroy();
+      graficos.brechas = new Chart($("g-brechas"), {
+        type: "bar",
+        data: {
+          labels: stats.map(s => s.col),
+          datasets: [{
+            label: "% diligenciado",
+            data: stats.map(s => s.pct),
+            backgroundColor: stats.map(s => s.pct < 50 ? "#EF4444" : (s.pct < 90 ? "#FFCC00" : "#10B981")),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { min: 0, max: 100, ticks: { callback: v => v + "%" } } }
+        }
+      });
+    }
+
+    function badgeEstado(est) {
+      if (est === "en FUENTES") return '<span class="estado-pill estado-en-fuentes">● en FUENTES</span>';
+      if (est === "candidata") return '<span class="estado-pill estado-candidata">◐ candidata</span>';
+      return '<span class="estado-pill estado-descartada">○ descartada</span>';
+    }
+
+    function badgeDP(val) {
+      const s = String(val || "").trim();
+      if (!s) return "—";
+      if (s.toLowerCase().startsWith("sí") || s.toLowerCase().startsWith("si")) {
+        return `<span class="dp-si">${esc(s)}</span>`;
+      }
+      return `<span class="dp-no">${esc(s)}</span>`;
+    }
+
+    function esc(str) {
+      return String(str ?? "").replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+    }
+
+    function renderTabla() {
+      $("s-tabla-fuentes").textContent = `Mostrando ${FILTRADAS.length} de ${FUENTES.length} fuentes · Clic en cualquier encabezado para ordenar`;
+      const tbody = $("tbody-fuentes");
+      if (!FILTRADAS.length) {
+        tbody.innerHTML = '<tr><td colspan="20" style="text-align:center;padding:24px;color:#64748B;">No hay fuentes que coincidan con los filtros activos.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = FILTRADAS.map(f => {
+        const idxReal = FUENTES.indexOf(f);
+        const av = calcularAvanceFila(f);
+        const avTab = Number(f.avance_tablero || 0);
+        const colorTab = avTab >= 90 ? "#10B981" : (avTab >= 50 ? "#E0A800" : "#94A3B8");
+        const urlHtml = f.url_descarga && f.url_descarga.startsWith("http")
+          ? `<a class="url-link" href="${esc(f.url_descarga)}" target="_blank" rel="noopener">${esc(f.url_descarga)}</a>`
+          : esc(f.url_descarga || "—");
+
+        return `<tr>
+          <td class="col-fija-izq">${esc(f.fuente)}</td>
+          <td>${badgeEstado(f.estado_fuente)}</td>
+          <td style="white-space:nowrap;">
+            <span class="avance-bar"><span class="avance-fill" style="width:${avTab}%;background:${colorTab};"></span></span><b>${avTab}%</b>
+          </td>
+          <td style="white-space:nowrap;">
+            <span class="avance-bar"><span class="avance-fill" style="width:${av}%;"></span></span><b>${av}%</b>
+          </td>
+          <td class="mono-celda">${esc(f.carpeta || "—")}</td>
+          <td>${esc(f.publica || "—")}</td>
+          <td>${esc(f.contenido || "—")}</td>
+          <td>${urlHtml}</td>
+          <td>${esc(f.frecuencia || "—")}</td>
+          <td class="mono-celda">${esc(f.fecha_corte || "—")}</td>
+          <td class="mono-celda">${esc(f.fecha_disponible || "—")}</td>
+          <td class="mono-celda">${esc(f.ultimo_archivo || "—")}</td>
+          <td>${esc(f.cobertura || "—")}</td>
+          <td>${esc(f.desagregacion || "—")}</td>
+          <td class="mono-celda">${esc(f.llaves_cruce || "—")}</td>
+          <td>${esc(f.formato || "—")}</td>
+          <td>${badgeDP(f.datos_personales)}</td>
+          <td>${esc(f.uso_actual || "—")}</td>
+          <td>${esc(f.calidad || "—")}</td>
+          <td class="col-acciones">
+            <button type="button" class="btn-mini" onclick="abrirModal(${idxReal})">Editar</button>
+            <button type="button" class="btn-mini del" onclick="eliminarFuente(${idxReal})">Eliminar</button>
+          </td>
+        </tr>`;
+      }).join("");
+    }
+
+    function abrirModal(idx = -1) {
+      $("edit-index").value = idx;
+      if (idx >= 0 && FUENTES[idx]) {
+        $("modal-titulo").textContent = "Editar fuente: " + FUENTES[idx].fuente;
+        COLUMNAS_17.forEach(c => { $("c-" + c).value = FUENTES[idx][c] || ""; });
+        $("c-avance_tablero").value = Number(FUENTES[idx].avance_tablero || 0);
+      } else {
+        $("modal-titulo").textContent = "Registrar nueva fuente";
+        $("form-fuente").reset();
+        $("c-estado_fuente").value = "candidata";
+        $("c-avance_tablero").value = 0;
+      }
+      $("modal-fuente").classList.add("abierto");
+      $("modal-fuente").setAttribute("aria-hidden", "false");
+    }
+
+    function cerrarModal() {
+      $("modal-fuente").classList.remove("abierto");
+      $("modal-fuente").setAttribute("aria-hidden", "true");
+    }
+
+    function eliminarFuente(idx) {
+      if (!FUENTES[idx]) return;
+      if (confirm(`¿Eliminar "${FUENTES[idx].fuente}" del registro?`)) {
+        FUENTES.splice(idx, 1);
+        guardarDatos();
+        poblarFiltroFormato();
+        aplicarFiltros();
+      }
+    }
+
+    function exportarCSV() {
+      const filas = [COLUMNAS_17.join(",")].concat(
+        FILTRADAS.map(f => COLUMNAS_17.map(c => `"${String(f[c] || "").replace(/"/g, '""')}"`).join(","))
+      );
+      const blob = new Blob(["\uFEFF" + filas.join("\n")], { type: "text/csv;charset=utf-8;" });
+      descargarBlob(blob, "registro_fuentes_cadit.csv");
+    }
+
+    function exportarXLSX() {
+      if (typeof XLSX === "undefined") return alert("Librería XLSX no cargada.");
+      const data = FILTRADAS.map(f => {
+        const obj = {};
+        COLUMNAS_17.forEach(c => obj[c] = f[c] || "");
+        return obj;
+      });
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Fuentes_CADIT");
+      XLSX.writeFile(wb, "registro_fuentes_cadit.xlsx");
+    }
+
+    function exportarJSON() {
+      const blob = new Blob([JSON.stringify(FUENTES, null, 2)], { type: "application/json;charset=utf-8;" });
+      descargarBlob(blob, "registro_fuentes_cadit.json");
+    }
+
+    function exportarPDF() {
+      if (!window.jspdf?.jsPDF) return alert("Librería PDF no cargada.");
+      const doc = new window.jspdf.jsPDF({ orientation: "landscape" });
+      doc.setFontSize(14);
+      doc.setTextColor(0, 78, 152);
+      doc.text("CADIT · Registro y Avance de Fuentes Externas", 14, 16);
+      doc.setFontSize(9);
+      doc.setTextColor(80);
+      doc.text(`Generado: ${new Date().toLocaleDateString("es-CO")} · Fuentes visibles: ${FILTRADAS.length}`, 14, 22);
+      let y = 30;
+      FILTRADAS.slice(0, 28).forEach((f, i) => {
+        if (y > 190) { doc.addPage(); y = 18; }
+        doc.setFontSize(8.5);
+        doc.setTextColor(15, 23, 42);
+        doc.text(`${i + 1}. ${f.fuente} [${f.estado_fuente}] — ${f.publica} | Llaves: ${f.llaves_cruce || "—"} | Uso: ${f.uso_actual || "—"}`, 14, y);
+        y += 6;
+      });
+      doc.save("registro_fuentes_cadit.pdf");
+    }
+
+    function descargarBlob(blob, nombre) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = nombre;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // Eventos
+    document.addEventListener("DOMContentLoaded", () => {
+      FUENTES = cargarDatos();
+      poblarFiltroFormato();
+      aplicarFiltros();
+
+      ["buscar", "f-estado", "f-formato", "f-llave", "f-dp"].forEach(id => {
+        $(id).addEventListener("input", aplicarFiltros);
+        $(id).addEventListener("change", aplicarFiltros);
+      });
+
+      $("limpiar").addEventListener("click", () => {
+        $("buscar").value = "";
+        $("f-estado").value = "";
+        $("f-formato").value = "";
+        $("f-llave").value = "";
+        $("f-dp").value = "";
+        aplicarFiltros();
+      });
+
+      document.querySelectorAll("#tabla-fuentes thead th[data-col]").forEach(th => {
+        th.addEventListener("click", () => {
+          const col = th.getAttribute("data-col");
+          if (ORDEN.col === col) ORDEN.asc = !ORDEN.asc;
+          else { ORDEN.col = col; ORDEN.asc = true; }
+          aplicarFiltros();
+        });
+      });
+
+      $("btn-nueva-fuente").addEventListener("click", () => abrirModal(-1));
+      $("btn-cerrar-modal").addEventListener("click", cerrarModal);
+      $("btn-cancelar-modal").addEventListener("click", cerrarModal);
+
+      $("form-fuente").addEventListener("submit", e => {
+        e.preventDefault();
+        const idx = Number($("edit-index").value);
+        const reg = {};
+        COLUMNAS_17.forEach(c => reg[c] = $("c-" + c).value.trim());
+        reg.avance_tablero = Math.max(0, Math.min(100, Number($("c-avance_tablero").value || 0)));
+        if (idx >= 0 && FUENTES[idx]) FUENTES[idx] = reg;
+        else FUENTES.unshift(reg);
+        guardarDatos();
+        poblarFiltroFormato();
+        aplicarFiltros();
+        cerrarModal();
+      });
+
+      $("btn-restaurar").addEventListener("click", () => {
+        if (confirm("¿Restaurar el catálogo base inicial? Se perderán los cambios locales no exportados.")) {
+          FUENTES = JSON.parse(JSON.stringify(CATALOGO_BASE));
+          guardarDatos();
+          poblarFiltroFormato();
+          aplicarFiltros();
+        }
+      });
+
+      $("btn-csv").addEventListener("click", exportarCSV);
+      $("xlsx").addEventListener("click", exportarXLSX);
+      $("pdf").addEventListener("click", exportarPDF);
+      $("btn-exportar-json").addEventListener("click", exportarJSON);
+
+      $("input-importar-json").addEventListener("change", e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          try {
+            const arr = JSON.parse(ev.target.result);
+            if (!Array.isArray(arr)) throw new Error("Formato inválido");
+            FUENTES = arr;
+            guardarDatos();
+            poblarFiltroFormato();
+            aplicarFiltros();
+          } catch (err) {
+            alert("No se pudo importar el JSON: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = "";
+      });
+
+      // Navegación del menú lateral
+      document.querySelectorAll("#menu button[data-v]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#menu button[data-v]").forEach(b => b.classList.remove("activa"));
+          btn.classList.add("activa");
+          const v = btn.getAttribute("data-v");
+          $("p-catalogo").hidden = v !== "catalogo";
+          $("p-brechas").hidden = v !== "brechas";
+        });
+      });
+
+      document.querySelectorAll("#menu button[data-href]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          window.location.href = btn.getAttribute("data-href");
+        });
+      });
+
+      // Menú móvil
+      const btnMovil = $("btn-menu-movil");
+      const lateral = document.querySelector(".lateral");
+      btnMovil?.addEventListener("click", () => {
+        const abierto = lateral.classList.toggle("abierto");
+        btnMovil.setAttribute("aria-expanded", abierto ? "true" : "false");
+      });
+    });
+  </script>
+</body>
+
+</html>
+
